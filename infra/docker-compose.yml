@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: my-recipes-postgres
+    environment:
+      POSTGRES_DB: my_recipes
+      POSTGRES_USER: my_recipes
+      POSTGRES_PASSWORD: my_recipes
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

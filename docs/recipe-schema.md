@@ -1,38 +1,40 @@
 # Recipe Schema
 
-Este documento define o contrato inicial do MVP para receitas importadas do Instagram.
+This document defines the initial MVP contract for recipes imported from Instagram.
 
-## Objetivo
+## Goal
 
-O sistema deve:
+The system must:
 
-- receber um link compartilhado de um post do Instagram
-- ler a descricao do post
-- estruturar a receita quando houver conteudo suficiente
-- informar claramente quando a receita nao estiver na descricao
+- receive a shared Instagram post link
+- read the post description
+- structure the recipe when there is enough content
+- clearly inform the user when the recipe is not present in the description
 
-## Status de processamento
+## Processing statuses
 
-Os itens importados devem usar um dos status abaixo:
+Imported items must use one of the statuses below:
 
-- `processing`: link recebido e em processamento
-- `ready`: receita estruturada e pronta para exibir
-- `no_recipe_in_description`: nao foi encontrada receita suficiente na descricao
-- `failed`: ocorreu uma falha tecnica no processamento
+- `queued`: link received and waiting to be processed
+- `processing`: extraction is currently running
+- `ready`: structured recipe is ready to display
+- `no_recipe_in_description`: no usable recipe was found in the description
+- `failed`: a technical failure happened during processing
 
 ## Recipe
 
 ```ts
 type RecipeStatus =
+  | "queued"
   | "processing"
   | "ready"
   | "no_recipe_in_description"
   | "failed";
 
 type RecipeIngredient = {
-  name: string;
-  quantity?: string | null;
-  notes?: string | null;
+  amount?: string | null;
+  unit?: string | null;
+  item: string;
 };
 
 type RecipeStep = {
@@ -61,9 +63,9 @@ type Recipe = {
 };
 ```
 
-## Regras de preenchimento
+## Population rules
 
-### Campos obrigatorios para todo item importado
+### Required fields for every imported item
 
 - `id`
 - `sourceUrl`
@@ -75,94 +77,102 @@ type Recipe = {
 - `createdAt`
 - `updatedAt`
 
-### Quando `status = ready`
+### When `status = queued`
 
-Esperamos que os seguintes campos estejam preenchidos:
+The item has been accepted by the system but has not started extraction yet.
+
+### When `status = processing`
+
+The item is being processed by the extraction pipeline.
+
+### When `status = ready`
+
+The following fields are expected to be populated:
 
 - `title`
-- `ingredients` com ao menos 1 item
-- `steps` com ao menos 1 item
+- `ingredients` with at least 1 item
+- `steps` with at least 1 item
 
-Campos como tempo, porcoes e imagem podem continuar vazios no MVP.
+Fields such as time, servings, and image may still be empty in the MVP.
 
-### Quando `status = no_recipe_in_description`
+### When `status = no_recipe_in_description`
 
-O sistema deve:
+The system must:
 
-- manter `sourceUrl`
-- manter `rawDescription` quando disponivel
-- permitir `ingredients` vazio
-- permitir `steps` vazio
-- exibir ao usuario que a receita nao foi encontrada na descricao
+- keep `sourceUrl`
+- keep `rawDescription` when available
+- allow empty `ingredients`
+- allow empty `steps`
+- show the user that the recipe was not found in the description
 
-### Quando `status = failed`
+### When `status = failed`
 
-O sistema deve:
+The system must:
 
-- manter `sourceUrl`
-- manter `rawDescription` se ela ja tiver sido obtida
-- registrar erro tecnico fora deste schema de exibicao
+- keep `sourceUrl`
+- keep `rawDescription` if it has already been fetched
+- record the technical error outside this display schema
 
-## Regras de validacao
+## Validation rules
 
 ### `sourceUrl`
 
-- obrigatorio
-- deve ser uma URL valida
-- no MVP, deve apontar para Instagram
+- required
+- must be a valid URL
+- in the MVP, it must point to Instagram
 
 ### `title`
 
-- opcional no schema geral
-- obrigatorio quando `status = ready`
-- idealmente curto e legivel
+- optional in the general schema
+- required when `status = ready`
+- ideally short and readable
 
 ### `ingredients`
 
-Cada item deve conter:
+Each item must contain:
 
-- `name`: obrigatorio
-- `quantity`: opcional, texto livre no MVP
-- `notes`: opcional
+- `item`: required
+- `amount`: optional, free text in the MVP
+- `unit`: optional, free text in the MVP
 
-Exemplo:
+Example:
 
 ```ts
 {
-  name: "farinha de trigo",
-  quantity: "2 xicaras",
-  notes: "sem fermento"
+  amount: "2",
+  unit: "cups",
+  item: "all-purpose flour"
 }
 ```
 
 ### `steps`
 
-Cada passo deve conter:
+Each step must contain:
 
-- `order`: obrigatorio
-- `instruction`: obrigatorio
+- `order`: required
+- `instruction`: required
 
-O `order` deve iniciar em 1 e seguir sem repeticao.
+`order` must start at 1 and continue without duplicates.
 
-### tempos
+### time fields
 
-- `prepTimeMinutes`, `cookTimeMinutes` e `totalTimeMinutes` sao opcionais
-- quando `totalTimeMinutes` estiver presente, ele deve ser maior ou igual a cada tempo parcial
+- `prepTimeMinutes`, `cookTimeMinutes`, and `totalTimeMinutes` are optional
+- when `totalTimeMinutes` is present, it must be greater than or equal to each partial time
 
 ### `servings`
 
-- opcional
-- texto livre no MVP, por exemplo `2 porcoes`, `1 bolo`, `8 fatias`
+- optional
+- free text in the MVP, for example `2 servings`, `1 cake`, `8 slices`
 
 ### `tags`
 
-- lista de strings
-- comecar vazia quando a IA nao tiver seguranca
-- evitar duplicatas
+- list of strings
+- should start empty when the AI is not confident
+- should avoid duplicates
 
-## Resposta esperada da IA
+## Expected AI response
 
-Para o pipeline de estruturacao, a IA deve sempre retornar um objeto compativel com este contrato:
+For the structuring pipeline, the AI must always return an object compatible with this contract:
 
 ```ts
 type RecipeExtractionResult =
@@ -183,11 +193,11 @@ type RecipeExtractionResult =
     };
 ```
 
-## Implicacoes para testes
+## Testing implications
 
-Este contrato permite testar:
+This contract allows us to test:
 
-- parser e validacao sem depender do app
-- camada de IA com mocks
-- casos felizes e casos sem receita na descricao
-- evals com entradas reais e saida esperada
+- parser and validation without depending on the app
+- the AI layer with mocks
+- happy paths and no-recipe-in-description cases
+- evals with real inputs and expected outputs

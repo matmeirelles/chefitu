@@ -1,0 +1,15 @@
+node_modules
+.turbo
+.expo
+.expo-shared
+dist
+build
+coverage
+.DS_Store
+.env
+.env.*
+!.env.example
+apps/api/generated
+apps/mobile/.expo
+apps/mobile/.expo-shared
+prisma/dev.db

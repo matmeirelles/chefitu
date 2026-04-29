@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ImportStatus {
+  queued
+  processing
+  ready
+  no_recipe_in_description
+  failed
+}
+
+model Import {
+  id               String       @id @default(cuid())
+  sourcePlatform   String
+  sourceUrl        String
+  sourceAuthorName String?
+  rawDescription   String?
+  coverImageUrl    String?
+  status           ImportStatus
+  failureReason    String?
+  recipe           Recipe?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model Recipe {
+  id               String   @id @default(cuid())
+  importId         String   @unique
+  import           Import   @relation(fields: [importId], references: [id])
+  title            String
+  ingredients      Json
+  steps            Json
+  prepTimeMinutes  Int?
+  cookTimeMinutes  Int?
+  totalTimeMinutes Int?
+  servings         String?
+  tags             Json
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
