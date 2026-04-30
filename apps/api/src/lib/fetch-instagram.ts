@@ -26,6 +26,10 @@ export const fetchInstagramData = async (url: string): Promise<InstagramData> =>
   };
 };
 
+export const instagramFetcher = {
+  fetchInstagramData,
+};
+
 const extractOgTag = (html: string, property: string): string | null => {
   const match =
     html.match(new RegExp(`<meta[^>]+property=["']${property}["'][^>]+content=["']([^"']+)["']`, "i")) ??

@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Animated, Image, Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Alert } from "react-native";
 import type { RecipeIngredient, RecipeRecord, RecipeStep } from "@my-recipes/shared";
 import { Icon, Surface, Text, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -57,6 +58,7 @@ export const RecipeDetailScreen = ({
       onDelete();
     } catch {
       setDeleting(false);
+      Alert.alert("Could not delete recipe", "Please try again.");
     }
   };
 
@@ -74,12 +76,6 @@ export const RecipeDetailScreen = ({
 
   return (
     <View style={styles.root}>
-      {menuOpen && (
-        <Pressable
-          style={[StyleSheet.absoluteFillObject, { zIndex: 50 }]}
-          onPress={closeMenu}
-        />
-      )}
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Hero */}
         <View>

@@ -26,6 +26,7 @@ model Import {
   failureReason    String?
   recipeId         String?      @unique
   recipe           Recipe?
+  aiExtractionLogs AIExtractionLog[]
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 }
@@ -47,4 +48,19 @@ model Recipe {
   tags             String[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+
+model AIExtractionLog {
+  id           String   @id @default(cuid())
+  importId     String
+  import       Import   @relation(fields: [importId], references: [id], onDelete: Cascade)
+  description  String
+  provider     String
+  model        String
+  inputTokens  Int?
+  outputTokens Int?
+  finalResponse Json
+  createdAt    DateTime @default(now())
+
+  @@index([importId, createdAt])
 }

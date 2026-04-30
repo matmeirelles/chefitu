@@ -1,6 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { ApiError, fetchRecipes, fetchRecipeById } from "./api";
+import {
+  ApiError,
+  createImport,
+  deleteImport,
+  deleteRecipe,
+  fetchImports,
+  fetchRecipeById,
+  fetchRecipes,
+  retryImport,
+} from "./api";
 
 const mockFetch = (status: number, body: unknown) => {
   globalThis.fetch = async () =>
@@ -71,4 +80,133 @@ test("request returns parsed JSON on a successful response", async () => {
   const result = await fetchRecipes();
 
   assert.deepEqual(result, payload);
+});
+
+test("fetchImports returns parsed JSON on a successful response", async () => {
+  const payload = { items: [{ id: "imp_1", status: "processing" }] };
+  mockFetch(200, payload);
+
+  const result = await fetchImports();
+
+  assert.deepEqual(result, payload);
+});
+
+test("createImport sends a POST request and succeeds on a 201 response", async () => {
+  let input: unknown;
+  let init: RequestInit | undefined;
+  globalThis.fetch = async (url, options) => {
+    input = url;
+    init = options;
+    return new Response(JSON.stringify({ item: { id: "imp_1" } }), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
+  };
+
+  await createImport("https://instagram.com/p/1");
+
+  assert.equal(input, "http://127.0.0.1:3333/imports");
+  assert.equal(init?.method, "POST");
+  assert.equal(init?.headers && (init.headers as Record<string, string>)["Content-Type"], "application/json");
+  assert.equal(init?.body, JSON.stringify({ sourceUrl: "https://instagram.com/p/1" }));
+});
+
+test("createImport throws ApiError on failure", async () => {
+  mockFetch(500, {});
+
+  await assert.rejects(
+    () => createImport("https://instagram.com/p/1"),
+    (err) => {
+      assert.ok(err instanceof ApiError);
+      assert.equal(err.message, "Failed to create import.");
+      return true;
+    },
+  );
+});
+
+test("deleteImport sends a DELETE request and succeeds on a 204 response", async () => {
+  let input: unknown;
+  let init: RequestInit | undefined;
+  globalThis.fetch = async (url, options) => {
+    input = url;
+    init = options;
+    return new Response(null, { status: 204 });
+  };
+
+  await deleteImport("imp_1");
+
+  assert.equal(input, "http://127.0.0.1:3333/imports/imp_1");
+  assert.equal(init?.method, "DELETE");
+});
+
+test("deleteImport throws ApiError on failure", async () => {
+  mockFetch(500, {});
+
+  await assert.rejects(
+    () => deleteImport("imp_1"),
+    (err) => {
+      assert.ok(err instanceof ApiError);
+      assert.equal(err.message, "Failed to delete import.");
+      return true;
+    },
+  );
+});
+
+test("retryImport sends a POST request and succeeds on a 200 response", async () => {
+  let input: unknown;
+  let init: RequestInit | undefined;
+  globalThis.fetch = async (url, options) => {
+    input = url;
+    init = options;
+    return new Response(JSON.stringify({ item: { id: "imp_1" } }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  };
+
+  await retryImport("imp_1");
+
+  assert.equal(input, "http://127.0.0.1:3333/imports/imp_1/retry");
+  assert.equal(init?.method, "POST");
+});
+
+test("retryImport throws ApiError on failure", async () => {
+  mockFetch(500, {});
+
+  await assert.rejects(
+    () => retryImport("imp_1"),
+    (err) => {
+      assert.ok(err instanceof ApiError);
+      assert.equal(err.message, "Failed to retry import.");
+      return true;
+    },
+  );
+});
+
+test("deleteRecipe sends a DELETE request and succeeds on a 204 response", async () => {
+  let input: unknown;
+  let init: RequestInit | undefined;
+  globalThis.fetch = async (url, options) => {
+    input = url;
+    init = options;
+    return new Response(null, { status: 204 });
+  };
+
+  await deleteRecipe("rec_1");
+
+  assert.equal(input, "http://127.0.0.1:3333/recipes/rec_1");
+  assert.equal(init?.method, "DELETE");
+});
+
+test("deleteRecipe throws ApiError on failure", async () => {
+  mockFetch(500, {});
+
+  await assert.rejects(
+    () => deleteRecipe("rec_1"),
+    (err) => {
+      assert.ok(err instanceof ApiError);
+      assert.equal(err.message, "Failed to delete recipe.");
+      return true;
+    },
+  );
 });

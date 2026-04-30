@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Animated,
   Easing,
   KeyboardAvoidingView,
@@ -42,14 +43,18 @@ export const QueueScreen = () => {
     try {
       await retryImport(id);
       await load();
-    } catch {}
+    } catch {
+      Alert.alert("Could not retry", "Please try again.");
+    }
   };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteImport(id);
       await load();
-    } catch {}
+    } catch {
+      Alert.alert("Could not delete", "Please try again.");
+    }
   };
 
   const handleAdd = async () => {
@@ -61,6 +66,7 @@ export const QueueScreen = () => {
       setModalVisible(false);
       await load();
     } catch {
+      Alert.alert("Could not add recipe", "Please check the link and try again.");
     } finally {
       setSubmitting(false);
     }
@@ -75,12 +81,6 @@ export const QueueScreen = () => {
 
   return (
     <View style={[styles.root, { backgroundColor: theme.colors.background }]}>
-      {openMenuId !== null && (
-        <Pressable
-          style={[StyleSheet.absoluteFillObject, { zIndex: 50 }]}
-          onPress={() => setOpenMenuId(null)}
-        />
-      )}
       <ScrollView
         contentContainerStyle={[
           styles.scroll,
@@ -258,46 +258,44 @@ const QueueItemCard = ({
 
   return (
     <>
-      <Pressable
-        onPress={() => void Linking.openURL(item.sourceUrl)}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-      >
-        <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
-          {/* Row 1: status + timestamp + menu */}
-          <View style={styles.cardRow}>
-            <StatusIndicator status={item.status} />
-            <View style={styles.cardRowRight}>
-              <Text style={[styles.timestamp, { color: theme.colors.onSurfaceVariant }]}>
-                {formatRelativeTime(item.createdAt)}
-              </Text>
-              <View>
-                <Pressable onPress={menuOpen ? onCloseMenu : onOpenMenu} hitSlop={8}>
-                  <Icon source="dots-vertical" size={18} color={theme.colors.onSurfaceVariant} />
-                </Pressable>
-                {menuOpen && (
-                  <>
-                    <Animated.View
-                      style={[
-                        styles.cardMenu,
-                        {
-                          opacity: menuAnim,
-                          transform: [{ scale: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }],
-                        },
-                      ]}
-                    >
-                      <Pressable style={styles.cardMenuItem} onPress={handleDeletePress}>
-                        <Icon source="trash-can-outline" size={16} color="#B3261E" />
-                        <Text style={styles.cardMenuItemText}>Deletar</Text>
-                      </Pressable>
-                    </Animated.View>
-                  </>
-                )}
-              </View>
+      <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
+        {/* Row 1: status + timestamp + menu */}
+        <View style={styles.cardRow}>
+          <StatusIndicator status={item.status} />
+          <View style={styles.cardRowRight}>
+            <Text style={[styles.timestamp, { color: theme.colors.onSurfaceVariant }]}>
+              {formatRelativeTime(item.createdAt)}
+            </Text>
+            <View>
+              <Pressable onPress={menuOpen ? onCloseMenu : onOpenMenu} hitSlop={8}>
+                <Icon source="dots-vertical" size={18} color={theme.colors.onSurfaceVariant} />
+              </Pressable>
+              {menuOpen && (
+                <Animated.View
+                  style={[
+                    styles.cardMenu,
+                    {
+                      opacity: menuAnim,
+                      transform: [{ scale: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }],
+                    },
+                  ]}
+                >
+                  <Pressable style={styles.cardMenuItem} onPress={handleDeletePress}>
+                    <Icon source="trash-can-outline" size={16} color="#B3261E" />
+                    <Text style={styles.cardMenuItemText}>Deletar</Text>
+                  </Pressable>
+                </Animated.View>
+              )}
             </View>
           </View>
+        </View>
 
-          {/* Row 2: URL */}
+        {/* Row 2: URL */}
+        <Pressable
+          onPress={() => void Linking.openURL(item.sourceUrl)}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+        >
           <View style={styles.urlRow}>
             <Icon source="link-variant" size={16} color={theme.colors.onSurfaceVariant} />
             <Text
@@ -308,18 +306,18 @@ const QueueItemCard = ({
               {item.sourceUrl}
             </Text>
           </View>
+        </Pressable>
 
-          {/* Row 3: Try again (conditional) */}
-          {canRetry && (
-            <Pressable onPress={onRetry} style={styles.retryBtn}>
-              <Icon source="refresh" size={14} color={theme.colors.primary} />
-              <Text style={[styles.retryText, { color: theme.colors.primary }]}>
-                Tentar novamente
-              </Text>
-            </Pressable>
-          )}
-        </Animated.View>
-      </Pressable>
+        {/* Row 3: Try again (conditional) */}
+        {canRetry && (
+          <Pressable onPress={onRetry} style={styles.retryBtn}>
+            <Icon source="refresh" size={14} color={theme.colors.primary} />
+            <Text style={[styles.retryText, { color: theme.colors.primary }]}>
+              Tentar novamente
+            </Text>
+          </Pressable>
+        )}
+      </Animated.View>
 
       <Modal visible={confirmVisible} transparent animationType="fade" onRequestClose={() => setConfirmVisible(false)}>
         <View style={styles.dialogOverlay}>

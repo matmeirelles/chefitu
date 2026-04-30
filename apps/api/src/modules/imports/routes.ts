@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { createImport, deleteImport, listInboxImports, retryImport } from "./service.js";
-import { processImport } from "../../lib/process-import.js";
+import { importProcessor } from "../../lib/process-import.js";
 
 export const registerImportRoutes = async (app: FastifyInstance) => {
   app.get("/", async () => {
@@ -17,7 +17,7 @@ export const registerImportRoutes = async (app: FastifyInstance) => {
     const item = await createImport(sourceUrl.trim());
 
     // Fire-and-forget processing
-    setImmediate(() => void processImport(item.id));
+    setImmediate(() => void importProcessor.processImport(item.id));
 
     return reply.status(201).send({ item });
   });
@@ -36,7 +36,7 @@ export const registerImportRoutes = async (app: FastifyInstance) => {
         return reply.status(404).send({ message: "Import not found." });
       }
 
-      setImmediate(() => void processImport(item.id));
+      setImmediate(() => void importProcessor.processImport(item.id));
 
       return { item };
     },

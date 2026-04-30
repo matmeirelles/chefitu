@@ -20,6 +20,19 @@ export type ExtractedRecipe =
       tags: string[];
     };
 
+export type AIExtractionMetadata = {
+  provider: string;
+  model: string;
+  inputTokens?: number | null;
+  outputTokens?: number | null;
+  rawResponse: string;
+};
+
+export type AIExtractionResult = {
+  recipe: ExtractedRecipe;
+  metadata: AIExtractionMetadata;
+};
+
 export interface AIProvider {
-  extractRecipe(description: string): Promise<ExtractedRecipe>;
+  extractRecipe(description: string): Promise<AIExtractionResult>;
 }

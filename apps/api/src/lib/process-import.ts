@@ -1,6 +1,6 @@
 import { db } from "./db.js";
-import { getAIProvider } from "./ai/index.js";
-import { fetchInstagramData } from "./fetch-instagram.js";
+import { aiProviderFactory } from "./ai/index.js";
+import { instagramFetcher } from "./fetch-instagram.js";
 
 export const processImport = async (importId: string): Promise<void> => {
   const record = await db.import.findUnique({ where: { id: importId } });
@@ -18,7 +18,7 @@ export const processImport = async (importId: string): Promise<void> => {
 
     if (!description) {
       console.log(`[process-import] Fetching Instagram data for: ${record.sourceUrl}`);
-      const igData = await fetchInstagramData(record.sourceUrl);
+      const igData = await instagramFetcher.fetchInstagramData(record.sourceUrl);
       description = igData.description;
       coverImageUrl = igData.coverImageUrl ?? coverImageUrl;
       console.log(`[process-import] Description: ${description ? `"${description.slice(0, 100)}..."` : "null"}`);
@@ -47,10 +47,26 @@ export const processImport = async (importId: string): Promise<void> => {
 
     // Extract recipe with AI
     console.log(`[process-import] Calling AI to extract recipe...`);
-    const ai = getAIProvider();
-    const result = await ai.extractRecipe(description);
+    const ai = aiProviderFactory.getAIProvider();
+    const extraction = await ai.extractRecipe(description);
+    const result = extraction.recipe;
+    console.log(
+      `[process-import] AI provider=${extraction.metadata.provider} model=${extraction.metadata.model} inputTokens=${extraction.metadata.inputTokens ?? "n/a"} outputTokens=${extraction.metadata.outputTokens ?? "n/a"}`,
+    );
     console.log(`[process-import] AI result: ${JSON.stringify(result).slice(0, 200)}`);
     console.log(result);
+
+    await db.aIExtractionLog.create({
+      data: {
+        importId,
+        description: record.sourceUrl,
+        provider: extraction.metadata.provider,
+        model: extraction.metadata.model,
+        inputTokens: extraction.metadata.inputTokens ?? null,
+        outputTokens: extraction.metadata.outputTokens ?? null,
+        finalResponse: result,
+      },
+    });
 
     if (!result.noRecipe) {
       if (result.category === "Outro" && result.categorySuggestion) {
@@ -105,4 +121,8 @@ export const processImport = async (importId: string): Promise<void> => {
       },
     });
   }
+};
+
+export const importProcessor = {
+  processImport,
 };
