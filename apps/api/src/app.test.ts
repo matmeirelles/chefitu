@@ -58,9 +58,9 @@ test("GET /recipes returns the recipe library", async () => {
   };
 
   assert.equal(Array.isArray(body.items), true);
-  assert.equal(body.items.length, 1);
+  assert.equal(body.items.length, 4);
   assert.equal(body.items[0]?.id, "rec_1");
-  assert.equal(body.items[0]?.title, "Banana Oat Pancakes");
+  assert.equal(body.items[1]?.title, "Fudge Chocolate Brownie");
 
   await app.close();
 });
@@ -81,6 +81,7 @@ test("GET /recipes/:id returns a recipe when it exists", async () => {
       importId: string;
       title: string;
       ingredients: Array<{ amount?: string; unit?: string; item: string }>;
+      steps: Array<{ order: number; title?: string; instruction: string }>;
     };
   };
 
@@ -90,6 +91,12 @@ test("GET /recipes/:id returns a recipe when it exists", async () => {
   assert.deepEqual(body.item.ingredients[0], {
     amount: "2",
     item: "eggs",
+  });
+  assert.equal(body.item.steps.length, 2);
+  assert.deepEqual(body.item.steps[0], {
+    order: 1,
+    title: "Blend",
+    instruction: "Blend all ingredients until smooth.",
   });
 
   await app.close();

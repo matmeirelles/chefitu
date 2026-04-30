@@ -11,9 +11,12 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.91.1",
     "@fastify/cors": "^10.0.2",
     "@my-recipes/shared": "file:../../packages/shared",
-    "fastify": "^5.3.2"
+    "@prisma/client": "^6.19.3",
+    "fastify": "^5.3.2",
+    "prisma": "^6.19.3"
   },
   "devDependencies": {
     "@types/node": "^22.15.17",

@@ -11,10 +11,23 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "react-native-safe-area-context": "~5.7.0"
   },
   "devDependencies": {
+    "prisma": "^6.19.3",
+    "tsx": "^4.19.3",
     "turbo": "^2.5.0",
-    "typescript": "^5.8.3"
+    "typescript": "~5.8.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3"
   }
 }

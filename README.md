@@ -20,3 +20,4 @@ This repository currently contains:
 - shared domain contracts for recipes and imports
 - initial API structure with mock data endpoints
 - initial Prisma schema and local PostgreSQL setup
+- initial Expo mobile app wired to the mock API

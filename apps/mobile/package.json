@@ -2,19 +2,27 @@
   "name": "@my-recipes/mobile",
   "private": true,
   "version": "0.0.1",
+  "main": "index.js",
   "scripts": {
-    "build": "node -e \"console.log('mobile build placeholder')\"",
-    "dev": "node -e \"console.log('mobile dev placeholder')\"",
+    "build": "node -e \"console.log('Use Expo build workflows for mobile artifacts.')\"",
+    "dev": "expo start",
     "lint": "tsc -p tsconfig.json --noEmit",
     "test": "node --test --import tsx src/**/*.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@my-recipes/shared": "file:../../packages/shared"
+    "@my-recipes/shared": "file:../../packages/shared",
+    "expo": "^54",
+    "expo-status-bar": "~3.0.9",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-paper": "^5.13.1",
+    "react-native-safe-area-context": "~5.7.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.17",
+    "@types/react": "19.1.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.3"
+    "typescript": "~5.8.3"
   }
 }

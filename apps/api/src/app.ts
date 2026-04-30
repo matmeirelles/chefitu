@@ -9,7 +9,7 @@ export const buildApp = async () => {
   });
 
   await app.register(cors, {
-    origin: true,
+    origin: process.env.CORS_ORIGIN ?? true,
   });
 
   app.get("/health", async () => ({

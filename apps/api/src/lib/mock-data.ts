@@ -43,6 +43,48 @@ export const mockImports: ImportRecord[] = [
     createdAt: "2026-04-28T19:00:00.000Z",
     updatedAt: "2026-04-28T19:02:00.000Z",
   },
+  {
+    id: "imp_5",
+    sourcePlatform: "instagram",
+    sourceUrl: "https://www.instagram.com/p/mock-recipe-5/",
+    sourceAuthorName: "dolceclub",
+    rawDescription:
+      "Fudgy brownie recipe with dark chocolate, butter, sugar, eggs, cocoa powder, and flour.",
+    coverImageUrl:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=1200&q=80",
+    status: "ready",
+    recipeId: "rec_2",
+    createdAt: "2026-04-28T18:34:00.000Z",
+    updatedAt: "2026-04-28T18:35:00.000Z",
+  },
+  {
+    id: "imp_6",
+    sourcePlatform: "instagram",
+    sourceUrl: "https://www.instagram.com/p/mock-recipe-6/",
+    sourceAuthorName: "greenplate",
+    rawDescription:
+      "Caesar salad with grilled chicken, romaine, croutons, parmesan, and creamy dressing.",
+    coverImageUrl:
+      "https://images.unsplash.com/photo-1546793665-c74683f339c1?auto=format&fit=crop&w=1200&q=80",
+    status: "ready",
+    recipeId: "rec_3",
+    createdAt: "2026-04-28T18:36:00.000Z",
+    updatedAt: "2026-04-28T18:37:00.000Z",
+  },
+  {
+    id: "imp_7",
+    sourcePlatform: "instagram",
+    sourceUrl: "https://www.instagram.com/p/mock-recipe-7/",
+    sourceAuthorName: "bruschettabar",
+    rawDescription:
+      "Tomato bruschetta with sourdough, tomatoes, basil, garlic, and olive oil.",
+    coverImageUrl:
+      "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?auto=format&fit=crop&w=1200&q=80",
+    status: "ready",
+    recipeId: "rec_4",
+    createdAt: "2026-04-28T18:38:00.000Z",
+    updatedAt: "2026-04-28T18:39:00.000Z",
+  },
 ];
 
 export const mockRecipes: RecipeRecord[] = [
@@ -50,6 +92,10 @@ export const mockRecipes: RecipeRecord[] = [
     id: "rec_1",
     importId: "imp_1",
     title: "Banana Oat Pancakes",
+    coverImageUrl:
+      "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=1200&q=80",
+    category: "Breakfast",
+    cuisine: "Healthy",
     ingredients: [
       {
         amount: "2",
@@ -68,10 +114,12 @@ export const mockRecipes: RecipeRecord[] = [
     steps: [
       {
         order: 1,
+        title: "Blend",
         instruction: "Blend all ingredients until smooth.",
       },
       {
         order: 2,
+        title: "Cook",
         instruction: "Cook the batter in a non-stick pan over medium heat.",
       },
     ],
@@ -79,8 +127,95 @@ export const mockRecipes: RecipeRecord[] = [
     cookTimeMinutes: 10,
     totalTimeMinutes: 15,
     servings: "2 servings",
-    tags: ["breakfast", "healthy"],
+    tags: ["Quick", "Healthy"],
     createdAt: "2026-04-28T18:32:00.000Z",
     updatedAt: "2026-04-28T18:32:00.000Z",
+  },
+  {
+    id: "rec_2",
+    importId: "imp_5",
+    title: "Fudge Chocolate Brownie",
+    coverImageUrl:
+      "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=1200&q=80",
+    category: "Dessert",
+    cuisine: "Sweet",
+    ingredients: [
+      { amount: "200", unit: "g", item: "dark chocolate" },
+      { amount: "150", unit: "g", item: "butter" },
+      { amount: "1", unit: "cup", item: "sugar" },
+      { amount: "3", item: "eggs" },
+      { amount: "1/2", unit: "cup", item: "flour" },
+      { amount: "1/4", unit: "cup", item: "cocoa powder" },
+    ],
+    steps: [
+      { order: 1, title: "Melt", instruction: "Melt the chocolate and butter together." },
+      { order: 2, title: "Mix", instruction: "Whisk in sugar and eggs until glossy." },
+      { order: 3, title: "Fold", instruction: "Fold in flour and cocoa powder." },
+      { order: 4, title: "Bake", instruction: "Bake until the center is just set." },
+    ],
+    prepTimeMinutes: 15,
+    cookTimeMinutes: 30,
+    totalTimeMinutes: 45,
+    servings: "8 servings",
+    tags: ["Sweet", "Easy"],
+    createdAt: "2026-04-28T18:35:00.000Z",
+    updatedAt: "2026-04-28T18:35:00.000Z",
+  },
+  {
+    id: "rec_3",
+    importId: "imp_6",
+    title: "Caesar Salad with Chicken",
+    coverImageUrl:
+      "https://images.unsplash.com/photo-1546793665-c74683f339c1?auto=format&fit=crop&w=1200&q=80",
+    category: "Main",
+    cuisine: "Salad",
+    ingredients: [
+      { amount: "1", item: "romaine lettuce" },
+      { amount: "2", item: "chicken breasts" },
+      { amount: "1/2", unit: "cup", item: "parmesan" },
+      { amount: "1", unit: "cup", item: "croutons" },
+      { amount: "1/3", unit: "cup", item: "caesar dressing" },
+    ],
+    steps: [
+      { order: 1, title: "Cook the chicken", instruction: "Grill or pan-sear the chicken until cooked through." },
+      { order: 2, title: "Prep the salad", instruction: "Chop the lettuce and add it to a large bowl." },
+      { order: 3, title: "Dress it", instruction: "Toss with parmesan, croutons, and caesar dressing." },
+      { order: 4, title: "Assemble", instruction: "Slice the chicken and place it on top." },
+    ],
+    prepTimeMinutes: 10,
+    cookTimeMinutes: 10,
+    totalTimeMinutes: 20,
+    servings: "2 servings",
+    tags: ["Healthy", "Chicken"],
+    createdAt: "2026-04-28T18:37:00.000Z",
+    updatedAt: "2026-04-28T18:37:00.000Z",
+  },
+  {
+    id: "rec_4",
+    importId: "imp_7",
+    title: "Tomato Bruschetta",
+    coverImageUrl:
+      "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?auto=format&fit=crop&w=1200&q=80",
+    category: "Starter",
+    cuisine: "Italian",
+    ingredients: [
+      { amount: "4", unit: "slices", item: "sourdough bread" },
+      { amount: "2", unit: "cups", item: "chopped tomatoes" },
+      { amount: "2", unit: "tbsp", item: "olive oil" },
+      { amount: "1", item: "garlic clove" },
+      { amount: "6", item: "basil leaves" },
+    ],
+    steps: [
+      { order: 1, title: "Toast the bread", instruction: "Toast the sourdough slices until golden and crispy." },
+      { order: 2, title: "Make the topping", instruction: "Mix tomatoes with olive oil, basil, and garlic." },
+      { order: 3, title: "Assemble", instruction: "Top each toast with the tomato mixture and serve immediately." },
+    ],
+    prepTimeMinutes: 10,
+    cookTimeMinutes: 5,
+    totalTimeMinutes: 15,
+    servings: "4 servings",
+    tags: ["Fresh", "Easy"],
+    createdAt: "2026-04-28T18:39:00.000Z",
+    updatedAt: "2026-04-28T18:39:00.000Z",
   },
 ];

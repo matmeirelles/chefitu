@@ -1,5 +1,37 @@
 export const appName = "my-recipes";
 
+export const RECIPE_CATEGORIES = [
+  "Café da manhã",
+  "Almoço",
+  "Lanche",
+  "Sobremesa",
+  "Petisco",
+  "Snack",
+  "Bebida Alcoólica",
+  "Drink",
+  "Bebida",
+  "Condimento"
+,  "Outro",
+] as const;
+
+export const RECIPE_CUISINES = [
+  "Italiana",
+  "Asiática",
+  "Saudável",
+  "Mexicana",
+  "Americana",
+  "Brasileira",
+  "Mediterrânea",
+  "Japonesa",
+  "Cafeteria",
+  "Alemã",
+  "Carnes",
+  "Outro",
+] as const;
+
+export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
+export type RecipeCuisine = (typeof RECIPE_CUISINES)[number];
+
 export type ImportStatus =
   | "queued"
   | "processing"
@@ -15,6 +47,7 @@ export type RecipeIngredient = {
 
 export type RecipeStep = {
   order: number;
+  title?: string | null;
   instruction: string;
 };
 
@@ -22,6 +55,9 @@ export type RecipeRecord = {
   id: string;
   importId: string;
   title: string;
+  coverImageUrl?: string | null;
+  category?: string | null;
+  cuisine?: string | null;
   ingredients: RecipeIngredient[];
   steps: RecipeStep[];
   prepTimeMinutes?: number | null;
