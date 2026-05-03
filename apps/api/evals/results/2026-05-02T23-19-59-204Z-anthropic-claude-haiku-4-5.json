@@ -1,0 +1,2737 @@
+{
+  "provider": "anthropic",
+  "model": "claude-haiku-4-5",
+  "dataset": "recipe-extraction.v1.json",
+  "totalCases": 13,
+  "passedCases": 6,
+  "failedCases": 7,
+  "results": [
+    {
+      "id": "case_001_sushi_de_preguicoso",
+      "sourceUrl": "https://www.instagram.com/reel/DWJn_-1jYEs/?igsh=cHNyN3VoM2dld21j",
+      "passed": false,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": false,
+          "actual": false
+        },
+        "title": {
+          "passed": true,
+          "score": 1,
+          "expected": "Sushi de Preguiçoso na Travessa",
+          "actual": "Sushi de Preguiçoso na Travessa"
+        },
+        "category": {
+          "passed": true,
+          "score": 1,
+          "expected": "Almoço",
+          "actual": "Almoço"
+        },
+        "cuisine": {
+          "passed": true,
+          "score": 1,
+          "expected": "Japonesa",
+          "actual": "Japonesa"
+        },
+        "ingredients": {
+          "passed": true,
+          "score": 0.8125,
+          "expected": [
+            {
+              "amount": "300",
+              "unit": "g",
+              "item": "Salmão"
+            },
+            {
+              "amount": "A gosto",
+              "unit": "",
+              "item": "Pepino"
+            },
+            {
+              "amount": "A gosto",
+              "unit": "",
+              "item": "Cebolinha"
+            },
+            {
+              "amount": "A gosto",
+              "unit": "",
+              "item": "Cream Cheese"
+            },
+            {
+              "amount": "1/2",
+              "unit": "xicara",
+              "item": "Arroz Japonês"
+            },
+            {
+              "amount": "A gosto",
+              "unit": "",
+              "item": "Tempero para sushi"
+            },
+            {
+              "amount": "A gosto",
+              "unit": "",
+              "item": "Molho de Ostra ou Shoyu"
+            },
+            {
+              "amount": "A gosto",
+              "unit": "",
+              "item": "Gergelim"
+            }
+          ],
+          "actual": [
+            {
+              "amount": "300",
+              "unit": "g",
+              "item": "Salmão"
+            },
+            {
+              "item": "Pepino"
+            },
+            {
+              "item": "Cebolinha"
+            },
+            {
+              "item": "Cream cheese"
+            },
+            {
+              "amount": "1/2",
+              "unit": "xícara",
+              "item": "Arroz japonês"
+            },
+            {
+              "item": "Tempero para sushi"
+            },
+            {
+              "item": "Molho de ostra ou shoyu"
+            },
+            {
+              "item": "Gergelim"
+            }
+          ],
+          "subScores": {
+            "item_count_match": true,
+            "name_recall": 1,
+            "name_precision": 1,
+            "qty_unit_accuracy": 0.25
+          }
+        },
+        "steps": {
+          "passed": true,
+          "score": 0.9642857142857143,
+          "expected": [
+            {
+              "order": 1,
+              "title": "Preparar o Arroz",
+              "instruction": "Lave muito bem o arroz e leve para cozinhar com 1 xicara de agua ate chegar no ponto. Tempere com 2 colheres de sopa de tempero para sushi e deixe esfriar completamente."
+            },
+            {
+              "order": 2,
+              "title": "Preparar ingredientes",
+              "instruction": "Corte o salmão em cubos, o pepino e a cebolinha."
+            },
+            {
+              "order": 3,
+              "title": "Montagem",
+              "instruction": "Passe azeite em uma travessa, coloque o salmão, o cream cheese, os verdinhos e o arroz por cima. Tampe e leve para a geladeira por 1 hora."
+            },
+            {
+              "order": 4,
+              "title": "Desenforme",
+              "instruction": "Desenforme em um prato e enfeite com o molho e gergelim. Bom apetite!"
+            }
+          ],
+          "actual": [
+            {
+              "order": 1,
+              "title": "Cozinhar o Arroz",
+              "instruction": "Lave muito bem o arroz e leve para cozinhar com 1 xícara de água até chegar no ponto. Tempere com 2 colheres de sopa de tempero para sushi e deixe esfriar completamente."
+            },
+            {
+              "order": 2,
+              "title": "Preparar os Ingredientes",
+              "instruction": "Corte o salmão em cubos e o pepino e cebolinha."
+            },
+            {
+              "order": 3,
+              "title": "Montar na Travessa",
+              "instruction": "Passe azeite em uma travessa, coloque o salmão, o cream cheese, os verdinhos e o arroz por cima. Tampe e leve para a geladeira por 1 hora."
+            },
+            {
+              "order": 4,
+              "title": "Finalizar e Servir",
+              "instruction": "Desenforme em um prato e enfeite com o molho e gergelim."
+            }
+          ]
+        },
+        "totalTimeMinutes": {
+          "passed": true,
+          "score": 1,
+          "expected": 90,
+          "actual": 90
+        },
+        "servings": {
+          "passed": true,
+          "score": 1,
+          "expected": 4,
+          "actual": 4
+        },
+        "tags": {
+          "passed": false,
+          "score": 0.3333333333333333,
+          "expected": [
+            "Fácil",
+            "Peixe"
+          ],
+          "actual": [
+            "Fácil",
+            "Japonesa"
+          ]
+        }
+      },
+      "expected": {
+        "noRecipe": false,
+        "title": "Sushi de Preguiçoso na Travessa",
+        "category": "Almoço",
+        "cuisine": "Japonesa",
+        "ingredients": [
+          {
+            "amount": "300",
+            "unit": "g",
+            "item": "Salmão"
+          },
+          {
+            "amount": "A gosto",
+            "unit": "",
+            "item": "Pepino"
+          },
+          {
+            "amount": "A gosto",
+            "unit": "",
+            "item": "Cebolinha"
+          },
+          {
+            "amount": "A gosto",
+            "unit": "",
+            "item": "Cream Cheese"
+          },
+          {
+            "amount": "1/2",
+            "unit": "xicara",
+            "item": "Arroz Japonês"
+          },
+          {
+            "amount": "A gosto",
+            "unit": "",
+            "item": "Tempero para sushi"
+          },
+          {
+            "amount": "A gosto",
+            "unit": "",
+            "item": "Molho de Ostra ou Shoyu"
+          },
+          {
+            "amount": "A gosto",
+            "unit": "",
+            "item": "Gergelim"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Preparar o Arroz",
+            "instruction": "Lave muito bem o arroz e leve para cozinhar com 1 xicara de agua ate chegar no ponto. Tempere com 2 colheres de sopa de tempero para sushi e deixe esfriar completamente."
+          },
+          {
+            "order": 2,
+            "title": "Preparar ingredientes",
+            "instruction": "Corte o salmão em cubos, o pepino e a cebolinha."
+          },
+          {
+            "order": 3,
+            "title": "Montagem",
+            "instruction": "Passe azeite em uma travessa, coloque o salmão, o cream cheese, os verdinhos e o arroz por cima. Tampe e leve para a geladeira por 1 hora."
+          },
+          {
+            "order": 4,
+            "title": "Desenforme",
+            "instruction": "Desenforme em um prato e enfeite com o molho e gergelim. Bom apetite!"
+          }
+        ],
+        "totalTimeMinutes": 90,
+        "servings": "4",
+        "tags": [
+          "Fácil",
+          "Peixe"
+        ]
+      },
+      "actual": {
+        "title": "Sushi de Preguiçoso na Travessa",
+        "category": "Almoço",
+        "cuisine": "Japonesa",
+        "ingredients": [
+          {
+            "amount": "300",
+            "unit": "g",
+            "item": "Salmão"
+          },
+          {
+            "item": "Pepino"
+          },
+          {
+            "item": "Cebolinha"
+          },
+          {
+            "item": "Cream cheese"
+          },
+          {
+            "amount": "1/2",
+            "unit": "xícara",
+            "item": "Arroz japonês"
+          },
+          {
+            "item": "Tempero para sushi"
+          },
+          {
+            "item": "Molho de ostra ou shoyu"
+          },
+          {
+            "item": "Gergelim"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Cozinhar o Arroz",
+            "instruction": "Lave muito bem o arroz e leve para cozinhar com 1 xícara de água até chegar no ponto. Tempere com 2 colheres de sopa de tempero para sushi e deixe esfriar completamente."
+          },
+          {
+            "order": 2,
+            "title": "Preparar os Ingredientes",
+            "instruction": "Corte o salmão em cubos e o pepino e cebolinha."
+          },
+          {
+            "order": 3,
+            "title": "Montar na Travessa",
+            "instruction": "Passe azeite em uma travessa, coloque o salmão, o cream cheese, os verdinhos e o arroz por cima. Tampe e leve para a geladeira por 1 hora."
+          },
+          {
+            "order": 4,
+            "title": "Finalizar e Servir",
+            "instruction": "Desenforme em um prato e enfeite com o molho e gergelim."
+          }
+        ],
+        "totalTimeMinutes": 90,
+        "servings": "4",
+        "tags": [
+          "Fácil",
+          "Japonesa"
+        ]
+      },
+      "resolvedDescription": "20K likes, 204 comments - thiagosodre on March 21, 2026: \"Olá pessoal, eu sou o Thiago Sodré, e hoje eu estou aqui com a Sabrina Iorio @iorio.sabrina pra fazer esse sushi de preguiçoso na travessa, vamos lá pra saber se da certo!\n\nIngredientes: \n- 300g de salmão cortado em cubinhos\n- pepino a gosto\n- cebolinha a gosto\n- cream cheese a gosto\n- ½ xic de arroz japones\n- tempero para sushi\n- molho de ostra ou shoyu\n- gergelim\n\nModo de preparo:\n1. Lave muito bem o arroz e leve para cozinhar com 1xic de água até chegar no ponto. Tempere com 2 col de sopa de tempero para sushi e deixe esfriar completamente. \n2. Corte o salmão em cubos e o pepino e cebolinha.\n3. Passe azeite em uma travessas, coloque o salmão, o cream cheese, os verdinhos e o arroz por cima. Tampe e leve para a geladeira por 1h.\n4. Desenforme em um prato e enfeite com o molho e gergelim. Bom apetite. \n\nNão esquece de me seguir aqui, porque a receita de amanhã está ainda melhor\nMe conta aqui nos comentários o que você achou, compartilhe com os amigos e bom apetite!\n\n#thiagosodre #receita #sushi\"."
+    },
+    {
+      "id": "case_002_bacalhau_empanado_com_maionese_verde_de_lanchonete",
+      "sourceUrl": "https://www.instagram.com/reel/DV_-StIkaPb/?igsh=cGhvZjZ1MTFnczZj",
+      "passed": true,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": false,
+          "actual": false
+        },
+        "title": {
+          "passed": true,
+          "score": 1,
+          "expected": "Bacalhau Frito com Maionese Verde",
+          "actual": "Bacalhau Frito com Maionese Verde"
+        },
+        "category": {
+          "passed": true,
+          "score": 1,
+          "expected": "Petisco",
+          "actual": "Petisco"
+        },
+        "cuisine": {
+          "passed": true,
+          "score": 1,
+          "expected": "Brasileira",
+          "actual": "Brasileira"
+        },
+        "ingredients": {
+          "passed": true,
+          "score": 0.9017857142857143,
+          "expected": [
+            {
+              "amount": "100",
+              "unit": "ml",
+              "item": "Leite gelado"
+            },
+            {
+              "amount": "1",
+              "unit": "dente",
+              "item": "Alho"
+            },
+            {
+              "amount": "1",
+              "unit": "colher",
+              "item": "Mostarda"
+            },
+            {
+              "amount": "1",
+              "unit": "unidade",
+              "item": "Suco de limão"
+            },
+            {
+              "amount": "300",
+              "unit": "ml",
+              "item": "Óleo gelado"
+            },
+            {
+              "item": "Sal a gosto"
+            },
+            {
+              "item": "Pimenta a gosto"
+            },
+            {
+              "amount": "2",
+              "unit": "colheres",
+              "item": "Salsinha picada"
+            },
+            {
+              "amount": "2",
+              "unit": "colheres",
+              "item": "Cebolinha picada"
+            },
+            {
+              "amount": "1",
+              "unit": "colher",
+              "item": "Alecrim"
+            },
+            {
+              "amount": "1",
+              "unit": "colher",
+              "item": "Orégano"
+            },
+            {
+              "amount": "100",
+              "unit": "g",
+              "item": "Farinha de trigo"
+            },
+            {
+              "amount": "100",
+              "unit": "g",
+              "item": "Amido de milho"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de chá",
+              "item": "Açafrão"
+            },
+            {
+              "amount": "200",
+              "unit": "ml",
+              "item": "Água com gás"
+            },
+            {
+              "amount": "1",
+              "unit": "kg",
+              "item": "Bacalhau"
+            }
+          ],
+          "actual": [
+            {
+              "amount": "100",
+              "unit": "ml",
+              "item": "Leite gelado"
+            },
+            {
+              "amount": "1",
+              "unit": "dente",
+              "item": "Alho"
+            },
+            {
+              "amount": "1",
+              "unit": "colher",
+              "item": "Mostarda"
+            },
+            {
+              "amount": "1",
+              "unit": "unidade",
+              "item": "Suco de limão"
+            },
+            {
+              "amount": "300",
+              "unit": "ml",
+              "item": "Óleo gelado"
+            },
+            {
+              "item": "Sal"
+            },
+            {
+              "item": "Pimenta"
+            },
+            {
+              "amount": "2",
+              "unit": "colher",
+              "item": "Salsinha picada"
+            },
+            {
+              "amount": "2",
+              "unit": "colher",
+              "item": "Cebolinha picada"
+            },
+            {
+              "amount": "1",
+              "unit": "colher",
+              "item": "Alecrim"
+            },
+            {
+              "amount": "1",
+              "unit": "colher",
+              "item": "Orégano"
+            },
+            {
+              "amount": "100",
+              "unit": "g",
+              "item": "Farinha de trigo"
+            },
+            {
+              "amount": "100",
+              "unit": "g",
+              "item": "Amido de milho"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de chá",
+              "item": "Açafrão"
+            },
+            {
+              "amount": "200",
+              "unit": "ml",
+              "item": "Água com gás"
+            },
+            {
+              "amount": "1",
+              "unit": "kg",
+              "item": "Bacalhau"
+            }
+          ],
+          "subScores": {
+            "item_count_match": true,
+            "name_recall": 0.875,
+            "name_precision": 0.875,
+            "qty_unit_accuracy": 0.8571428571428571
+          }
+        },
+        "steps": {
+          "passed": true,
+          "score": 0.8846153846153846,
+          "expected": [
+            {
+              "order": 1,
+              "title": "Base da Maionese",
+              "instruction": "Leve ao liquidificador o leite, o alho, o limão e a mostarda. Comece a bater em velocidade baixa para não desandar."
+            },
+            {
+              "order": 2,
+              "title": "Emulsão da Maionese",
+              "instruction": "Vá acrescentando o óleo aos poucos, em fio, até atingir o ponto de maionese."
+            },
+            {
+              "order": 3,
+              "title": "Tempero da Maionese",
+              "instruction": "Tempere com sal, pimenta e as ervas (salsinha, cebolinha, alecrim e orégano). Bata mais um pouco e reserve."
+            },
+            {
+              "order": 4,
+              "title": "Preparo do Empanamento",
+              "instruction": "Misture a farinha de trigo, o amido de milho, o açafrão e a água com gás até formar uma massa homogênea."
+            },
+            {
+              "order": 5,
+              "title": "Fritura do Peixe",
+              "instruction": "Passe o peixe na farinha de trigo, depois na massa de empanamento, e leve para fritar em óleo pré-aquecido a 180°C até dourar."
+            },
+            {
+              "order": 6,
+              "title": "Finalização",
+              "instruction": "Sirva o peixe com batatas fritas e a maionese verde."
+            }
+          ],
+          "actual": [
+            {
+              "order": 1,
+              "title": "Preparar a Maionese Verde",
+              "instruction": "Leve ao liquidificador o leite gelado, o alho, o suco de limão e a mostarda. Comece a bater em velocidade baixa para não desandar."
+            },
+            {
+              "order": 2,
+              "title": "Adicionar o Óleo",
+              "instruction": "Vá acrescentando o óleo gelado aos poucos, em fio, até atingir o ponto de maionese."
+            },
+            {
+              "order": 3,
+              "title": "Temperar a Maionese",
+              "instruction": "Tempere com sal, pimenta e as ervas (salsinha, cebolinha, alecrim e orégano). Bata mais um pouco até ficar pronto."
+            },
+            {
+              "order": 4,
+              "title": "Preparar o Empanamento",
+              "instruction": "Misture a farinha de trigo, o amido de milho, o açafrão e a água com gás. Misture bem até formar uma massa homogênea."
+            },
+            {
+              "order": 5,
+              "title": "Empanar o Peixe",
+              "instruction": "Passe o bacalhau na farinha de trigo, depois na massa de empanamento."
+            },
+            {
+              "order": 6,
+              "title": "Fritar o Bacalhau",
+              "instruction": "Leve para fritar em óleo pré-aquecido a 180 °C até dourar."
+            },
+            {
+              "order": 7,
+              "title": "Servir",
+              "instruction": "Sirva o bacalhau frito com batatas fritas e a maionese verde."
+            }
+          ]
+        },
+        "totalTimeMinutes": {
+          "passed": true,
+          "score": 0.8571428571428572,
+          "expected": 35,
+          "actual": 30
+        },
+        "servings": {
+          "passed": true,
+          "score": 1,
+          "expected": 4,
+          "actual": 4
+        },
+        "tags": {
+          "passed": true,
+          "score": 1,
+          "expected": [
+            "Frito",
+            "Peixe"
+          ],
+          "actual": [
+            "Frito",
+            "Peixe"
+          ]
+        }
+      },
+      "expected": {
+        "noRecipe": false,
+        "title": "Bacalhau Frito com Maionese Verde",
+        "category": "Petisco",
+        "categorySuggestion": null,
+        "cuisine": "Brasileira",
+        "cuisineSuggestion": null,
+        "ingredients": [
+          {
+            "amount": "100",
+            "unit": "ml",
+            "item": "Leite gelado"
+          },
+          {
+            "amount": "1",
+            "unit": "dente",
+            "item": "Alho"
+          },
+          {
+            "amount": "1",
+            "unit": "colher",
+            "item": "Mostarda"
+          },
+          {
+            "amount": "1",
+            "unit": "unidade",
+            "item": "Suco de limão"
+          },
+          {
+            "amount": "300",
+            "unit": "ml",
+            "item": "Óleo gelado"
+          },
+          {
+            "item": "Sal a gosto"
+          },
+          {
+            "item": "Pimenta a gosto"
+          },
+          {
+            "amount": "2",
+            "unit": "colheres",
+            "item": "Salsinha picada"
+          },
+          {
+            "amount": "2",
+            "unit": "colheres",
+            "item": "Cebolinha picada"
+          },
+          {
+            "amount": "1",
+            "unit": "colher",
+            "item": "Alecrim"
+          },
+          {
+            "amount": "1",
+            "unit": "colher",
+            "item": "Orégano"
+          },
+          {
+            "amount": "100",
+            "unit": "g",
+            "item": "Farinha de trigo"
+          },
+          {
+            "amount": "100",
+            "unit": "g",
+            "item": "Amido de milho"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de chá",
+            "item": "Açafrão"
+          },
+          {
+            "amount": "200",
+            "unit": "ml",
+            "item": "Água com gás"
+          },
+          {
+            "amount": "1",
+            "unit": "kg",
+            "item": "Bacalhau"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Base da Maionese",
+            "instruction": "Leve ao liquidificador o leite, o alho, o limão e a mostarda. Comece a bater em velocidade baixa para não desandar."
+          },
+          {
+            "order": 2,
+            "title": "Emulsão da Maionese",
+            "instruction": "Vá acrescentando o óleo aos poucos, em fio, até atingir o ponto de maionese."
+          },
+          {
+            "order": 3,
+            "title": "Tempero da Maionese",
+            "instruction": "Tempere com sal, pimenta e as ervas (salsinha, cebolinha, alecrim e orégano). Bata mais um pouco e reserve."
+          },
+          {
+            "order": 4,
+            "title": "Preparo do Empanamento",
+            "instruction": "Misture a farinha de trigo, o amido de milho, o açafrão e a água com gás até formar uma massa homogênea."
+          },
+          {
+            "order": 5,
+            "title": "Fritura do Peixe",
+            "instruction": "Passe o peixe na farinha de trigo, depois na massa de empanamento, e leve para fritar em óleo pré-aquecido a 180°C até dourar."
+          },
+          {
+            "order": 6,
+            "title": "Finalização",
+            "instruction": "Sirva o peixe com batatas fritas e a maionese verde."
+          }
+        ],
+        "totalTimeMinutes": 35,
+        "servings": "4 pessoas",
+        "tags": [
+          "Frito",
+          "Peixe"
+        ]
+      },
+      "actual": {
+        "title": "Bacalhau Frito com Maionese Verde",
+        "category": "Petisco",
+        "cuisine": "Brasileira",
+        "ingredients": [
+          {
+            "amount": "100",
+            "unit": "ml",
+            "item": "Leite gelado"
+          },
+          {
+            "amount": "1",
+            "unit": "dente",
+            "item": "Alho"
+          },
+          {
+            "amount": "1",
+            "unit": "colher",
+            "item": "Mostarda"
+          },
+          {
+            "amount": "1",
+            "unit": "unidade",
+            "item": "Suco de limão"
+          },
+          {
+            "amount": "300",
+            "unit": "ml",
+            "item": "Óleo gelado"
+          },
+          {
+            "item": "Sal"
+          },
+          {
+            "item": "Pimenta"
+          },
+          {
+            "amount": "2",
+            "unit": "colher",
+            "item": "Salsinha picada"
+          },
+          {
+            "amount": "2",
+            "unit": "colher",
+            "item": "Cebolinha picada"
+          },
+          {
+            "amount": "1",
+            "unit": "colher",
+            "item": "Alecrim"
+          },
+          {
+            "amount": "1",
+            "unit": "colher",
+            "item": "Orégano"
+          },
+          {
+            "amount": "100",
+            "unit": "g",
+            "item": "Farinha de trigo"
+          },
+          {
+            "amount": "100",
+            "unit": "g",
+            "item": "Amido de milho"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de chá",
+            "item": "Açafrão"
+          },
+          {
+            "amount": "200",
+            "unit": "ml",
+            "item": "Água com gás"
+          },
+          {
+            "amount": "1",
+            "unit": "kg",
+            "item": "Bacalhau"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Preparar a Maionese Verde",
+            "instruction": "Leve ao liquidificador o leite gelado, o alho, o suco de limão e a mostarda. Comece a bater em velocidade baixa para não desandar."
+          },
+          {
+            "order": 2,
+            "title": "Adicionar o Óleo",
+            "instruction": "Vá acrescentando o óleo gelado aos poucos, em fio, até atingir o ponto de maionese."
+          },
+          {
+            "order": 3,
+            "title": "Temperar a Maionese",
+            "instruction": "Tempere com sal, pimenta e as ervas (salsinha, cebolinha, alecrim e orégano). Bata mais um pouco até ficar pronto."
+          },
+          {
+            "order": 4,
+            "title": "Preparar o Empanamento",
+            "instruction": "Misture a farinha de trigo, o amido de milho, o açafrão e a água com gás. Misture bem até formar uma massa homogênea."
+          },
+          {
+            "order": 5,
+            "title": "Empanar o Peixe",
+            "instruction": "Passe o bacalhau na farinha de trigo, depois na massa de empanamento."
+          },
+          {
+            "order": 6,
+            "title": "Fritar o Bacalhau",
+            "instruction": "Leve para fritar em óleo pré-aquecido a 180 °C até dourar."
+          },
+          {
+            "order": 7,
+            "title": "Servir",
+            "instruction": "Sirva o bacalhau frito com batatas fritas e a maionese verde."
+          }
+        ],
+        "totalTimeMinutes": 30,
+        "servings": "4",
+        "tags": [
+          "Frito",
+          "Peixe"
+        ]
+      },
+      "resolvedDescription": "266K likes, 747 comments - patriciocarvalho21 on March 17, 2026: \"O segredo da maionese verde de lanchonete foi revelado🍀✅\n\nMaionese verde👇:\n100 ml de leite gelado\n1 dente de alho\n1 colher de mostarda\nSuco de 1 limão\n300 ml de óleo gelado\nSal e pimenta a gosto\n2 colheres de salsinha picada\n2 colheres de cebolinha picada\n1 colher de alecrim\n1 colher de orégano\n\nEmpanamento do peixe:\n100 g de farinha de trigo\n100 g de amido de milho\n1 colher de chá de açafrão\n200 ml de água com gás\nSal a gosto\n\n1kg de Bacalhau Swift\n\nPreparo:\nLeve ao liquidificador o leite, o alho, o limão e a mostarda. Comece a bater em velocidade baixa para não desandar. Vá acrescentando o óleo aos poucos, em fio, até atingir o ponto de maionese.\n\nDepois, tempere com sal, pimenta e as ervas. Bata mais um pouco e está pronto.\n\nAgora misture a farinha de trigo, o amido de milho, o açafrão e a água com gás. Misture bem até formar uma massa homogênea.\n\nPasse o peixe na farinha de trigo, depois na massa de empanamento, e leve para fritar em óleo pré-aquecido a 180 °C até dourar.\n\nSirva com batatas fritas e a maionese verde. Está pronto o melhor petisco para o St. Patrick's Day🍀\n\n#maionese #maioneseverde #peixe\"."
+    },
+    {
+      "id": "case_003_mongolian_beef",
+      "sourceUrl": "https://www.instagram.com/reel/DXez3IbiAmY/?igsh=MXEyYm1rdHJ0M3M3OA==",
+      "passed": true,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": true,
+          "actual": true
+        }
+      },
+      "expected": {
+        "noRecipe": true
+      },
+      "actual": {
+        "noRecipe": true
+      },
+      "resolvedDescription": "5,045 likes, 607 comments - i.am.never.full on April 23, 2026: \"Mongolian beef will be your new fixation! \n\nComment \"Recipe\" for the full recipe to be sent to your inbox or see below for the link! Make sure to follow me or the message may be blocked!\n\nhttps://iamneverfull.com/mongolian-beef-recipe/\n\n#cooking #recipe #beef #asian #mongolianbeef\"."
+    },
+    {
+      "id": "case_004_sufle_nuvem",
+      "sourceUrl": "https://www.instagram.com/reel/DTff-aTDlom/?igsh=ZGFia2thZjc5dDFq",
+      "passed": true,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": false,
+          "actual": false
+        },
+        "title": {
+          "passed": true,
+          "score": 1,
+          "expected": "Suflê Nuvem",
+          "actual": "Suflê Nuvem"
+        },
+        "category": {
+          "passed": true,
+          "score": 1,
+          "expected": "Sobremesa",
+          "actual": "Sobremesa"
+        },
+        "cuisine": {
+          "passed": true,
+          "score": 1,
+          "expected": "Doces",
+          "actual": "Doces"
+        },
+        "ingredients": {
+          "passed": true,
+          "score": 0.8333333333333333,
+          "expected": [
+            {
+              "amount": "3",
+              "unit": "unidades",
+              "item": "Ovos"
+            },
+            {
+              "amount": "1",
+              "unit": "pitada",
+              "item": "Sal"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Açúcar"
+            }
+          ],
+          "actual": [
+            {
+              "amount": "3",
+              "unit": "unidade",
+              "item": "Ovo"
+            },
+            {
+              "amount": "1",
+              "unit": "pitada",
+              "item": "Sal"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Açúcar"
+            }
+          ],
+          "subScores": {
+            "item_count_match": true,
+            "name_recall": 0.6666666666666666,
+            "name_precision": 0.6666666666666666,
+            "qty_unit_accuracy": 1
+          }
+        },
+        "steps": {
+          "passed": true,
+          "score": 0.8405797101449275,
+          "expected": [
+            {
+              "order": 1,
+              "title": "Preparação das Gemas",
+              "instruction": "Misture as gemas com o sal apenas para incorporar."
+            },
+            {
+              "order": 2,
+              "title": "Batimento das Claras",
+              "instruction": "Bata as claras com o açúcar até ponto de neve firme, formando picos."
+            },
+            {
+              "order": 3,
+              "title": "Incorporação da Massa",
+              "instruction": "Com cuidado, incorpore as gemas às claras, usando uma espátula e movimentos suaves de baixo para cima para manter a leveza."
+            },
+            {
+              "order": 4,
+              "title": "Cozimento na Frigideira",
+              "instruction": "Unte uma frigideira com tampa, coloque a massa e leve ao fogo bem baixo por cerca de 8 minutos. Dobre ao meio com delicadeza."
+            },
+            {
+              "order": 5,
+              "title": "Opção de Cozimento no Forno",
+              "instruction": "Se preferir, asse em ramequins a 180 °C por aproximadamente 15 minutos."
+            },
+            {
+              "order": 6,
+              "title": "Finalização e Serviço",
+              "instruction": "Sirva imediatamente, finalizando com mel e açúcar de confeiteiro se desejar."
+            }
+          ],
+          "actual": [
+            {
+              "order": 1,
+              "title": "Preparar as gemas",
+              "instruction": "Misture as gemas com o sal apenas para incorporar."
+            },
+            {
+              "order": 2,
+              "title": "Bater as claras",
+              "instruction": "Bata as claras com o açúcar até ponto de neve firme, formando picos."
+            },
+            {
+              "order": 3,
+              "title": "Incorporar os ingredientes",
+              "instruction": "Com cuidado, incorpore as gemas às claras, usando uma espátula e movimentos suaves de baixo para cima — aqui está o segredo da leveza."
+            },
+            {
+              "order": 4,
+              "title": "Cozinhar na frigideira",
+              "instruction": "Unte uma frigideira com tampa, coloque a massa e leve ao fogo bem baixo por cerca de 8 minutos."
+            },
+            {
+              "order": 5,
+              "title": "Finalizar e servir",
+              "instruction": "Dobre ao meio com delicadeza e sirva imediatamente. Finalize com mel e açúcar de confeiteiro. Alternativa: asse em ramequins a 180 °C por aproximadamente 15 minutos."
+            }
+          ]
+        },
+        "totalTimeMinutes": {
+          "passed": true,
+          "score": 0.8888888888888888,
+          "expected": 18,
+          "actual": 20
+        },
+        "servings": {
+          "passed": true,
+          "score": 1,
+          "expected": 1,
+          "actual": 1
+        },
+        "tags": {
+          "passed": true,
+          "score": 1,
+          "expected": [
+            "Rápido",
+            "Fácil"
+          ],
+          "actual": [
+            "Rápido",
+            "Fácil"
+          ]
+        }
+      },
+      "expected": {
+        "noRecipe": false,
+        "title": "Suflê Nuvem",
+        "category": "Sobremesa",
+        "categorySuggestion": null,
+        "cuisine": "Doces",
+        "cuisineSuggestion": null,
+        "ingredients": [
+          {
+            "amount": "3",
+            "unit": "unidades",
+            "item": "Ovos"
+          },
+          {
+            "amount": "1",
+            "unit": "pitada",
+            "item": "Sal"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Açúcar"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Preparação das Gemas",
+            "instruction": "Misture as gemas com o sal apenas para incorporar."
+          },
+          {
+            "order": 2,
+            "title": "Batimento das Claras",
+            "instruction": "Bata as claras com o açúcar até ponto de neve firme, formando picos."
+          },
+          {
+            "order": 3,
+            "title": "Incorporação da Massa",
+            "instruction": "Com cuidado, incorpore as gemas às claras, usando uma espátula e movimentos suaves de baixo para cima para manter a leveza."
+          },
+          {
+            "order": 4,
+            "title": "Cozimento na Frigideira",
+            "instruction": "Unte uma frigideira com tampa, coloque a massa e leve ao fogo bem baixo por cerca de 8 minutos. Dobre ao meio com delicadeza."
+          },
+          {
+            "order": 5,
+            "title": "Opção de Cozimento no Forno",
+            "instruction": "Se preferir, asse em ramequins a 180 °C por aproximadamente 15 minutos."
+          },
+          {
+            "order": 6,
+            "title": "Finalização e Serviço",
+            "instruction": "Sirva imediatamente, finalizando com mel e açúcar de confeiteiro se desejar."
+          }
+        ],
+        "totalTimeMinutes": 18,
+        "servings": "1 a 2 porções",
+        "tags": [
+          "Rápido",
+          "Fácil"
+        ]
+      },
+      "actual": {
+        "title": "Suflê Nuvem",
+        "category": "Sobremesa",
+        "cuisine": "Doces",
+        "ingredients": [
+          {
+            "amount": "3",
+            "unit": "unidade",
+            "item": "Ovo"
+          },
+          {
+            "amount": "1",
+            "unit": "pitada",
+            "item": "Sal"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Açúcar"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Preparar as gemas",
+            "instruction": "Misture as gemas com o sal apenas para incorporar."
+          },
+          {
+            "order": 2,
+            "title": "Bater as claras",
+            "instruction": "Bata as claras com o açúcar até ponto de neve firme, formando picos."
+          },
+          {
+            "order": 3,
+            "title": "Incorporar os ingredientes",
+            "instruction": "Com cuidado, incorpore as gemas às claras, usando uma espátula e movimentos suaves de baixo para cima — aqui está o segredo da leveza."
+          },
+          {
+            "order": 4,
+            "title": "Cozinhar na frigideira",
+            "instruction": "Unte uma frigideira com tampa, coloque a massa e leve ao fogo bem baixo por cerca de 8 minutos."
+          },
+          {
+            "order": 5,
+            "title": "Finalizar e servir",
+            "instruction": "Dobre ao meio com delicadeza e sirva imediatamente. Finalize com mel e açúcar de confeiteiro. Alternativa: asse em ramequins a 180 °C por aproximadamente 15 minutos."
+          }
+        ],
+        "totalTimeMinutes": 20,
+        "servings": "1",
+        "tags": [
+          "Rápido",
+          "Fácil"
+        ]
+      },
+      "resolvedDescription": "97K likes, 802 comments - abetaqfaz on January 14, 2026: \"🥚 Só tem ovo na geladeira e acha que isso é pouco?\nCom a técnica certa, dá pra transformar o básico em um preparo sofisticado, leve e gostoso — com cara de sobremesa de restaurante.\n\nEsse é o famoso suflê nuvem ☁️ Uma receita simples, rápida e que prova que não é a quantidade de ingredientes que faz a diferença, e sim como você usa o que já tem em casa.\n\n🛒 Ingredientes\n• 3 ovos (claras e gemas separadas)\n• 1 pitada de sal (nas gemas)\n• 1 colher de sopa de açúcar (nas claras)\n• Manteiga ou óleo para untar\n• Opcional para servir: mel, açúcar de confeiteiro ou frutas\n\n👨‍🍳 Modo de preparo\nMisture as gemas com o sal apenas para incorporar.\nBata as claras com o açúcar até ponto de neve firme, formando picos.\nCom cuidado, incorpore as gemas às claras, usando uma espátula e movimentos suaves de baixo para cima — aqui está o segredo da leveza.\n\nUnte uma frigideira com tampa, coloque a massa e leve ao fogo bem baixo por cerca de 8 minutos. Dobre ao meio com delicadeza e sirva imediatamente. Finalize com mel e açúcar de confeiteiro.\nSe preferir, asse em ramequins a 180 °C por aproximadamente 15 minutos.\n\n💡 Dica da Beta\nSuflê não espera. Ele fica alto e fofinho assim que sai do fogo — depois abaixa. Então o melhor momento é na hora.\n\n👉 Salva essa receita para testar quando a geladeira parecer vazia\n👉 E me conta nos comentários: você faria essa versão doce ou imagina uma versão salgada?\n@sweet.bites.daily \n#abetaqfaz #suflenuvem #receitafacil #ovos\"."
+    },
+    {
+      "id": "case_005_sticky_honey_garlic_noodles",
+      "sourceUrl": "https://www.instagram.com/reel/DVhmt-qicTF/?igsh=MWxiMHQ1czk0d3F4cQ==",
+      "passed": true,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": true,
+          "actual": true
+        }
+      },
+      "expected": {
+        "noRecipe": true
+      },
+      "actual": {
+        "noRecipe": true
+      },
+      "resolvedDescription": "38K likes, 13K comments - mason_woodruff on March 5, 2026: \"20-Minute Sticky Honey Garlic Chicken Noodles 🍯 Y'all seemed to dig the crispy beef noodles last week so I ran it back with a ground chicken + chili garlic and honey sauce + slaw mix + the squiggly noodles situation. So easy for a high protein meal (34g protein and only 7g fat per serving).\n\nComment \"sticky\" and I'll send the recipe to your DMs to save for later.\n\nOr comment \"the bear is sticky with honey\" (name that show) and I'll DM you this recipe AND the hoisin beef noodles recipe.\n\n#traderjoes #noodles #groundchicken #highproteinmeals\"."
+    },
+    {
+      "id": "case_006_azeitonas_empanadas",
+      "sourceUrl": "https://www.instagram.com/reel/DXhPC2vjhy1/?igsh=MTVvOXIya2ZqN3Bzcw%3D%3D",
+      "passed": true,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": true,
+          "actual": true
+        }
+      },
+      "expected": {
+        "noRecipe": true
+      },
+      "actual": {
+        "noRecipe": true
+      },
+      "resolvedDescription": "Azeitona empanada \n\nIngredientes creme: \n\n150g de requeijão catupiry ou cream cheese \n1 colher de sobremesa de salsinha picada \n2 colheres de sopa de queijo parmesão ralado \n2 colheres de sopa de queijo muçarela ralado \nRaspas de meio limão siciliano \nSal e pimenta do reino à gosto \n\n400g de azeitonas sem caroço \n\nMisture tudo e recheie as azeitonas. \n\nPra empanar:\n\n1 xícara de farinha de trigo \nAproximadamente 1 xícara de água ( pode precisar de mais ou menos, até ficar na textura do vídeo) \nSal e pimenta do reino à gosto \n1 xícara de farinha Panko \nÓleo pra fritar \n\nModo de preparo no vídeo!"
+    },
+    {
+      "id": "case_007_burguer_fit",
+      "sourceUrl": "https://www.instagram.com/reel/DWB6DP-gJCI/?igsh=aXBtamd3cTd1azd6",
+      "passed": true,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": true,
+          "actual": true
+        }
+      },
+      "expected": {
+        "noRecipe": true
+      },
+      "actual": {
+        "noRecipe": true
+      },
+      "resolvedDescription": "BURGUER FIT? \n\nViralizou essa técnica criativa pra inovar na dieta que além de fit é bem prático pro dia a dia. Será?\n\nAlgum nutri pra calcular os macros? 😱\nLhe agrada?\n\n#dieta #burguer #receitafit"
+    },
+    {
+      "id": "case_008_scallion_soy_chili_noodles",
+      "sourceUrl": "https://www.instagram.com/reel/DVJ8He8kmF_/?igsh=MXh4OGo1dWk1cGVsZA%3D%3D",
+      "passed": false,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": false,
+          "actual": false
+        },
+        "title": {
+          "passed": false,
+          "score": 0.5555555555555556,
+          "expected": "Macarrão com Cebolinha, Soja e Chili",
+          "actual": "Macarrão com Cebolinha e Molho de Soja Picante"
+        },
+        "category": {
+          "passed": false,
+          "score": 0,
+          "expected": "Prato Principal",
+          "actual": "Almoço"
+        },
+        "cuisine": {
+          "passed": true,
+          "score": 1,
+          "expected": "Asiática",
+          "actual": "Asiática"
+        },
+        "ingredients": {
+          "passed": false,
+          "score": 0.4337225274725275,
+          "expected": [
+            {
+              "amount": "1",
+              "unit": "maço",
+              "item": "Cebolinha"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de chá",
+              "item": "Sal"
+            },
+            {
+              "amount": "1/3",
+              "unit": "xícara",
+              "item": "Óleo neutro"
+            },
+            {
+              "amount": "1/3",
+              "unit": "xícara",
+              "item": "Cebolinha fatiada"
+            },
+            {
+              "amount": "1-2",
+              "unit": "colheres de chá",
+              "item": "Pimenta em flocos"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Sementes de gergelim"
+            },
+            {
+              "amount": "4",
+              "unit": "dentes",
+              "item": "Alho picado"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Açúcar mascavo"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Chalota picada"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Molho shoyu"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Molho shoyu escuro"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Vinagre de arroz ou vinagre preto"
+            },
+            {
+              "amount": "2",
+              "unit": "pacotes",
+              "item": "Macarrão instantâneo"
+            },
+            {
+              "item": "Chili crunch"
+            }
+          ],
+          "actual": [
+            {
+              "amount": "1",
+              "unit": "maço",
+              "item": "Cebolinha"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de chá",
+              "item": "Sal"
+            },
+            {
+              "amount": "1/3",
+              "unit": "xícara",
+              "item": "Óleo neutro"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Flocos de pimenta"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Sementes de gergelim"
+            },
+            {
+              "amount": "4",
+              "unit": "dente",
+              "item": "Alho"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Açúcar mascavo"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Chalota fresca"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Molho de soja"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Molho de soja escuro"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Vinagre preto"
+            },
+            {
+              "amount": "2",
+              "unit": "pacote",
+              "item": "Macarrão de Soja e Cebolinha Momofuku"
+            },
+            {
+              "item": "Pimenta Chili Crunch Momofuku para finalizar"
+            }
+          ],
+          "subScores": {
+            "item_count_match": false,
+            "name_recall": 0.5714285714285714,
+            "name_precision": 0.5384615384615384,
+            "qty_unit_accuracy": 0.625
+          }
+        },
+        "steps": {
+          "passed": false,
+          "score": 0.5362318840579711,
+          "expected": [
+            {
+              "order": 1,
+              "title": "Cozinhar o Macarrão",
+              "instruction": "Ferva uma panela grande com água salgada. Cozinhe o macarrão conforme as instruções da embalagem, retirando 30 segundos antes do tempo. Reserve um pouco da água do cozimento, escorra e passe por água fria."
+            },
+            {
+              "order": 2,
+              "title": "Infusionar o Óleo",
+              "instruction": "Em uma frigideira grande em fogo médio, adicione o óleo e a cebolinha cortada em terços. Cozinhe por 10-15 minutos até dourar levemente. Remova a cebolinha e mantenha o óleo na panela."
+            },
+            {
+              "order": 3,
+              "title": "Preparar Aromáticos",
+              "instruction": "Em uma tigela resistente ao calor, combine a cebolinha fresca fatiada, pimenta em flocos, gergelim, alho, chalota, açúcar mascavo, vinagre e os molhos shoyu."
+            },
+            {
+              "order": 4,
+              "title": "Escaldar com Óleo Quente",
+              "instruction": "Reaqueça o óleo de cebolinha reservado até ficar bem quente. Despeje cuidadosamente sobre os aromáticos na tigela e misture bem."
+            },
+            {
+              "order": 5,
+              "title": "Finalizar o Prato",
+              "instruction": "Adicione o macarrão à mistura e envolva bem. Se desejar mais cremosidade, leve ao fogo baixo e adicione 2-3 colheres da água do cozimento reservada."
+            },
+            {
+              "order": 6,
+              "title": "Servir",
+              "instruction": "Desligue o fogo e finalize com cebolinha extra e chili crunch por cima. Sirva imediatamente."
+            }
+          ],
+          "actual": [
+            {
+              "order": 1,
+              "title": "Cozinhar o macarrão",
+              "instruction": "Leve uma panela grande de água salgada para fervir. Cozinhe o macarrão conforme instruções da embalagem, retirando cerca de 30 segundos antes do ponto. Reserve a água da cozedura, depois escorra e enxague o macarrão em água fria para evitar que grude."
+            },
+            {
+              "order": 2,
+              "title": "Preparar óleo infusionado",
+              "instruction": "Em uma frigideira grande em fogo médio, adicione o óleo neutro e a cebolinha picada. Cozinhe por 10 a 15 minutos até ficar levemente dourado e aromático. Remova a cebolinha mas deixe o óleo infusionado na panela."
+            },
+            {
+              "order": 3,
+              "title": "Preparar molho e temperos",
+              "instruction": "Em uma tigela refratária ou panela, combine a cebolinha fresca fatiada, flocos de pimenta, sementes de gergelim, alho, chalota, açúcar mascavo, vinagre, molho de soja, molho de soja escuro e o pacote de molho incluído na embalagem do macarrão."
+            },
+            {
+              "order": 4,
+              "title": "Infusionar os temperos com óleo quente",
+              "instruction": "Reaqueça o óleo de cebolinha até ficar muito quente. Despeje cuidadosamente o óleo quente sobre os temperos e ingredientes aromáticos, observando-o borbulhar. Misture para combinar."
+            },
+            {
+              "order": 5,
+              "title": "Misturar e finalizar o macarrão",
+              "instruction": "Adicione o macarrão cozido e misture para cobrir completamente. Para macarrão mais macio e brilhante, coloque em fogo médio-baixo e adicione 2 a 3 colheres de sopa da água reservada até ficar lustroso."
+            },
+            {
+              "order": 6,
+              "title": "Servir",
+              "instruction": "Desligue o fogo. Finalize com cebolinha extra e pimenta Chili Crunch. Sirva imediatamente e aproveite."
+            }
+          ]
+        },
+        "totalTimeMinutes": {
+          "passed": false,
+          "score": 0.5,
+          "expected": 20,
+          "actual": 30
+        },
+        "servings": {
+          "passed": true,
+          "score": 1,
+          "expected": 2,
+          "actual": 2
+        },
+        "tags": {
+          "passed": false,
+          "score": 0.3333333333333333,
+          "expected": [
+            "Rápido",
+            "Massa"
+          ],
+          "actual": [
+            "Rápido",
+            "Asiática"
+          ]
+        }
+      },
+      "expected": {
+        "noRecipe": false,
+        "title": "Macarrão com Cebolinha, Soja e Chili",
+        "category": "Prato Principal",
+        "categorySuggestion": null,
+        "cuisine": "Asiática",
+        "cuisineSuggestion": null,
+        "ingredients": [
+          {
+            "amount": "1",
+            "unit": "maço",
+            "item": "Cebolinha"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de chá",
+            "item": "Sal"
+          },
+          {
+            "amount": "1/3",
+            "unit": "xícara",
+            "item": "Óleo neutro"
+          },
+          {
+            "amount": "1/3",
+            "unit": "xícara",
+            "item": "Cebolinha fatiada"
+          },
+          {
+            "amount": "1-2",
+            "unit": "colheres de chá",
+            "item": "Pimenta em flocos"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Sementes de gergelim"
+          },
+          {
+            "amount": "4",
+            "unit": "dentes",
+            "item": "Alho picado"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Açúcar mascavo"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Chalota picada"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Molho shoyu"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Molho shoyu escuro"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Vinagre de arroz ou vinagre preto"
+          },
+          {
+            "amount": "2",
+            "unit": "pacotes",
+            "item": "Macarrão instantâneo"
+          },
+          {
+            "item": "Chili crunch"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Cozinhar o Macarrão",
+            "instruction": "Ferva uma panela grande com água salgada. Cozinhe o macarrão conforme as instruções da embalagem, retirando 30 segundos antes do tempo. Reserve um pouco da água do cozimento, escorra e passe por água fria."
+          },
+          {
+            "order": 2,
+            "title": "Infusionar o Óleo",
+            "instruction": "Em uma frigideira grande em fogo médio, adicione o óleo e a cebolinha cortada em terços. Cozinhe por 10-15 minutos até dourar levemente. Remova a cebolinha e mantenha o óleo na panela."
+          },
+          {
+            "order": 3,
+            "title": "Preparar Aromáticos",
+            "instruction": "Em uma tigela resistente ao calor, combine a cebolinha fresca fatiada, pimenta em flocos, gergelim, alho, chalota, açúcar mascavo, vinagre e os molhos shoyu."
+          },
+          {
+            "order": 4,
+            "title": "Escaldar com Óleo Quente",
+            "instruction": "Reaqueça o óleo de cebolinha reservado até ficar bem quente. Despeje cuidadosamente sobre os aromáticos na tigela e misture bem."
+          },
+          {
+            "order": 5,
+            "title": "Finalizar o Prato",
+            "instruction": "Adicione o macarrão à mistura e envolva bem. Se desejar mais cremosidade, leve ao fogo baixo e adicione 2-3 colheres da água do cozimento reservada."
+          },
+          {
+            "order": 6,
+            "title": "Servir",
+            "instruction": "Desligue o fogo e finalize com cebolinha extra e chili crunch por cima. Sirva imediatamente."
+          }
+        ],
+        "totalTimeMinutes": 20,
+        "servings": "2",
+        "tags": [
+          "Rápido",
+          "Massa"
+        ]
+      },
+      "actual": {
+        "title": "Macarrão com Cebolinha e Molho de Soja Picante",
+        "category": "Almoço",
+        "cuisine": "Asiática",
+        "ingredients": [
+          {
+            "amount": "1",
+            "unit": "maço",
+            "item": "Cebolinha"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de chá",
+            "item": "Sal"
+          },
+          {
+            "amount": "1/3",
+            "unit": "xícara",
+            "item": "Óleo neutro"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Flocos de pimenta"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Sementes de gergelim"
+          },
+          {
+            "amount": "4",
+            "unit": "dente",
+            "item": "Alho"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Açúcar mascavo"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Chalota fresca"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Molho de soja"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Molho de soja escuro"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Vinagre preto"
+          },
+          {
+            "amount": "2",
+            "unit": "pacote",
+            "item": "Macarrão de Soja e Cebolinha Momofuku"
+          },
+          {
+            "item": "Pimenta Chili Crunch Momofuku para finalizar"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Cozinhar o macarrão",
+            "instruction": "Leve uma panela grande de água salgada para fervir. Cozinhe o macarrão conforme instruções da embalagem, retirando cerca de 30 segundos antes do ponto. Reserve a água da cozedura, depois escorra e enxague o macarrão em água fria para evitar que grude."
+          },
+          {
+            "order": 2,
+            "title": "Preparar óleo infusionado",
+            "instruction": "Em uma frigideira grande em fogo médio, adicione o óleo neutro e a cebolinha picada. Cozinhe por 10 a 15 minutos até ficar levemente dourado e aromático. Remova a cebolinha mas deixe o óleo infusionado na panela."
+          },
+          {
+            "order": 3,
+            "title": "Preparar molho e temperos",
+            "instruction": "Em uma tigela refratária ou panela, combine a cebolinha fresca fatiada, flocos de pimenta, sementes de gergelim, alho, chalota, açúcar mascavo, vinagre, molho de soja, molho de soja escuro e o pacote de molho incluído na embalagem do macarrão."
+          },
+          {
+            "order": 4,
+            "title": "Infusionar os temperos com óleo quente",
+            "instruction": "Reaqueça o óleo de cebolinha até ficar muito quente. Despeje cuidadosamente o óleo quente sobre os temperos e ingredientes aromáticos, observando-o borbulhar. Misture para combinar."
+          },
+          {
+            "order": 5,
+            "title": "Misturar e finalizar o macarrão",
+            "instruction": "Adicione o macarrão cozido e misture para cobrir completamente. Para macarrão mais macio e brilhante, coloque em fogo médio-baixo e adicione 2 a 3 colheres de sopa da água reservada até ficar lustroso."
+          },
+          {
+            "order": 6,
+            "title": "Servir",
+            "instruction": "Desligue o fogo. Finalize com cebolinha extra e pimenta Chili Crunch. Sirva imediatamente e aproveite."
+          }
+        ],
+        "totalTimeMinutes": 30,
+        "servings": "2",
+        "tags": [
+          "Rápido",
+          "Asiática"
+        ]
+      },
+      "resolvedDescription": "Scallion & Soy Chili Noodles 🔥\n\nComment “Recipe” and I’ll send you the full recipe card for free!\n\nBig flavor in under 10 minutes!! These noodles are savory, comforting and SO addictive. Find @momofukugoods Scallion Soy Noodles online or at a grocery store near you. Check out the link in my bio to find a store near you!\n\nIngredients:\n-1 bunch scallions (6–8 stalks), cut into thirds (for frying)\n-1 tsp salt (for fried scallions)\n-⅓ cup neutral oil (avocado oil works great)\n-⅓ cup fresh scallions, thinly sliced\n-1–2 tsp chili flakes\n-1 tbsp sesame seeds\n-4 garlic cloves, minced\n-1 tbsp brown sugar\n-1 tbsp fresh shallot, minced (optional)\n-1 tbsp soy sauce\n-1 tbsp dark soy sauce\n-1 tbsp black vinegar or rice vinegar\n-Reserved pasta water, as needed\n-2 packets Momofuku Soy & Scallion Noodles\n-Momofuku Chili Crunch, for garnish\n\nInstructions:\n1. Bring a large pot of salted water to a boil. Cook the noodles according to package instructions, undercooking by about 30 seconds. Reserve some pasta water, then drain and rinse the noodles under cold water to prevent sticking.\n2. In a large pan over medium heat, add the neutral oil and the chopped scallions. Cook for 10–15 minutes until lightly golden and fragrant. Remove the scallions but leave the infused oil in the pan.\n3. In a heatproof bowl or pan, combine the sliced fresh scallions, chili flakes, sesame seeds, garlic, shallots, brown sugar, vinegar, soy sauce, dark soy sauce, and the included noodle sauce packet if using.\n4. Reheat the reserved scallion oil until very hot. Carefully pour the hot oil over the aromatics and watch it sizzle. Stir to combine.\n5. Add the noodles and toss to coat thoroughly. For extra silky noodles, turn the heat to medium-low and mix in 2–3 tablespoons of reserved pasta water until glossy.\n6. Turn off the heat. Top with extra scallions and chili crunch. Serve immediately and enjoy.\n\n#momofukupartner"
+    },
+    {
+      "id": "case_009_hot_dog_saudavel",
+      "sourceUrl": "https://www.instagram.com/reel/DWwsGdrkUFc/?igsh=MW81MGc4M3ZuN2J0Yw%3D%3D",
+      "passed": false,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": false,
+          "actual": false
+        },
+        "title": {
+          "passed": false,
+          "score": 0.125,
+          "expected": "Salsicha de Frango e Vegetais Saudável",
+          "actual": "Hot Dog Saudável"
+        },
+        "category": {
+          "passed": false,
+          "score": 0,
+          "expected": "Lanches",
+          "actual": "Almoço"
+        },
+        "cuisine": {
+          "passed": true,
+          "score": 1,
+          "expected": "Brasileira",
+          "actual": "Brasileira"
+        },
+        "ingredients": {
+          "passed": true,
+          "score": 0.9166666666666666,
+          "expected": [
+            {
+              "amount": "150",
+              "unit": "gramas",
+              "item": "Cenoura cozida"
+            },
+            {
+              "amount": "150",
+              "unit": "gramas",
+              "item": "Beterraba cozida"
+            },
+            {
+              "amount": "1",
+              "unit": "dente",
+              "item": "Alho"
+            },
+            {
+              "amount": "1",
+              "unit": "kg",
+              "item": "Peito de frango"
+            },
+            {
+              "item": "Sal"
+            },
+            {
+              "item": "Páprica defumada"
+            }
+          ],
+          "actual": [
+            {
+              "amount": "1",
+              "unit": "unidade",
+              "item": "Cenoura cozida"
+            },
+            {
+              "amount": "1",
+              "unit": "unidade",
+              "item": "Beterraba cozida"
+            },
+            {
+              "amount": "1",
+              "unit": "dente",
+              "item": "Alho"
+            },
+            {
+              "amount": "1",
+              "unit": "kg",
+              "item": "Peito de frango"
+            },
+            {
+              "item": "Sal"
+            },
+            {
+              "item": "Páprica defumada"
+            }
+          ],
+          "subScores": {
+            "item_count_match": true,
+            "name_recall": 1,
+            "name_precision": 1,
+            "qty_unit_accuracy": 0.6666666666666666
+          }
+        },
+        "steps": {
+          "passed": false,
+          "score": 0.5,
+          "expected": [
+            {
+              "order": 1,
+              "title": "Processar os Ingredientes",
+              "instruction": "Bata no processador a cenoura cozida, a beterraba cozida, o alho, o peito de frango em cubinhos, o sal e a páprica defumada até obter uma massa homogênea."
+            },
+            {
+              "order": 2,
+              "title": "Modelar as Salsichas",
+              "instruction": "Pegue porções da massa e enrole individualmente em pedaços de plástico filme, apertando bem para formar cilindros compactos no formato de salsicha."
+            },
+            {
+              "order": 3,
+              "title": "Firmar no Congelador",
+              "instruction": "Leve as salsichas modeladas ao congelador e deixe descansar até que estejam firmes o suficiente para manusear."
+            },
+            {
+              "order": 4,
+              "title": "Cozimento e Finalização",
+              "instruction": "Remova o plástico filme, doure as salsichas em uma frigideira e, em seguida, termine o cozimento em molho de tomate antes de servir."
+            }
+          ],
+          "actual": [
+            {
+              "order": 1,
+              "title": "Processar ingredientes",
+              "instruction": "Bata no processador a cenoura, beterraba, alho, peito de frango, sal e páprica defumada até formar uma massa homogênea."
+            },
+            {
+              "order": 2,
+              "title": "Moldar as salsichas",
+              "instruction": "Pegue um pouco de massa e enrole em um pedaço de plástico filme, apertando bem para que fique no formato de uma salsicha comprida e compacta. Repita o processo com toda a massa."
+            },
+            {
+              "order": 3,
+              "title": "Congelar",
+              "instruction": "Coloque as salsichas enroladas no congelador até que estejam firmes."
+            },
+            {
+              "order": 4,
+              "title": "Cozinhar e servir",
+              "instruction": "Doure as salsichas na frigideira, cozinhe depois no molho de tomate e sirva como quiser."
+            }
+          ]
+        },
+        "totalTimeMinutes": {
+          "passed": false,
+          "score": 0.5,
+          "expected": 60,
+          "actual": 90
+        },
+        "servings": {
+          "passed": true,
+          "score": 0.8,
+          "expected": 10,
+          "actual": 8
+        },
+        "tags": {
+          "passed": false,
+          "score": 0.3333333333333333,
+          "expected": [
+            "Saudável",
+            "Frango"
+          ],
+          "actual": [
+            "Saudável",
+            "Alto Proteico"
+          ]
+        }
+      },
+      "expected": {
+        "noRecipe": false,
+        "title": "Salsicha de Frango e Vegetais Saudável",
+        "category": "Lanches",
+        "categorySuggestion": null,
+        "cuisine": "Brasileira",
+        "cuisineSuggestion": null,
+        "ingredients": [
+          {
+            "amount": "150",
+            "unit": "gramas",
+            "item": "Cenoura cozida"
+          },
+          {
+            "amount": "150",
+            "unit": "gramas",
+            "item": "Beterraba cozida"
+          },
+          {
+            "amount": "1",
+            "unit": "dente",
+            "item": "Alho"
+          },
+          {
+            "amount": "1",
+            "unit": "kg",
+            "item": "Peito de frango"
+          },
+          {
+            "item": "Sal"
+          },
+          {
+            "item": "Páprica defumada"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Processar os Ingredientes",
+            "instruction": "Bata no processador a cenoura cozida, a beterraba cozida, o alho, o peito de frango em cubinhos, o sal e a páprica defumada até obter uma massa homogênea."
+          },
+          {
+            "order": 2,
+            "title": "Modelar as Salsichas",
+            "instruction": "Pegue porções da massa e enrole individualmente em pedaços de plástico filme, apertando bem para formar cilindros compactos no formato de salsicha."
+          },
+          {
+            "order": 3,
+            "title": "Firmar no Congelador",
+            "instruction": "Leve as salsichas modeladas ao congelador e deixe descansar até que estejam firmes o suficiente para manusear."
+          },
+          {
+            "order": 4,
+            "title": "Cozimento e Finalização",
+            "instruction": "Remova o plástico filme, doure as salsichas em uma frigideira e, em seguida, termine o cozimento em molho de tomate antes de servir."
+          }
+        ],
+        "totalTimeMinutes": 60,
+        "servings": "10",
+        "tags": [
+          "Saudável",
+          "Frango"
+        ]
+      },
+      "actual": {
+        "title": "Hot Dog Saudável",
+        "category": "Almoço",
+        "cuisine": "Brasileira",
+        "ingredients": [
+          {
+            "amount": "1",
+            "unit": "unidade",
+            "item": "Cenoura cozida"
+          },
+          {
+            "amount": "1",
+            "unit": "unidade",
+            "item": "Beterraba cozida"
+          },
+          {
+            "amount": "1",
+            "unit": "dente",
+            "item": "Alho"
+          },
+          {
+            "amount": "1",
+            "unit": "kg",
+            "item": "Peito de frango"
+          },
+          {
+            "item": "Sal"
+          },
+          {
+            "item": "Páprica defumada"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Processar ingredientes",
+            "instruction": "Bata no processador a cenoura, beterraba, alho, peito de frango, sal e páprica defumada até formar uma massa homogênea."
+          },
+          {
+            "order": 2,
+            "title": "Moldar as salsichas",
+            "instruction": "Pegue um pouco de massa e enrole em um pedaço de plástico filme, apertando bem para que fique no formato de uma salsicha comprida e compacta. Repita o processo com toda a massa."
+          },
+          {
+            "order": 3,
+            "title": "Congelar",
+            "instruction": "Coloque as salsichas enroladas no congelador até que estejam firmes."
+          },
+          {
+            "order": 4,
+            "title": "Cozinhar e servir",
+            "instruction": "Doure as salsichas na frigideira, cozinhe depois no molho de tomate e sirva como quiser."
+          }
+        ],
+        "totalTimeMinutes": 90,
+        "servings": "8",
+        "tags": [
+          "Saudável",
+          "Alto Proteico"
+        ]
+      },
+      "resolvedDescription": "Hot Dog Saudável😍\n\nCréditos dessa receita f*da: @edugomeslima 👏🏼\n\n👨🏻‍🍳INGREDIENTES:\n- 1 cenoura cozida (150g)\n- 1 beterraba cozida (150g)\n- 1 dente de alho.\n- 1 kg de peito de frango em cubinhos.\n- sal e páprica defumada a gosto.\n.\nMODO DE FAZER:\n1. Bata no processador todos os ingredientes.\n2. Pegue um pouco de massa e enrole em um pedaço de plástico filme, apertando bem para que fique no formato de uma salsicha comprida e compacta. Repita o processo com toda a massa.\n3. Coloque as salsichas enroladas no congelador até que estejam firmes. \n4. Doure as salsichas na frigideira, cozinhe depois no molho de tomate e sirva como quiser😍\n.\n👉🏼Use o cupom BRUC na Growth para \nconseguir + desconto em qlqr compra do site🤩🛒.\n."
+    },
+    {
+      "id": "case_010_bolo_moca",
+      "sourceUrl": "https://www.instagram.com/reel/DX2b8FWAwQD/?igsh=MWV2bDd2czlyb2k0Mw%3D%3D",
+      "passed": false,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": false,
+          "score": 0,
+          "expected": true,
+          "actual": false
+        }
+      },
+      "expected": {
+        "noRecipe": true,
+        "title": "Torta de Liquidificador",
+        "category": "Tortas e Quiches",
+        "categorySuggestion": null,
+        "cuisine": "Brasileira",
+        "cuisineSuggestion": null,
+        "ingredients": [
+          {
+            "amount": "3",
+            "unit": null,
+            "item": "ovos"
+          },
+          {
+            "amount": "0.5",
+            "unit": "xícara",
+            "item": "açúcar"
+          },
+          {
+            "amount": "1",
+            "unit": "caixa",
+            "item": "leite condensado"
+          },
+          {
+            "amount": "800",
+            "unit": "ml",
+            "item": "leite integral"
+          },
+          {
+            "amount": "2",
+            "unit": "xícaras",
+            "item": "farinha de trigo sem fermento"
+          },
+          {
+            "amount": "2",
+            "unit": "colheres de sopa",
+            "item": "manteiga"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Misturar",
+            "instruction": "Bata todos os ingredientes no liquidificador até obter uma massa homogênea."
+          },
+          {
+            "order": 2,
+            "title": "Assar",
+            "instruction": "Despeje em forma de 23cm untada e asse em forno pré-aquecido a 200°C por aproximadamente 1 hora, ou até dourar levemente por cima."
+          }
+        ],
+        "totalTimeMinutes": 70,
+        "servings": "8",
+        "tags": [
+          "forno",
+          "torta",
+          "simples",
+          "rápido"
+        ]
+      },
+      "actual": {
+        "title": "Bolo de Leite Condensado",
+        "category": "Sobremesa",
+        "cuisine": "Brasileira",
+        "ingredients": [
+          {
+            "amount": "3",
+            "unit": "unidade",
+            "item": "Ovo"
+          },
+          {
+            "amount": "1/2",
+            "unit": "xícara",
+            "item": "Açúcar"
+          },
+          {
+            "amount": "1",
+            "unit": "lata",
+            "item": "Leite condensado"
+          },
+          {
+            "amount": "800",
+            "unit": "ml",
+            "item": "Leite integral"
+          },
+          {
+            "amount": "2",
+            "unit": "xícara",
+            "item": "Farinha de trigo sem fermento"
+          },
+          {
+            "amount": "2",
+            "unit": "colher de sopa",
+            "item": "Manteiga"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Preparar os ingredientes",
+            "instruction": "Reúna os ovos, açúcar, leite condensado, leite integral e farinha de trigo. Prepare uma forma de 23cm de diâmetro."
+          },
+          {
+            "order": 2,
+            "title": "Misturar os ingredientes",
+            "instruction": "Em uma tigela, bata os ovos com o açúcar até obter uma mistura homogênea. Adicione o leite condensado e o leite integral, misturando bem. Incorpore a farinha de trigo sem fermento e a manteiga, mexendo até ficar uma massa uniforme."
+          },
+          {
+            "order": 3,
+            "title": "Verter na forma",
+            "instruction": "Despeje a massa na forma untada e prepare-a para assar."
+          },
+          {
+            "order": 4,
+            "title": "Assar o bolo",
+            "instruction": "Leve ao forno pré-aquecido a 200°C por aproximadamente 1 hora ou até ficar levemente dourado por cima."
+          }
+        ],
+        "totalTimeMinutes": 75,
+        "servings": "8",
+        "tags": [
+          "Fácil",
+          "Comfort Food"
+        ]
+      },
+      "resolvedDescription": "Como você conhece esse bolo? \n\nIngredientes \n3 ovos \n1/2 xícara de açúcar \n1 caixa ou late de leite condensado \n800ml de leite integral \n2 xícaras de farinha de trigo sem fermento \n2 colheres de sopa de Qualy \n\nXícara de 240ml \nUsei forma de 23cm de diâmetro \nAssar em forno pré aquecido 200°C, por mais ou menos 1 hora ou até fica levemente dourado por cima \n\nQualy há 35 anos, o que é gostoso você nunca esquece! \n@qualy"
+    },
+    {
+      "id": "case_011_macarrao_molho_amendoim",
+      "sourceUrl": "https://www.instagram.com/reel/DXxL6xnz1o8/?igsh=MTM0NmtwZ3Q1eTE1eA%3D%3D",
+      "passed": false,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": false,
+          "score": 0,
+          "expected": true,
+          "actual": false
+        }
+      },
+      "expected": {
+        "noRecipe": true
+      },
+      "actual": {
+        "title": "Macarrão com Molho de Amendoim",
+        "category": "Almoço",
+        "cuisine": "Asiática",
+        "ingredients": [
+          {
+            "amount": "300",
+            "unit": "g",
+            "item": "Pappardelle"
+          },
+          {
+            "amount": "300",
+            "unit": "g",
+            "item": "Sobrecoxa desossada"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Curry"
+          },
+          {
+            "item": "Sal"
+          },
+          {
+            "item": "Pimenta"
+          },
+          {
+            "item": "Óleo de gergelim"
+          },
+          {
+            "item": "Coentro"
+          },
+          {
+            "item": "Amendoim torrado"
+          },
+          {
+            "item": "Cebolinha"
+          },
+          {
+            "amount": "3",
+            "unit": "dente",
+            "item": "Alho"
+          },
+          {
+            "amount": "1/2",
+            "unit": "unidade",
+            "item": "Pimenta dedo-de-moça"
+          },
+          {
+            "amount": "1/2",
+            "unit": "xícara",
+            "item": "Shoyu"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sobremesa",
+            "item": "Açúcar mascavo"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de chá",
+            "item": "Gengibre ralado"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Vinagre de arroz"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de chá",
+            "item": "Hondashi"
+          },
+          {
+            "amount": "2",
+            "unit": "colher de sopa",
+            "item": "Pasta de amendoim"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Preparar a sobrecoxa",
+            "instruction": "Tempere a sobrecoxa desossada com curry, sal e pimenta a gosto."
+          },
+          {
+            "order": 2,
+            "title": "Cozinhar a sobrecoxa",
+            "instruction": "Aquea óleo de gergelim em uma panela e cozinhe a sobrecoxa temperada até ficar cozida. Reserve a água do cozimento."
+          },
+          {
+            "order": 3,
+            "title": "Preparar o molho",
+            "instruction": "Em uma tigela, misture shoyu, açúcar mascavo, gengibre ralado, vinagre de arroz, hondashi e pasta de amendoim. Adicione 2 colheres de sopa da água do cozimento do macarrão para atingir a consistência desejada."
+          },
+          {
+            "order": 4,
+            "title": "Cozinhar o macarrão",
+            "instruction": "Cozinhe o pappardelle em água com sal até ficar al dente. Escorra a pasta."
+          },
+          {
+            "order": 5,
+            "title": "Montar o prato",
+            "instruction": "Coloque o macarrão em um prato, distribua a sobrecoxa cozida por cima, despeje o molho de amendoim e decore com coentro picado, cebolinha a gosto, amendoim torrado e rodelas de pimenta dedo-de-moça."
+          }
+        ],
+        "totalTimeMinutes": 30,
+        "servings": "2",
+        "tags": [
+          "Frango",
+          "Rápido"
+        ]
+      },
+      "resolvedDescription": "Macarrão com molho de amendoim? Sim!\nFiz essa receita usando o pappardelle @marca.renata porque essa massa pede molhos encorpados como esse! Ela tem a textura ideal e fica sempre al dente!\n\nINGREDIENTES\n300 g de Pappardelle Renata Superiore\n300 g de sobrecoxa desossada\n1 colher de sopa de curry\nSal e pimenta a gosto\nÓleo de gergelim\nCoentro\nAmendoim torrado\nCebolinha a gosto\n3 dentes de alho\n½ pimenta dedo-de-moça\n\nMOLHO\n½ xícara de shoyu\n1 colher de sobremesa de açúcar mascavo\n1 colher de chá de gengibre ralado\n1 colher de sopa de vinagre de arroz\n1 colher de chá de hondashi\n2 colheres de sopa de pasta de amendoim\n2 colheres de sopa da água do cozimento do macarrão\n\n#receitas #pappardele #ReceitasRenata #SaborQueVemDeFamilia *publi"
+    },
+    {
+      "id": "case_012_polenguinho_caseiro",
+      "sourceUrl": "https://www.instagram.com/reel/DW4iGR8xWhT/?igsh=MWdveGxvbWswNjMxYw%3D%3D",
+      "passed": false,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": true,
+          "score": 1,
+          "expected": false,
+          "actual": false
+        },
+        "title": {
+          "passed": true,
+          "score": 1,
+          "expected": "Polenguinho Caseiro",
+          "actual": "Polenguinho Caseiro"
+        },
+        "category": {
+          "passed": false,
+          "score": 0,
+          "expected": "Lanches",
+          "actual": "Lanche"
+        },
+        "cuisine": {
+          "passed": true,
+          "score": 1,
+          "expected": "Brasileira",
+          "actual": "Brasileira"
+        },
+        "ingredients": {
+          "passed": true,
+          "score": 0.9285714285714286,
+          "expected": [
+            {
+              "amount": "1",
+              "unit": "litro",
+              "item": "Leite"
+            },
+            {
+              "amount": "3",
+              "unit": "colheres de sopa",
+              "item": "Vinagre"
+            },
+            {
+              "amount": "1/2",
+              "unit": "xícara",
+              "item": "Queijo parmesão ralado"
+            },
+            {
+              "amount": "1",
+              "unit": "xícara",
+              "item": "Soro do leite"
+            },
+            {
+              "item": "Sal"
+            },
+            {
+              "amount": "1",
+              "unit": "pacote",
+              "item": "Gelatina sem sabor"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Manteiga"
+            }
+          ],
+          "actual": [
+            {
+              "amount": "1",
+              "unit": "litro",
+              "item": "Leite"
+            },
+            {
+              "amount": "3",
+              "unit": "colher de sopa",
+              "item": "Vinagre"
+            },
+            {
+              "amount": "1/2",
+              "unit": "xícara",
+              "item": "Parmesão ralado"
+            },
+            {
+              "amount": "1",
+              "unit": "xícara",
+              "item": "Soro do leite"
+            },
+            {
+              "item": "Sal"
+            },
+            {
+              "amount": "1",
+              "unit": "unidade",
+              "item": "Gelatina sem sabor"
+            },
+            {
+              "amount": "1",
+              "unit": "colher de sopa",
+              "item": "Manteiga"
+            }
+          ],
+          "subScores": {
+            "item_count_match": true,
+            "name_recall": 1,
+            "name_precision": 1,
+            "qty_unit_accuracy": 0.7142857142857143
+          }
+        },
+        "steps": {
+          "passed": false,
+          "score": 0.4155844155844156,
+          "expected": [
+            {
+              "order": 1,
+              "title": "Talhar o Leite",
+              "instruction": "Ferva o leite e, assim que começar a subir, desligue o fogo e adicione o vinagre. Misture levemente e deixe talhar."
+            },
+            {
+              "order": 2,
+              "title": "Separar o Soro",
+              "instruction": "Separe a parte sólida do leite talhado e reserve uma xícara do soro resultante."
+            },
+            {
+              "order": 3,
+              "title": "Bater no Liquidificador",
+              "instruction": "No liquidificador, coloque o leite talhado, a xícara de soro reservada, o parmesão, o sal, a manteiga e a gelatina já hidratada. Bata até ficar homogêneo."
+            },
+            {
+              "order": 4,
+              "title": "Finalização",
+              "instruction": "Despeje a mistura em uma forma de silicone e leve à geladeira até que esteja firme. Corte em quadradinhos antes de servir."
+            }
+          ],
+          "actual": [
+            {
+              "order": 1,
+              "title": "Talhar o leite",
+              "instruction": "Ferva o leite, assim que quase transbordar a panela, retire do fogo e adicione 3 colheres de sopa de vinagre. Misture um pouco e deixe o leite talhar."
+            },
+            {
+              "order": 2,
+              "title": "Separar o soro",
+              "instruction": "Separe o soro do leite talhado."
+            },
+            {
+              "order": 3,
+              "title": "Bater no liquidificador",
+              "instruction": "Adicione o leite talhado, 1 xícara do soro e o restante dos ingredientes (gelatina tem que estar hidratada e pronta pro uso) no liquidificador e bata."
+            },
+            {
+              "order": 4,
+              "title": "Firmar na geladeira",
+              "instruction": "Despeje a mistura em uma forma de silicone e deixe firmar na geladeira."
+            },
+            {
+              "order": 5,
+              "title": "Cortar e servir",
+              "instruction": "Corte em porções e sirva."
+            }
+          ]
+        },
+        "totalTimeMinutes": {
+          "passed": false,
+          "score": 0,
+          "expected": 120,
+          "actual": 240
+        },
+        "servings": {
+          "passed": false,
+          "score": 0.6666666666666667,
+          "expected": 6,
+          "actual": 4
+        },
+        "tags": {
+          "passed": true,
+          "score": 1,
+          "expected": [
+            "Queijo",
+            "Fácil"
+          ],
+          "actual": [
+            "Fácil",
+            "Queijo"
+          ]
+        }
+      },
+      "expected": {
+        "noRecipe": false,
+        "title": "Polenguinho Caseiro",
+        "category": "Lanches",
+        "categorySuggestion": null,
+        "cuisine": "Brasileira",
+        "cuisineSuggestion": null,
+        "ingredients": [
+          {
+            "amount": "1",
+            "unit": "litro",
+            "item": "Leite"
+          },
+          {
+            "amount": "3",
+            "unit": "colheres de sopa",
+            "item": "Vinagre"
+          },
+          {
+            "amount": "1/2",
+            "unit": "xícara",
+            "item": "Queijo parmesão ralado"
+          },
+          {
+            "amount": "1",
+            "unit": "xícara",
+            "item": "Soro do leite"
+          },
+          {
+            "item": "Sal"
+          },
+          {
+            "amount": "1",
+            "unit": "pacote",
+            "item": "Gelatina sem sabor"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Manteiga"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Talhar o Leite",
+            "instruction": "Ferva o leite e, assim que começar a subir, desligue o fogo e adicione o vinagre. Misture levemente e deixe talhar."
+          },
+          {
+            "order": 2,
+            "title": "Separar o Soro",
+            "instruction": "Separe a parte sólida do leite talhado e reserve uma xícara do soro resultante."
+          },
+          {
+            "order": 3,
+            "title": "Bater no Liquidificador",
+            "instruction": "No liquidificador, coloque o leite talhado, a xícara de soro reservada, o parmesão, o sal, a manteiga e a gelatina já hidratada. Bata até ficar homogêneo."
+          },
+          {
+            "order": 4,
+            "title": "Finalização",
+            "instruction": "Despeje a mistura em uma forma de silicone e leve à geladeira até que esteja firme. Corte em quadradinhos antes de servir."
+          }
+        ],
+        "totalTimeMinutes": 120,
+        "servings": "6",
+        "tags": [
+          "Queijo",
+          "Fácil"
+        ]
+      },
+      "actual": {
+        "title": "Polenguinho Caseiro",
+        "category": "Lanche",
+        "cuisine": "Brasileira",
+        "ingredients": [
+          {
+            "amount": "1",
+            "unit": "litro",
+            "item": "Leite"
+          },
+          {
+            "amount": "3",
+            "unit": "colher de sopa",
+            "item": "Vinagre"
+          },
+          {
+            "amount": "1/2",
+            "unit": "xícara",
+            "item": "Parmesão ralado"
+          },
+          {
+            "amount": "1",
+            "unit": "xícara",
+            "item": "Soro do leite"
+          },
+          {
+            "item": "Sal"
+          },
+          {
+            "amount": "1",
+            "unit": "unidade",
+            "item": "Gelatina sem sabor"
+          },
+          {
+            "amount": "1",
+            "unit": "colher de sopa",
+            "item": "Manteiga"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Talhar o leite",
+            "instruction": "Ferva o leite, assim que quase transbordar a panela, retire do fogo e adicione 3 colheres de sopa de vinagre. Misture um pouco e deixe o leite talhar."
+          },
+          {
+            "order": 2,
+            "title": "Separar o soro",
+            "instruction": "Separe o soro do leite talhado."
+          },
+          {
+            "order": 3,
+            "title": "Bater no liquidificador",
+            "instruction": "Adicione o leite talhado, 1 xícara do soro e o restante dos ingredientes (gelatina tem que estar hidratada e pronta pro uso) no liquidificador e bata."
+          },
+          {
+            "order": 4,
+            "title": "Firmar na geladeira",
+            "instruction": "Despeje a mistura em uma forma de silicone e deixe firmar na geladeira."
+          },
+          {
+            "order": 5,
+            "title": "Cortar e servir",
+            "instruction": "Corte em porções e sirva."
+          }
+        ],
+        "totalTimeMinutes": 240,
+        "servings": "4",
+        "tags": [
+          "Fácil",
+          "Queijo"
+        ]
+      },
+      "resolvedDescription": "É BÃO OU NÃO? Polenguinho Caseiro!\n\nIngredientes:\n- 1L de leite\n- 3 colheres de sopa de vinagre (ou limão)\n- 1/2 xícara de parmesão ralado\n- 1 xícara de soro do leite\n- Sal a gosto\n- 1 pacotinho de gelatina sem sabor\n- 1 colher de sopa de manteiga\n\nModo de preparo:\n1. Ferva o leite, assim que quase transbordar a panela, para o fogo e adicione 3 colheres de sopa de vinagre\n2. Misture um pouco e deixe o leite talhar\n3. Separe o soro do leite talhado\n4. Pegue seu liquidificador e adicione o leite talhado, 1 xícara do soro e o restante dos ingredientes (gelatina tem que estar hidratada e pronta pro uso)\n5. Despeje a mistura em uma forma de silicone e deixe firmar na geladeira\n6. Agora é só cortar e partir pro abraço!\n\nCréditos ao vídeo original: @eubetoalmeida"
+    },
+    {
+      "id": "case_013_onion_rings",
+      "sourceUrl": "https://www.instagram.com/reel/DW4iGR8xWhT/?igsh=MWdveGxvbWswNjMxYw%3D%3D",
+      "passed": false,
+      "fieldResults": {
+        "noRecipe": {
+          "passed": false,
+          "score": 0,
+          "expected": false,
+          "actual": true
+        }
+      },
+      "expected": {
+        "noRecipe": false,
+        "title": "Cebola Empanada (Onion Rings)",
+        "category": "Aperitivos",
+        "categorySuggestion": null,
+        "cuisine": "Americana",
+        "cuisineSuggestion": null,
+        "ingredients": [
+          {
+            "amount": "1",
+            "unit": "unidade",
+            "item": "Cebola"
+          },
+          {
+            "amount": "360",
+            "unit": "gramas",
+            "item": "Farinha de trigo"
+          },
+          {
+            "amount": "360",
+            "unit": "ml",
+            "item": "Água com gás"
+          },
+          {
+            "amount": "40",
+            "unit": "gramas",
+            "item": "Amido de milho"
+          },
+          {
+            "amount": "8",
+            "unit": "gramas",
+            "item": "Fermento em pó"
+          },
+          {
+            "amount": "5",
+            "unit": "gramas",
+            "item": "Alho em pó"
+          },
+          {
+            "amount": "8",
+            "unit": "gramas",
+            "item": "Páprica defumada"
+          },
+          {
+            "item": "Sal"
+          },
+          {
+            "item": "Pimenta"
+          },
+          {
+            "amount": "120",
+            "unit": "gramas",
+            "item": "Farinha panko"
+          }
+        ],
+        "steps": [
+          {
+            "order": 1,
+            "title": "Preparar a Cebola",
+            "instruction": "Corte a cebola em anéis e passe-os em uma parte da farinha de trigo (60g) para pré-empanar."
+          },
+          {
+            "order": 2,
+            "title": "Preparar a Massa",
+            "instruction": "Misture a água com gás gelada, o restante da farinha de trigo, o amido de milho, o fermento, o alho em pó, a páprica, o sal e a pimenta até formar uma massa homogênea."
+          },
+          {
+            "order": 3,
+            "title": "Empanar",
+            "instruction": "Mergulhe os anéis de cebola na massa líquida e, em seguida, passe na farinha panko para garantir a textura crocante."
+          },
+          {
+            "order": 4,
+            "title": "Fritura",
+            "instruction": "Aqueça o óleo a 180°C e frite os anéis por 2 a 3 minutos até ficarem com um dourado intenso. Não lote a panela para manter a crocância."
+          },
+          {
+            "order": 5,
+            "title": "Finalização",
+            "instruction": "Retire, escorra em papel toalha e salpique sal de alho ou sal comum. Sirva com maionese de sriracha, se desejar."
+          }
+        ],
+        "totalTimeMinutes": 30,
+        "servings": "3",
+        "tags": [
+          "Cebola",
+          "Fritura"
+        ]
+      },
+      "actual": {
+        "noRecipe": true
+      },
+      "resolvedDescription": "ONIONS RINGS \n\nIngredientes:\n\nBase:\n1 cebola (350g)\n60g de farinha de trigo (para pré-empanar)\n\nMassa (batter):\n360ml de água com gás bem gelada \n360g de farinha de trigo\n40g de amido de milho \n8g de fermento em pó\n5g Alho em pó\n8g Páprica defumada\nS&P\n\nEmpanar:\n120g de farinha panko\n\nFritura:\nÓleo suficiente para imersã\n\nFinalização (opcional)\nMaionese de pimenta Sriracha\n\nModo de preparo:\nNo vídeo\n\n🔥 Dica:\n\nUse uma mão para molhado e outra para seco (não vira bagunça)\n4. Fritura perfeita\nÓleo a 180°C\nFrite por 2 a 3 minutos\nAté ficar dourado intenso\n\n👉 Não lota a panela (senão perde crocância)\n\n5. Finalização\nRetira e escorre em papel\nSalpica sal de alho ou normal\nFinaliza com Sriracha se quiser\n💥 Segredos que fazem MUITA diferença\nÁgua com gás gelada = mais crocante\nAmido de milho = leveza absurda\nPanko = textura “crunch” de verdade\nÓleo na temperatura certa = não encharca\n\n#Brunoeeeats #receitas #receita #comida #onions"
+    }
+  ]
+}

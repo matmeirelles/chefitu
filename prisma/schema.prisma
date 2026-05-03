@@ -41,8 +41,6 @@ model Recipe {
   cuisine          String?
   ingredients      Json
   steps            Json
-  prepTimeMinutes  Int?
-  cookTimeMinutes  Int?
   totalTimeMinutes Int?
   servings         String?
   tags             String[]
@@ -59,6 +57,7 @@ model AIExtractionLog {
   model        String
   inputTokens  Int?
   outputTokens Int?
+  responseTimeMs Int?
   finalResponse Json
   createdAt    DateTime @default(now())
 

@@ -48,10 +48,12 @@ export const processImport = async (importId: string): Promise<void> => {
     // Extract recipe with AI
     console.log(`[process-import] Calling AI to extract recipe...`);
     const ai = aiProviderFactory.getAIProvider();
+    const extractionStartedAt = Date.now();
     const extraction = await ai.extractRecipe(description);
+    const responseTimeMs = Date.now() - extractionStartedAt;
     const result = extraction.recipe;
     console.log(
-      `[process-import] AI provider=${extraction.metadata.provider} model=${extraction.metadata.model} inputTokens=${extraction.metadata.inputTokens ?? "n/a"} outputTokens=${extraction.metadata.outputTokens ?? "n/a"}`,
+      `[process-import] AI provider=${extraction.metadata.provider} model=${extraction.metadata.model} inputTokens=${extraction.metadata.inputTokens ?? "n/a"} outputTokens=${extraction.metadata.outputTokens ?? "n/a"} responseTimeMs=${responseTimeMs}`,
     );
     console.log(`[process-import] AI result: ${JSON.stringify(result).slice(0, 200)}`);
     console.log(result);
@@ -64,6 +66,7 @@ export const processImport = async (importId: string): Promise<void> => {
         model: extraction.metadata.model,
         inputTokens: extraction.metadata.inputTokens ?? null,
         outputTokens: extraction.metadata.outputTokens ?? null,
+        responseTimeMs,
         finalResponse: result,
       },
     });
@@ -98,8 +101,6 @@ export const processImport = async (importId: string): Promise<void> => {
         cuisine: result.cuisine ?? null,
         ingredients: result.ingredients,
         steps: result.steps,
-        prepTimeMinutes: result.prepTimeMinutes ?? null,
-        cookTimeMinutes: result.cookTimeMinutes ?? null,
         totalTimeMinutes: result.totalTimeMinutes ?? null,
         servings: result.servings ?? null,
         tags: result.tags,

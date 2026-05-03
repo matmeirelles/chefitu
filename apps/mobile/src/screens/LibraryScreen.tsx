@@ -1,13 +1,13 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import type { RecipeRecord } from "@my-recipes/shared";
-import { RECIPE_CATEGORIES } from "@my-recipes/shared";
 import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { fetchRecipes } from "../services/api";
 import { LibraryHeader } from "../components/LibraryHeader";
 import { RecipeCard } from "../components/RecipeCard";
 import { StateCard } from "../components/StateCard";
+import { buildFilterList, filterRecipes } from "../utils/filter";
 
 
 export const LibraryScreen = ({
@@ -54,37 +54,12 @@ export const LibraryScreen = ({
     void loadRecipes();
   }, [loadRecipes]);
 
-  const filters = useMemo(() => {
-    const present = new Set(
-      recipes.map((r) => r.category).filter((c): c is string => Boolean(c)),
-    );
-    const ordered = RECIPE_CATEGORIES.filter((c) => present.has(c));
-    return ["All", ...ordered];
-  }, [recipes]);
+  const filters = useMemo(() => buildFilterList(recipes), [recipes]);
 
-  const filteredRecipes = useMemo(() => {
-    const normalizedQuery = deferredSearchQuery.trim().toLowerCase();
-
-    return recipes.filter((recipe) => {
-      const matchesFilter = selectedFilter === "All" || recipe.category === selectedFilter;
-
-      if (!matchesFilter) return false;
-      if (!normalizedQuery) return true;
-
-      const haystack = [
-        recipe.title,
-        recipe.category,
-        recipe.cuisine,
-        recipe.tags.join(" "),
-        recipe.ingredients.map((ingredient) => ingredient.item).join(" "),
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      return haystack.includes(normalizedQuery);
-    });
-  }, [deferredSearchQuery, recipes, selectedFilter]);
+  const filteredRecipes = useMemo(
+    () => filterRecipes(recipes, selectedFilter, deferredSearchQuery),
+    [recipes, selectedFilter, deferredSearchQuery],
+  );
 
   return (
     <View style={[styles.root, { backgroundColor: theme.colors.background }]}>

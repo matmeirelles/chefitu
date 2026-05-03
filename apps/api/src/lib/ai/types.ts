@@ -13,8 +13,6 @@ export type ExtractedRecipe =
       cuisineSuggestion?: string | null;
       ingredients: RecipeIngredient[];
       steps: RecipeStep[];
-      prepTimeMinutes?: number | null;
-      cookTimeMinutes?: number | null;
       totalTimeMinutes?: number | null;
       servings?: string | null;
       tags: string[];

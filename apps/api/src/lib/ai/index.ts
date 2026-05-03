@@ -1,5 +1,5 @@
 import type { AIProvider } from "./types.js";
-import { AnthropicProvider } from "./anthropic.js";
+import { AnthropicProvider } from "./anthropic-provider.js";
 import { OllamaProvider } from "./ollama.js";
 
 export type { AIProvider, ExtractedRecipe } from "./types.js";

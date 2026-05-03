@@ -8,6 +8,7 @@ Monorepo for the My Recipes MVP.
 - `apps/api`: Fastify backend
 - `packages/shared`: shared types and contracts
 - `docs`: product and architecture docs
+  - includes recipe schema, ingestion flow, design notes, and AI eval guidance
 - `prisma`: database schema and migrations
 - `infra`: local infrastructure setup
 

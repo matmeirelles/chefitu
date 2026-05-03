@@ -1,5 +1,39 @@
 export const appName = "my-recipes";
 
+export const RECIPE_TAGS = [
+  "Rápido",
+  "Fácil",
+  "Poucos Ingredientes",
+  "Sem Forno",
+  "Uma Panela",
+  "Vegano",
+  "Vegetariano",
+  "Sem Glúten",
+  "Sem Lactose",
+  "Low Carb",
+  "Alto Proteico",
+  "Assado",
+  "Grelhado",
+  "Frito",
+  "Cru",
+  "Fermentado",
+  "Fitness",
+  "Comfort Food",
+  "Infantil",
+  "Festa",
+  "Marmita",
+  "Frango",
+  "Carne Vermelha",
+  "Peixe",
+  "Ovo",
+  "Massa",
+  "Arroz",
+  "Legumes",
+  "Chilli"
+] as const;
+
+export type RecipeTag = (typeof RECIPE_TAGS)[number];
+
 export const RECIPE_CATEGORIES = [
   "Café da manhã",
   "Almoço",
@@ -27,6 +61,8 @@ export const RECIPE_CUISINES = [
   "Alemã",
   "Carnes",
   "Outro",
+  "Aperitivos",
+  "Doces"
 ] as const;
 
 export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
@@ -60,8 +96,6 @@ export type RecipeRecord = {
   cuisine?: string | null;
   ingredients: RecipeIngredient[];
   steps: RecipeStep[];
-  prepTimeMinutes?: number | null;
-  cookTimeMinutes?: number | null;
   totalTimeMinutes?: number | null;
   servings?: string | null;
   tags: string[];

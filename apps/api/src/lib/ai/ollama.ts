@@ -9,7 +9,8 @@ type OllamaGenerateResponse = {
 
 export class OllamaProvider implements AIProvider {
   private model = process.env.AI_MODEL ?? "llama3.1:8b";
-  private baseUrl = process.env.OLLAMA_BASE_URL ?? "http://127.0.0.1:11434";
+  private baseUrl =
+    process.env.OLLAMA_BASE_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:11434";
   private apiKey = process.env.OLLAMA_API_KEY;
 
   async extractRecipe(description: string): Promise<AIExtractionResult> {
@@ -17,7 +18,12 @@ export class OllamaProvider implements AIProvider {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(this.apiKey ? { Authorization: `Bearer ${this.apiKey}` } : {}),
+        ...(this.apiKey
+          ? {
+              Authorization: `Bearer ${this.apiKey}`,
+              "X-Api-Key": this.apiKey,
+            }
+          : {}),
       },
       body: JSON.stringify({
         model: this.model,

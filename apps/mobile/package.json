@@ -8,6 +8,7 @@
     "dev": "expo start",
     "lint": "tsc -p tsconfig.json --noEmit",
     "test": "node --test --import tsx src/**/*.test.ts",
+    "test:watch": "node --test --watch --import tsx src/**/*.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
