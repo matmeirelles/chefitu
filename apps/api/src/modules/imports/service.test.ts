@@ -1,4 +1,4 @@
-import test, { type TestContext } from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { db } from "../../lib/db.js";
 import {
@@ -7,19 +7,7 @@ import {
   listInboxImports,
   retryImport,
 } from "./service.js";
-
-const stubMethod = (
-  t: TestContext,
-  target: object,
-  methodName: string,
-  implementation: unknown,
-) => {
-  const previous = (target as Record<string, unknown>)[methodName];
-  (target as Record<string, unknown>)[methodName] = implementation;
-  t.after(() => {
-    (target as Record<string, unknown>)[methodName] = previous;
-  });
-};
+import { stubMethod } from "../../test/helpers.js";
 
 test("listInboxImports maps rows into import list items", async (t) => {
   stubMethod(t, db.import, "findMany", async () => [

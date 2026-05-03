@@ -1,0 +1,13 @@
+**/.git
+**/.DS_Store
+**/node_modules
+**/.env
+**/.env.*
+.turbo
+.claude
+docs
+infra
+apps/mobile/android
+apps/mobile/ios
+apps/mobile/.expo
+apps/api/evals/results

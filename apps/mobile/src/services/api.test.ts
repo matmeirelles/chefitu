@@ -82,6 +82,15 @@ test("request returns parsed JSON on a successful response", async () => {
   assert.deepEqual(result, payload);
 });
 
+test("fetchRecipeById returns the recipe on a successful response", async () => {
+  const payload = { item: { id: "rec_1", title: "Banana Oat Pancakes" } };
+  mockFetch(200, payload);
+
+  const result = await fetchRecipeById("rec_1");
+
+  assert.deepEqual(result, payload);
+});
+
 test("fetchImports returns parsed JSON on a successful response", async () => {
   const payload = { items: [{ id: "imp_1", status: "processing" }] };
   mockFetch(200, payload);

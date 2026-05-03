@@ -6,8 +6,12 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "node --watch --import tsx src/index.ts",
+    "eval:recipes": "node --import tsx evals/scripts/run-recipe-extraction-evals.ts",
+    "eval:try": "node --import tsx evals/scripts/try-url.ts",
+    "eval:watch": "node --import tsx evals/scripts/watch-prompt.ts",
     "lint": "tsc -p tsconfig.json --noEmit",
     "test": "node --test --import tsx \"src/**/*.test.ts\"",
+    "test:watch": "node --test --watch --import tsx \"src/**/*.test.ts\"",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

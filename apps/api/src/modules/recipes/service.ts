@@ -10,8 +10,6 @@ const toRecipeRecord = (row: {
   cuisine: string | null;
   ingredients: unknown;
   steps: unknown;
-  prepTimeMinutes: number | null;
-  cookTimeMinutes: number | null;
   totalTimeMinutes: number | null;
   servings: string | null;
   tags: string[];
@@ -26,8 +24,6 @@ const toRecipeRecord = (row: {
   cuisine: row.cuisine,
   ingredients: row.ingredients as RecipeRecord["ingredients"],
   steps: row.steps as RecipeRecord["steps"],
-  prepTimeMinutes: row.prepTimeMinutes,
-  cookTimeMinutes: row.cookTimeMinutes,
   totalTimeMinutes: row.totalTimeMinutes,
   servings: row.servings,
   tags: row.tags,

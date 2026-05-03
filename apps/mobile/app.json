@@ -3,6 +3,9 @@
     "name": "My Recipes",
     "slug": "my-recipes",
     "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "splash": {
@@ -13,11 +16,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.mateusmeirelles.myrecipes"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#f4efe6"
+      },
+      "package": "com.mateusmeirelles.myrecipes"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
       }
     }
   }

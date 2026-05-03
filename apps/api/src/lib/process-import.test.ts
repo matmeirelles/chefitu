@@ -1,28 +1,11 @@
-import test, { type TestContext } from "node:test";
+import test from "node:test";
 import assert from "node:assert/strict";
 import { db } from "./db.js";
 import { processImport } from "./process-import.js";
 import { aiProviderFactory } from "./ai/index.js";
 import { instagramFetcher } from "./fetch-instagram.js";
 import type { AIProvider } from "./ai/types.js";
-
-const stubMethod = (
-  t: TestContext,
-  target: object,
-  methodName: string,
-  implementation: unknown,
-) => {
-  const previous = (target as Record<string, unknown>)[methodName];
-  (target as Record<string, unknown>)[methodName] = implementation;
-  t.after(() => {
-    (target as Record<string, unknown>)[methodName] = previous;
-  });
-};
-
-const stubSilentConsole = (t: TestContext) => {
-  stubMethod(t, console, "log", () => undefined);
-  stubMethod(t, console, "error", () => undefined);
-};
+import { stubMethod, stubSilentConsole } from "../test/helpers.js";
 
 test("processImport returns early when the import record does not exist", async (t) => {
   stubSilentConsole(t);
@@ -104,6 +87,11 @@ test("processImport logs usage and marks no_recipe_in_description when AI finds 
     rawDescription: "just a caption without a recipe",
     coverImageUrl: "https://image.example/cover.jpg",
   }) as never);
+  let nowCallCount = 0;
+  stubMethod(t, Date, "now", () => {
+    nowCallCount += 1;
+    return nowCallCount === 1 ? 1000 : 1123;
+  });
   stubMethod(t, aiProviderFactory, "getAIProvider", () => provider);
   stubMethod(t, db.import, "update", async ({ where, data }: { where: any; data: any }) => {
     updateCalls.push({ where, data });
@@ -124,6 +112,7 @@ test("processImport logs usage and marks no_recipe_in_description when AI finds 
     model: "llama3.1:8b",
     inputTokens: 111,
     outputTokens: 22,
+    responseTimeMs: 123,
     finalResponse: { noRecipe: true },
   });
   assert.deepEqual(updateCalls.at(-1), {
@@ -172,6 +161,11 @@ test("processImport saves the recipe, logs usage, and marks the import as ready"
     rawDescription: "200g pasta. Cook pasta. Serves 2.",
     coverImageUrl: "https://image.example/pasta.jpg",
   }) as never);
+  let nowCallCount = 0;
+  stubMethod(t, Date, "now", () => {
+    nowCallCount += 1;
+    return nowCallCount === 1 ? 2000 : 2450;
+  });
   stubMethod(t, aiProviderFactory, "getAIProvider", () => provider);
   stubMethod(t, db.import, "update", async ({ where, data }: { where: any; data: any }) => {
     updateCalls.push({ where, data });
@@ -189,6 +183,27 @@ test("processImport saves the recipe, logs usage, and marks the import as ready"
   await processImport("imp_3");
 
   assert.equal(aiLogCalls.length, 1);
+  assert.deepEqual(aiLogCalls[0]!.data, {
+    importId: "imp_3",
+    description: "https://instagram.com/p/3",
+    provider: "ollama",
+    model: "llama3.1:8b",
+    inputTokens: 140,
+    outputTokens: 55,
+    responseTimeMs: 450,
+    finalResponse: {
+      title: "Garlic Pasta",
+      category: "Main",
+      cuisine: "Italian",
+      ingredients: [{ amount: "200", unit: "g", item: "pasta" }],
+      steps: [{ order: 1, instruction: "Cook pasta." }],
+      prepTimeMinutes: 5,
+      cookTimeMinutes: 10,
+      totalTimeMinutes: 15,
+      servings: "2 servings",
+      tags: ["Quick"],
+    },
+  });
   assert.equal(recipeCreateCalls.length, 1);
   assert.deepEqual(recipeCreateCalls[0]!.data, {
     importId: "imp_3",
