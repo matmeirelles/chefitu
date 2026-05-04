@@ -1,0 +1,287 @@
+[
+  {
+    "id": "adj_001_halve_macarronada",
+    "description": "Reduzir receita pela metade deve dividir os amounts dos ingredientes por 2 e atualizar porções. Título, categoria, passos e tags não devem mudar.",
+    "request": "Reduzir receita pela metade",
+    "history": [],
+    "baseRecipe": {
+      "title": "Macarrão à Bolonhesa",
+      "category": "Almoço",
+      "cuisine": "Italiana",
+      "ingredients": [
+        { "amount": "400", "unit": "g", "item": "Macarrão espaguete" },
+        { "amount": "500", "unit": "g", "item": "Carne moída" },
+        { "amount": "400", "unit": "g", "item": "Molho de tomate" },
+        { "amount": "1", "unit": "unidade", "item": "Cebola" },
+        { "amount": "3", "unit": "dente", "item": "Alho" },
+        { "amount": "2", "unit": "colher de sopa", "item": "Azeite" }
+      ],
+      "steps": [
+        { "order": 1, "title": "Refogar", "instruction": "Aqueça o azeite e refogue a cebola e o alho até dourar." },
+        { "order": 2, "title": "Cozinhar a carne", "instruction": "Adicione a carne moída e cozinhe até perder a cor rosada." },
+        { "order": 3, "title": "Adicionar molho", "instruction": "Junte o molho de tomate, tempere com sal e pimenta e cozinhe por 20 minutos." },
+        { "order": 4, "title": "Cozinhar massa", "instruction": "Cozinhe o macarrão conforme as instruções da embalagem. Escorra e sirva com o molho." }
+      ],
+      "totalTimeMinutes": 40,
+      "servings": "4 porções",
+      "tags": ["Massa", "Carne Vermelha"],
+      "coverImageUrl": null
+    },
+    "checks": {
+      "fieldsUnchanged": ["title", "category", "cuisine", "tags"],
+      "stepsUnchanged": true,
+      "ingredientsMultipliedBy": 0.5,
+      "ingredientsToCheck": ["Macarrão espaguete", "Carne moída", "Molho de tomate"],
+      "servingsHalved": true
+    }
+  },
+  {
+    "id": "adj_002_reduce_sugar_bolo",
+    "description": "Reduzir açúcar num bolo. Apenas o amount do açúcar deve diminuir. Outros ingredientes, passos e metadados devem permanecer iguais.",
+    "request": "Reduzir o açúcar",
+    "history": [],
+    "baseRecipe": {
+      "title": "Bolo de Cenoura",
+      "category": "Sobremesa",
+      "cuisine": "Brasileira",
+      "ingredients": [
+        { "amount": "3", "unit": "unidade", "item": "Cenoura" },
+        { "amount": "3", "unit": "unidade", "item": "Ovo" },
+        { "amount": "1", "unit": "xícara", "item": "Óleo" },
+        { "amount": "2", "unit": "xícara", "item": "Açúcar" },
+        { "amount": "2", "unit": "xícara", "item": "Farinha de trigo" },
+        { "amount": "1", "unit": "colher de sopa", "item": "Fermento em pó" }
+      ],
+      "steps": [
+        { "order": 1, "title": "Bater no liquidificador", "instruction": "Bata as cenouras, ovos e óleo no liquidificador até ficar homogêneo." },
+        { "order": 2, "title": "Misturar secos", "instruction": "Misture a farinha, o açúcar e o fermento. Adicione a mistura do liquidificador e mexa bem." },
+        { "order": 3, "title": "Assar", "instruction": "Despeje em forma untada e asse a 180°C por 35 minutos ou até palito sair limpo." }
+      ],
+      "totalTimeMinutes": 50,
+      "servings": "8 fatias",
+      "tags": ["Assado", "Fácil"],
+      "coverImageUrl": null
+    },
+    "checks": {
+      "fieldsUnchanged": ["title", "category", "cuisine", "tags"],
+      "stepsUnchanged": true,
+      "ingredientAmountReduced": { "item": "Açúcar", "mustBeLessThan": "2 xícara" },
+      "ingredientsOtherUnchanged": ["Cenoura", "Ovo", "Óleo", "Farinha de trigo", "Fermento em pó"]
+    }
+  },
+  {
+    "id": "adj_003_missing_creme_de_leite",
+    "description": "Substituição de ingrediente que o usuário não tem. O creme de leite deve ser substituído por um equivalente. Outros ingredientes e passos devem permanecer.",
+    "request": "Não tenho creme de leite em casa, o que posso usar no lugar?",
+    "history": [],
+    "baseRecipe": {
+      "title": "Frango ao Creme",
+      "category": "Almoço",
+      "cuisine": "Brasileira",
+      "ingredients": [
+        { "amount": "600", "unit": "g", "item": "Peito de frango" },
+        { "amount": "1", "unit": "caixa", "item": "Creme de leite" },
+        { "amount": "1", "unit": "unidade", "item": "Cebola" },
+        { "amount": "2", "unit": "dente", "item": "Alho" },
+        { "amount": "2", "unit": "colher de sopa", "item": "Manteiga" },
+        { "item": "Sal" },
+        { "item": "Pimenta-do-reino" }
+      ],
+      "steps": [
+        { "order": 1, "title": "Temperar frango", "instruction": "Tempere o frango com sal, pimenta e alho amassado." },
+        { "order": 2, "title": "Selar", "instruction": "Derreta a manteiga e sele o frango dos dois lados até dourar. Reserve." },
+        { "order": 3, "title": "Fazer o molho", "instruction": "Refogue a cebola na mesma panela, adicione o creme de leite e mexa. Volte o frango e cozinhe por 10 minutos." }
+      ],
+      "totalTimeMinutes": 35,
+      "servings": "3 porções",
+      "tags": ["Frango", "Fácil"],
+      "coverImageUrl": null
+    },
+    "checks": {
+      "fieldsUnchanged": ["title", "category", "cuisine", "tags"],
+      "ingredientRemoved": "Creme de leite",
+      "ingredientAddedOrSubstituted": true,
+      "otherIngredientsUnchanged": ["Peito de frango", "Cebola", "Alho", "Manteiga"]
+    }
+  },
+  {
+    "id": "adj_004_make_healthier_massa",
+    "description": "Tornar mais saudável. A IA deve substituir ou reduzir ingredientes calóricos (queijo, manteiga, creme) por alternativas mais leves. Estrutura geral deve ser preservada.",
+    "request": "Tornar mais saudável",
+    "history": [],
+    "baseRecipe": {
+      "title": "Macarrão Alfredo",
+      "category": "Almoço",
+      "cuisine": "Italiana",
+      "ingredients": [
+        { "amount": "400", "unit": "g", "item": "Macarrão fettuccine" },
+        { "amount": "200", "unit": "ml", "item": "Creme de leite" },
+        { "amount": "100", "unit": "g", "item": "Queijo parmesão ralado" },
+        { "amount": "50", "unit": "g", "item": "Manteiga" },
+        { "item": "Sal" },
+        { "item": "Noz-moscada" }
+      ],
+      "steps": [
+        { "order": 1, "title": "Cozinhar a massa", "instruction": "Cozinhe o fettuccine em água salgada até ficar al dente. Reserve 1 copo da água do cozimento." },
+        { "order": 2, "title": "Preparar o molho", "instruction": "Derreta a manteiga em fogo baixo, adicione o creme de leite e o queijo. Mexa até engrossar." },
+        { "order": 3, "title": "Finalizar", "instruction": "Misture a massa ao molho, ajuste a consistência com a água do cozimento. Tempere com sal e noz-moscada." }
+      ],
+      "totalTimeMinutes": 25,
+      "servings": "3 porções",
+      "tags": ["Massa", "Comfort Food"],
+      "coverImageUrl": null
+    },
+    "checks": {
+      "fieldsUnchanged": ["category", "cuisine"],
+      "stepsUnchanged": false,
+      "atLeastOneIngredientChanged": true,
+      "judgePrompt": "A receita ajustada é objetivamente mais saudável que a original? O creme de leite, a manteiga ou o queijo foram reduzidos ou substituídos por alternativas mais leves?"
+    }
+  },
+  {
+    "id": "adj_005_double_servings",
+    "description": "Duplicar a receita para mais pessoas. Todos os amounts devem ser multiplicados por 2 e as porções atualizadas.",
+    "request": "Quero fazer para 8 pessoas ao invés de 4",
+    "history": [],
+    "baseRecipe": {
+      "title": "Arroz de Forno",
+      "category": "Almoço",
+      "cuisine": "Brasileira",
+      "ingredients": [
+        { "amount": "2", "unit": "xícara", "item": "Arroz" },
+        { "amount": "200", "unit": "g", "item": "Queijo mussarela" },
+        { "amount": "200", "unit": "g", "item": "Presunto fatiado" },
+        { "amount": "1", "unit": "caixa", "item": "Creme de leite" },
+        { "amount": "1", "unit": "lata", "item": "Milho verde" },
+        { "amount": "1", "unit": "lata", "item": "Ervilha" }
+      ],
+      "steps": [
+        { "order": 1, "title": "Cozinhar arroz", "instruction": "Cozinhe o arroz normalmente e reserve." },
+        { "order": 2, "title": "Montar", "instruction": "Misture o arroz com o creme de leite, milho e ervilha. Monte camadas em refratário com arroz, presunto e queijo." },
+        { "order": 3, "title": "Gratinar", "instruction": "Leve ao forno a 200°C por 20 minutos ou até o queijo dourar." }
+      ],
+      "totalTimeMinutes": 45,
+      "servings": "4 porções",
+      "tags": ["Assado", "Marmita"],
+      "coverImageUrl": null
+    },
+    "checks": {
+      "fieldsUnchanged": ["title", "category", "cuisine", "tags"],
+      "stepsUnchanged": true,
+      "ingredientsMultipliedBy": 2,
+      "ingredientsToCheck": ["Arroz", "Queijo mussarela", "Presunto fatiado"],
+      "servingsDoubled": true
+    }
+  },
+  {
+    "id": "adj_006_remove_gluten",
+    "description": "Remover glúten: o macarrão de trigo deve ser substituído por versão sem glúten. Outros ingredientes não devem mudar.",
+    "request": "Preciso tirar o glúten da receita",
+    "history": [],
+    "baseRecipe": {
+      "title": "Macarrão à Bolonhesa",
+      "category": "Almoço",
+      "cuisine": "Italiana",
+      "ingredients": [
+        { "amount": "400", "unit": "g", "item": "Macarrão espaguete" },
+        { "amount": "500", "unit": "g", "item": "Carne moída" },
+        { "amount": "400", "unit": "g", "item": "Molho de tomate" },
+        { "amount": "1", "unit": "unidade", "item": "Cebola" },
+        { "amount": "3", "unit": "dente", "item": "Alho" },
+        { "amount": "2", "unit": "colher de sopa", "item": "Azeite" }
+      ],
+      "steps": [
+        { "order": 1, "title": "Refogar", "instruction": "Aqueça o azeite e refogue a cebola e o alho até dourar." },
+        { "order": 2, "title": "Cozinhar a carne", "instruction": "Adicione a carne moída e cozinhe até perder a cor rosada." },
+        { "order": 3, "title": "Adicionar molho", "instruction": "Junte o molho de tomate, tempere com sal e pimenta e cozinhe por 20 minutos." },
+        { "order": 4, "title": "Cozinhar massa", "instruction": "Cozinhe o macarrão conforme as instruções da embalagem. Escorra e sirva com o molho." }
+      ],
+      "totalTimeMinutes": 40,
+      "servings": "4 porções",
+      "tags": ["Massa", "Carne Vermelha"],
+      "coverImageUrl": null
+    },
+    "checks": {
+      "fieldsUnchanged": ["title", "category", "cuisine"],
+      "stepsUnchanged": true,
+      "ingredientSubstituted": { "from": "Macarrão espaguete", "shouldContain": "gluten" },
+      "otherIngredientsUnchanged": ["Carne moída", "Molho de tomate", "Cebola", "Alho", "Azeite"]
+    }
+  },
+  {
+    "id": "adj_007_multiturn_halve_then_remove_sugar",
+    "description": "Multi-turn: primeiro reduz pela metade (turn 1), depois remove o açúcar (turn 2). O resultado final deve ter amounts pela metade E sem açúcar.",
+    "request": "Agora remova o açúcar completamente",
+    "history": [
+      {
+        "role": "user",
+        "content": "Receita atual:\n{\n  \"title\": \"Bolo de Cenoura\",\n  \"category\": \"Sobremesa\",\n  \"cuisine\": \"Brasileira\",\n  \"ingredients\": [\n    { \"amount\": \"3\", \"unit\": \"unidade\", \"item\": \"Cenoura\" },\n    { \"amount\": \"3\", \"unit\": \"unidade\", \"item\": \"Ovo\" },\n    { \"amount\": \"1\", \"unit\": \"xícara\", \"item\": \"Óleo\" },\n    { \"amount\": \"2\", \"unit\": \"xícara\", \"item\": \"Açúcar\" },\n    { \"amount\": \"2\", \"unit\": \"xícara\", \"item\": \"Farinha de trigo\" },\n    { \"amount\": \"1\", \"unit\": \"colher de sopa\", \"item\": \"Fermento em pó\" }\n  ],\n  \"steps\": [\n    { \"order\": 1, \"title\": \"Bater no liquidificador\", \"instruction\": \"Bata as cenouras, ovos e óleo no liquidificador até ficar homogêneo.\" },\n    { \"order\": 2, \"title\": \"Misturar secos\", \"instruction\": \"Misture a farinha, o açúcar e o fermento. Adicione a mistura do liquidificador e mexa bem.\" },\n    { \"order\": 3, \"title\": \"Assar\", \"instruction\": \"Despeje em forma untada e asse a 180°C por 35 minutos ou até palito sair limpo.\" }\n  ],\n  \"totalTimeMinutes\": 50,\n  \"servings\": \"8 fatias\",\n  \"tags\": [\"Assado\", \"Fácil\"],\n  \"coverImageUrl\": null\n}\n\nPedido: Reduzir receita pela metade"
+      },
+      {
+        "role": "assistant",
+        "content": "{\"title\":\"Bolo de Cenoura\",\"category\":\"Sobremesa\",\"cuisine\":\"Brasileira\",\"coverImageUrl\":null,\"ingredients\":[{\"amount\":\"2\",\"unit\":\"unidade\",\"item\":\"Cenoura\"},{\"amount\":\"2\",\"unit\":\"unidade\",\"item\":\"Ovo\"},{\"amount\":\"1/2\",\"unit\":\"xícara\",\"item\":\"Óleo\"},{\"amount\":\"1\",\"unit\":\"xícara\",\"item\":\"Açúcar\"},{\"amount\":\"1\",\"unit\":\"xícara\",\"item\":\"Farinha de trigo\"},{\"amount\":\"1/2\",\"unit\":\"colher de sopa\",\"item\":\"Fermento em pó\"}],\"steps\":[{\"order\":1,\"title\":\"Bater no liquidificador\",\"instruction\":\"Bata as cenouras, ovos e óleo no liquidificador até ficar homogêneo.\"},{\"order\":2,\"title\":\"Misturar secos\",\"instruction\":\"Misture a farinha, o açúcar e o fermento. Adicione a mistura do liquidificador e mexa bem.\"},{\"order\":3,\"title\":\"Assar\",\"instruction\":\"Despeje em forma untada e asse a 180°C por 35 minutos ou até palito sair limpo.\"}],\"totalTimeMinutes\":25,\"servings\":\"4 fatias\",\"tags\":[\"Assado\",\"Fácil\"]}"
+      }
+    ],
+    "baseRecipe": {
+      "title": "Bolo de Cenoura",
+      "category": "Sobremesa",
+      "cuisine": "Brasileira",
+      "ingredients": [
+        { "amount": "3", "unit": "unidade", "item": "Cenoura" },
+        { "amount": "3", "unit": "unidade", "item": "Ovo" },
+        { "amount": "1", "unit": "xícara", "item": "Óleo" },
+        { "amount": "2", "unit": "xícara", "item": "Açúcar" },
+        { "amount": "2", "unit": "xícara", "item": "Farinha de trigo" },
+        { "amount": "1", "unit": "colher de sopa", "item": "Fermento em pó" }
+      ],
+      "steps": [
+        { "order": 1, "title": "Bater no liquidificador", "instruction": "Bata as cenouras, ovos e óleo no liquidificador até ficar homogêneo." },
+        { "order": 2, "title": "Misturar secos", "instruction": "Misture a farinha, o açúcar e o fermento. Adicione a mistura do liquidificador e mexa bem." },
+        { "order": 3, "title": "Assar", "instruction": "Despeje em forma untada e asse a 180°C por 35 minutos ou até palito sair limpo." }
+      ],
+      "totalTimeMinutes": 50,
+      "servings": "8 fatias",
+      "tags": ["Assado", "Fácil"],
+      "coverImageUrl": null
+    },
+    "checks": {
+      "fieldsUnchanged": ["title", "category", "cuisine", "tags"],
+      "ingredientRemoved": "Açúcar",
+      "ingredientsOtherHalved": ["Cenoura", "Ovo", "Óleo", "Farinha de trigo", "Fermento em pó"],
+      "servingsHalved": true,
+      "note": "A IA deve acumular os dois ajustes: amounts pela metade (do turn 1) + sem açúcar (turn 2)"
+    }
+  },
+  {
+    "id": "adj_008_no_change_unrelated",
+    "description": "Pedido que não se aplica à receita (remover peixe de uma receita sem peixe). A IA deve retornar a receita inalterada ou informar que o ingrediente não existe.",
+    "request": "Remover o peixe da receita",
+    "history": [],
+    "baseRecipe": {
+      "title": "Macarrão à Bolonhesa",
+      "category": "Almoço",
+      "cuisine": "Italiana",
+      "ingredients": [
+        { "amount": "400", "unit": "g", "item": "Macarrão espaguete" },
+        { "amount": "500", "unit": "g", "item": "Carne moída" },
+        { "amount": "400", "unit": "g", "item": "Molho de tomate" },
+        { "amount": "1", "unit": "unidade", "item": "Cebola" }
+      ],
+      "steps": [
+        { "order": 1, "title": "Refogar", "instruction": "Refogue a cebola até dourar." },
+        { "order": 2, "title": "Cozinhar", "instruction": "Adicione a carne e o molho. Cozinhe por 20 minutos." },
+        { "order": 3, "title": "Servir", "instruction": "Sirva com o macarrão cozido." }
+      ],
+      "totalTimeMinutes": 40,
+      "servings": "4 porções",
+      "tags": ["Massa", "Carne Vermelha"],
+      "coverImageUrl": null
+    },
+    "checks": {
+      "fieldsUnchanged": ["title", "category", "cuisine", "tags", "totalTimeMinutes", "servings"],
+      "ingredientsUnchanged": true,
+      "stepsUnchanged": true,
+      "note": "Receita deve ser retornada idêntica pois o ingrediente pedido não existe"
+    }
+  }
+]

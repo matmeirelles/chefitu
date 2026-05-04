@@ -1,6 +1,9 @@
 import { appName } from "@my-recipes/shared";
 import { buildApp } from "./app.js";
+import { loadRootEnv } from "./lib/load-root-env.js";
 import { startProcessingWatchdog } from "./lib/processing-watchdog.js";
+
+loadRootEnv();
 
 const port = Number(process.env.PORT ?? 3333);
 const host = process.env.HOST ?? "0.0.0.0";

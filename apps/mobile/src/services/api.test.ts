@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  adjustRecipe,
   ApiError,
   createImport,
   deleteImport,
@@ -215,6 +216,53 @@ test("deleteRecipe throws ApiError on failure", async () => {
     (err) => {
       assert.ok(err instanceof ApiError);
       assert.equal(err.message, "Failed to delete recipe.");
+      return true;
+    },
+  );
+});
+
+test("adjustRecipe sends a POST request and returns response payload", async () => {
+  let input: unknown;
+  let init: RequestInit | undefined;
+  const payload = {
+    kind: "message",
+    message: "Quer que eu remova o glúten?",
+  };
+  globalThis.fetch = async (url, options) => {
+    input = url;
+    init = options;
+    return new Response(JSON.stringify(payload), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  };
+
+  const result = await adjustRecipe("rec_1", "session_abc", [
+    { role: "user", content: "Remova glúten" },
+  ]);
+
+  assert.equal(input, "http://127.0.0.1:3333/recipes/rec_1/adjust");
+  assert.equal(init?.method, "POST");
+  assert.equal(init?.headers && (init.headers as Record<string, string>)["Content-Type"], "application/json");
+  assert.equal(
+    init?.body,
+    JSON.stringify({
+      sessionId: "session_abc",
+      messages: [{ role: "user", content: "Remova glúten" }],
+    }),
+  );
+  assert.deepEqual(result, payload);
+});
+
+test("adjustRecipe throws ApiError combining message and detail from API", async () => {
+  mockFetch(500, { message: "AI adjustment failed.", detail: "timeout from provider" });
+
+  await assert.rejects(
+    () => adjustRecipe("rec_1", "session_abc", [{ role: "user", content: "Teste" }]),
+    (err) => {
+      assert.ok(err instanceof ApiError);
+      assert.equal(err.statusCode, 500);
+      assert.equal(err.message, "AI adjustment failed. — timeout from provider");
       return true;
     },
   );

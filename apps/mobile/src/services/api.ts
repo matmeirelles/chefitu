@@ -1,7 +1,14 @@
 import type {
+  AdjustRecipeRequest,
+  AdjustRecipeResponse,
+  ChatMessage,
+  CreateAdjustedRecipeRequest,
+  CreateAdjustedRecipeResponse,
   GetRecipeResponse,
   ListImportsResponse,
   ListRecipesResponse,
+  RecipeRecord,
+  UpdateRecipeRequest,
 } from "@my-recipes/shared";
 
 const baseUrl =
@@ -71,4 +78,53 @@ export const fetchRecipeById = async (
 export const deleteRecipe = async (recipeId: string): Promise<void> => {
   const response = await fetch(`${baseUrl}/recipes/${recipeId}`, { method: "DELETE" });
   if (!response.ok) throw new ApiError("Failed to delete recipe.", response.status);
+};
+
+export const adjustRecipe = async (
+  recipeId: string,
+  sessionId: string,
+  messages: ChatMessage[],
+): Promise<AdjustRecipeResponse> => {
+  const body: AdjustRecipeRequest = { sessionId, messages };
+  const response = await fetch(`${baseUrl}/recipes/${recipeId}/adjust`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    let detail = `HTTP ${response.status}`;
+    try {
+      const json = (await response.json()) as { message?: string; detail?: string };
+      detail = [json.message, json.detail].filter(Boolean).join(" — ") || detail;
+    } catch {}
+    throw new ApiError(detail, response.status);
+  }
+  return (await response.json()) as AdjustRecipeResponse;
+};
+
+export const updateRecipe = async (
+  recipeId: string,
+  data: UpdateRecipeRequest,
+): Promise<RecipeRecord> => {
+  const response = await fetch(`${baseUrl}/recipes/${recipeId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new ApiError("Failed to update recipe.", response.status);
+  const json = (await response.json()) as { item: RecipeRecord };
+  return json.item;
+};
+
+export const saveNewRecipe = async (
+  data: CreateAdjustedRecipeRequest,
+): Promise<RecipeRecord> => {
+  const response = await fetch(`${baseUrl}/recipes`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new ApiError("Failed to save recipe.", response.status);
+  const json = (await response.json()) as CreateAdjustedRecipeResponse;
+  return json.item;
 };

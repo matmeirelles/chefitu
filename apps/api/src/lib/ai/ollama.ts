@@ -1,5 +1,5 @@
-import type { AIExtractionResult, AIProvider, ExtractedRecipe } from "./types.js";
-import { EXTRACTION_SYSTEM_PROMPT } from "./prompt.js";
+import type { AIAdjustmentResult, AIExtractionResult, AIProvider, ChatMessage, ExtractedRecipe } from "./types.js";
+import { EXTRACTION_SYSTEM_PROMPT } from "./extractionPrompt.js";
 
 type OllamaGenerateResponse = {
   response?: string;
@@ -54,5 +54,9 @@ export class OllamaProvider implements AIProvider {
         rawResponse: raw,
       },
     };
+  }
+
+  async adjustRecipe(_messages: ChatMessage[]): Promise<AIAdjustmentResult> {
+    throw new Error("Recipe adjustment is not supported by the Ollama provider.");
   }
 }

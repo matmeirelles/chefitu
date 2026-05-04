@@ -130,3 +130,45 @@ export type ListRecipesResponse = {
 export type GetRecipeResponse = {
   item: RecipeRecord;
 };
+
+export type ChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type AdjustRecipeRequest = {
+  sessionId: string;
+  messages: ChatMessage[];
+};
+
+export type AdjustRecipeResponse =
+  | { kind: "message"; message: string }
+  | { kind: "adjustment"; adjustedRecipe: RecipeRecord };
+
+export type UpdateRecipeRequest = {
+  title: string;
+  category?: string | null;
+  cuisine?: string | null;
+  ingredients: RecipeIngredient[];
+  steps: RecipeStep[];
+  totalTimeMinutes?: number | null;
+  servings?: string | null;
+  tags: string[];
+};
+
+export type CreateAdjustedRecipeRequest = {
+  sourceRecipeId: string;
+  title: string;
+  coverImageUrl?: string | null;
+  category?: string | null;
+  cuisine?: string | null;
+  ingredients: RecipeIngredient[];
+  steps: RecipeStep[];
+  totalTimeMinutes?: number | null;
+  servings?: string | null;
+  tags: string[];
+};
+
+export type CreateAdjustedRecipeResponse = {
+  item: RecipeRecord;
+};

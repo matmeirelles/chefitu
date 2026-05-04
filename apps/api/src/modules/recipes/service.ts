@@ -1,4 +1,4 @@
-import type { RecipeRecord } from "@my-recipes/shared";
+import type { CreateAdjustedRecipeRequest, RecipeRecord, UpdateRecipeRequest } from "@my-recipes/shared";
 import { db } from "../../lib/db.js";
 
 const toRecipeRecord = (row: {
@@ -49,4 +49,62 @@ export const deleteRecipe = async (recipeId: string): Promise<boolean> => {
   await db.recipe.delete({ where: { id: recipeId } });
   await db.import.delete({ where: { id: recipe.importId } });
   return true;
+};
+
+export const updateRecipe = async (
+  recipeId: string,
+  data: UpdateRecipeRequest,
+): Promise<RecipeRecord | null> => {
+  const recipe = await db.recipe.findUnique({ where: { id: recipeId } });
+  if (!recipe) return null;
+
+  const updated = await db.recipe.update({
+    where: { id: recipeId },
+    data: {
+      title: data.title,
+      category: data.category ?? null,
+      cuisine: data.cuisine ?? null,
+      ingredients: data.ingredients as never,
+      steps: data.steps as never,
+      totalTimeMinutes: data.totalTimeMinutes ?? null,
+      servings: data.servings ?? null,
+      tags: data.tags,
+    },
+  });
+
+  return toRecipeRecord(updated);
+};
+
+export const createAdjustedRecipe = async (
+  data: CreateAdjustedRecipeRequest,
+): Promise<RecipeRecord> => {
+  const newImport = await db.import.create({
+    data: {
+      sourcePlatform: "adjusted",
+      sourceUrl: `adjusted:${data.sourceRecipeId}`,
+      status: "ready",
+    },
+  });
+
+  const recipe = await db.recipe.create({
+    data: {
+      importId: newImport.id,
+      title: data.title,
+      coverImageUrl: data.coverImageUrl ?? null,
+      category: data.category ?? null,
+      cuisine: data.cuisine ?? null,
+      ingredients: data.ingredients as never,
+      steps: data.steps as never,
+      totalTimeMinutes: data.totalTimeMinutes ?? null,
+      servings: data.servings ?? null,
+      tags: data.tags,
+    },
+  });
+
+  await db.import.update({
+    where: { id: newImport.id },
+    data: { recipeId: recipe.id },
+  });
+
+  return toRecipeRecord(recipe);
 };

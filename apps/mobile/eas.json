@@ -14,13 +14,13 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://REPLACE_WITH_RAILWAY_URL"
+        "EXPO_PUBLIC_API_BASE_URL": "https://YOUR_API_HOST"
       }
     },
     "production": {
       "distribution": "store",
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://REPLACE_WITH_RAILWAY_URL"
+        "EXPO_PUBLIC_API_BASE_URL": "https://YOUR_API_HOST"
       }
     }
   },
