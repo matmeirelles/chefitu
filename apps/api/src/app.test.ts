@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { db } from "./lib/db.js";
 import { buildApp } from "./app.js";
+import { aiProviderFactory } from "./lib/ai/index.js";
 import { importProcessor } from "./lib/process-import.js";
 import { stubMethod } from "./test/helpers.js";
 
@@ -297,6 +298,279 @@ test("GET /recipes/:id returns 404 when the recipe does not exist", async (t) =>
   assert.deepEqual(response.json(), {
     message: "Recipe not found.",
   });
+
+  await app.close();
+});
+
+test("POST /recipes/:id/adjust returns the adjusted recipe and persists the adjustment log", async (t) => {
+  stubMethod(t, db.recipe, "findUnique", async () => ({
+    id: "rec_1",
+    importId: "imp_1",
+    title: "Banana Oat Pancakes",
+    coverImageUrl: null,
+    category: "Breakfast",
+    cuisine: "Healthy",
+    ingredients: [{ amount: "2", unit: null, item: "bananas" }],
+    steps: [{ order: 1, instruction: "Mix." }],
+    totalTimeMinutes: 15,
+    servings: "2 servings",
+    tags: ["Quick"],
+    createdAt: new Date("2026-04-30T10:00:00.000Z"),
+    updatedAt: new Date("2026-04-30T10:00:00.000Z"),
+  }) as never);
+
+  stubMethod(t, aiProviderFactory, "getAIProvider", () => ({
+    extractRecipe: async () => {
+      throw new Error("not used in this test");
+    },
+    adjustRecipe: async () => ({
+      kind: "adjustment" as const,
+      adjustedFields: {
+        title: "Banana Oat Pancakes Proteicas",
+        coverImageUrl: null,
+        category: "Breakfast",
+        cuisine: "Healthy",
+        ingredients: [{ amount: "2", unit: null, item: "bananas" }],
+        steps: [{ order: 1, instruction: "Mix." }],
+        totalTimeMinutes: 15,
+        servings: "2 servings",
+        tags: ["Quick"],
+      },
+      metadata: {
+        provider: "anthropic",
+        model: "claude-haiku-4-5",
+        inputTokens: 111,
+        outputTokens: 222,
+      },
+    }),
+  }));
+
+  let createdLog: Record<string, unknown> | undefined;
+  stubMethod(t, db.aIAdjustmentLog, "create", async ({ data }: { data: Record<string, unknown> }) => {
+    createdLog = data;
+    return {
+      id: "log_1",
+      createdAt: new Date("2026-05-04T15:00:00.000Z"),
+      ...data,
+    } as never;
+  });
+
+  const app = await buildApp();
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/recipes/rec_1/adjust",
+    payload: {
+      sessionId: "session_rec_1_abc123",
+      messages: [{ role: "user", content: "deixe mais proteica" }],
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(createdLog, {
+    sessionId: "session_rec_1_abc123",
+    recipeId: "rec_1",
+    provider: "anthropic",
+    model: "claude-haiku-4-5",
+    kind: "adjustment",
+    inputTokens: 111,
+    outputTokens: 222,
+    totalTokens: 333,
+    responseTimeMs: createdLog?.responseTimeMs,
+  });
+  assert.equal(typeof createdLog?.responseTimeMs, "number");
+
+  const body = response.json() as { kind: string; adjustedRecipe: { title: string; id: string } };
+  assert.equal(body.kind, "adjustment");
+  assert.equal(body.adjustedRecipe.id, "rec_1");
+  assert.equal(body.adjustedRecipe.title, "Banana Oat Pancakes Proteicas");
+
+  await app.close();
+});
+
+test("POST /recipes/:id/adjust returns 404 when recipe does not exist", async (t) => {
+  stubMethod(t, db.recipe, "findUnique", async () => null as never);
+  const app = await buildApp();
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/recipes/missing/adjust",
+    payload: {
+      sessionId: "session_missing",
+      messages: [{ role: "user", content: "reduzir pela metade" }],
+    },
+  });
+
+  assert.equal(response.statusCode, 404);
+  assert.deepEqual(response.json(), { message: "Recipe not found." });
+
+  await app.close();
+});
+
+test("POST /recipes/:id/adjust returns AI message response when provider returns kind=message", async (t) => {
+  stubMethod(t, db.recipe, "findUnique", async () => ({
+    id: "rec_1",
+    importId: "imp_1",
+    title: "Banana Oat Pancakes",
+    coverImageUrl: null,
+    category: "Breakfast",
+    cuisine: "Healthy",
+    ingredients: [{ amount: "2", unit: null, item: "bananas" }],
+    steps: [{ order: 1, instruction: "Mix." }],
+    totalTimeMinutes: 15,
+    servings: "2 servings",
+    tags: ["Quick"],
+    createdAt: new Date("2026-04-30T10:00:00.000Z"),
+    updatedAt: new Date("2026-04-30T10:00:00.000Z"),
+  }) as never);
+  stubMethod(t, aiProviderFactory, "getAIProvider", () => ({
+    extractRecipe: async () => {
+      throw new Error("not used in this test");
+    },
+    adjustRecipe: async () => ({
+      kind: "message" as const,
+      message: "Posso remover glúten, lactose ou ambos?",
+      metadata: {
+        provider: "anthropic",
+        model: "claude-haiku-4-5",
+        inputTokens: 10,
+        outputTokens: 8,
+      },
+    }),
+  }));
+  stubMethod(t, db.aIAdjustmentLog, "create", async ({ data }: { data: Record<string, unknown> }) => ({
+    id: "log_message_1",
+    createdAt: new Date("2026-05-04T15:00:00.000Z"),
+    ...data,
+  }) as never);
+  const app = await buildApp();
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/recipes/rec_1/adjust",
+    payload: {
+      sessionId: "session_rec_1_message",
+      messages: [{ role: "user", content: "não tenho queijo" }],
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(response.json(), {
+    kind: "message",
+    message: "Posso remover glúten, lactose ou ambos?",
+  });
+
+  await app.close();
+});
+
+test("POST /recipes/:id/adjust returns 500 when provider throws", async (t) => {
+  stubMethod(t, db.recipe, "findUnique", async () => ({
+    id: "rec_1",
+    importId: "imp_1",
+    title: "Banana Oat Pancakes",
+    coverImageUrl: null,
+    category: "Breakfast",
+    cuisine: "Healthy",
+    ingredients: [{ amount: "2", unit: null, item: "bananas" }],
+    steps: [{ order: 1, instruction: "Mix." }],
+    totalTimeMinutes: 15,
+    servings: "2 servings",
+    tags: ["Quick"],
+    createdAt: new Date("2026-04-30T10:00:00.000Z"),
+    updatedAt: new Date("2026-04-30T10:00:00.000Z"),
+  }) as never);
+  stubMethod(t, aiProviderFactory, "getAIProvider", () => ({
+    extractRecipe: async () => {
+      throw new Error("not used in this test");
+    },
+    adjustRecipe: async () => {
+      throw new Error("provider timeout");
+    },
+  }));
+  const app = await buildApp();
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/recipes/rec_1/adjust",
+    payload: {
+      sessionId: "session_rec_1_error",
+      messages: [{ role: "user", content: "reduzir açúcar" }],
+    },
+  });
+
+  assert.equal(response.statusCode, 500);
+  assert.deepEqual(response.json(), {
+    message: "AI adjustment failed.",
+    detail: "Error: provider timeout",
+  });
+
+  await app.close();
+});
+
+test("POST /recipes/:id/adjust uses fallback sessionId and still returns adjustment when log persistence fails", async (t) => {
+  stubMethod(t, db.recipe, "findUnique", async () => ({
+    id: "rec_1",
+    importId: "imp_1",
+    title: "Banana Oat Pancakes",
+    coverImageUrl: "https://img.local/original.jpg",
+    category: "Breakfast",
+    cuisine: "Healthy",
+    ingredients: [{ amount: "2", unit: null, item: "bananas" }],
+    steps: [{ order: 1, instruction: "Mix." }],
+    totalTimeMinutes: 15,
+    servings: "2 servings",
+    tags: ["Quick"],
+    createdAt: new Date("2026-04-30T10:00:00.000Z"),
+    updatedAt: new Date("2026-04-30T10:00:00.000Z"),
+  }) as never);
+  stubMethod(t, aiProviderFactory, "getAIProvider", () => ({
+    extractRecipe: async () => {
+      throw new Error("not used in this test");
+    },
+    adjustRecipe: async () => ({
+      kind: "adjustment" as const,
+      adjustedFields: {
+        title: "Banana Oat Pancakes sem açúcar",
+        coverImageUrl: null,
+        category: "Breakfast",
+        cuisine: "Healthy",
+        ingredients: [{ amount: "2", unit: null, item: "bananas" }],
+        steps: [{ order: 1, instruction: "Mix." }],
+        totalTimeMinutes: 15,
+        servings: "2 servings",
+        tags: ["Quick"],
+      },
+      metadata: {
+        provider: "anthropic",
+        model: "claude-haiku-4-5",
+        inputTokens: 90,
+        outputTokens: 60,
+      },
+    }),
+  }));
+
+  let capturedSessionId: string | undefined;
+  stubMethod(t, db.aIAdjustmentLog, "create", async ({ data }: { data: Record<string, unknown> }) => {
+    capturedSessionId = data.sessionId as string;
+    throw new Error("db unavailable");
+  });
+  const app = await buildApp();
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/recipes/rec_1/adjust",
+    payload: {
+      sessionId: "   ",
+      messages: [{ role: "user", content: "quero menos doce" }],
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.ok(capturedSessionId?.startsWith("fallback:rec_1:"));
+
+  const body = response.json() as { kind: string; adjustedRecipe: { coverImageUrl: string | null } };
+  assert.equal(body.kind, "adjustment");
+  assert.equal(body.adjustedRecipe.coverImageUrl, "https://img.local/original.jpg");
 
   await app.close();
 });

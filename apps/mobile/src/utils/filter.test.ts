@@ -12,8 +12,6 @@ const makeRecipe = (overrides: Partial<RecipeRecord> = {}): RecipeRecord => ({
   cuisine: "Italian",
   ingredients: [{ amount: "200", unit: "g", item: "pasta" }],
   steps: [{ order: 1, instruction: "Cook." }],
-  prepTimeMinutes: 5,
-  cookTimeMinutes: 10,
   totalTimeMinutes: 15,
   servings: "2 servings",
   tags: ["Quick"],

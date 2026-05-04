@@ -14,13 +14,13 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://REPLACE_WITH_RAILWAY_URL"
+        "EXPO_PUBLIC_API_BASE_URL": "https://api-production-423d.up.railway.app"
       }
     },
     "production": {
       "distribution": "store",
       "env": {
-        "EXPO_PUBLIC_API_BASE_URL": "https://REPLACE_WITH_RAILWAY_URL"
+        "EXPO_PUBLIC_API_BASE_URL": "https://api-production-423d.up.railway.app"
       }
     }
   },

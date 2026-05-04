@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "node --watch --import tsx src/index.ts",
+    "eval:adjustments": "node --import tsx evals/scripts/run-recipe-adjustment-evals.ts",
     "eval:recipes": "node --import tsx evals/scripts/run-recipe-extraction-evals.ts",
     "eval:try": "node --import tsx evals/scripts/try-url.ts",
     "eval:watch": "node --import tsx evals/scripts/watch-prompt.ts",
