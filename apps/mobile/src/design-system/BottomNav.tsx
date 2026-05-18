@@ -25,7 +25,7 @@ type Props = {
 };
 
 export const DSBottomNav = ({ activeTab, onTabPress, bottomInset = 0 }: Props) => (
-  <View style={[styles.container, { bottom: 16 + bottomInset }]}>
+  <View style={[styles.container, { paddingBottom: bottomInset + SPACING[2] }]}>
     {TABS.map((tab) => {
       if (tab.isFab) {
         return (
@@ -55,22 +55,15 @@ export const DSBottomNav = ({ activeTab, onTabPress, bottomInset = 0 }: Props) =
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    left: 12,
-    right: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
     backgroundColor: COLORS.white,
-    borderRadius: RADIUS.sheet,
-    paddingVertical: SPACING[2],
+    paddingTop: SPACING[2],
     paddingHorizontal: SPACING[2],
-    ...SHADOWS.md,
-    // Extra shadow for the floating pill effect
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.10,
-    shadowRadius: 32,
-    elevation: 8,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(74, 44, 26, 0.08)",
+    ...SHADOWS.sm,
   },
   tabItem: {
     flex: 1,
@@ -84,13 +77,13 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   fab: {
-    width: 56,
-    height: 56,
+    width: 52,
+    height: 52,
     borderRadius: RADIUS.pill,
     backgroundColor: COLORS.laranja,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -22,
+    marginTop: -18,
     ...SHADOWS.cta,
   },
 });

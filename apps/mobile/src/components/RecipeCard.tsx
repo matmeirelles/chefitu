@@ -13,7 +13,6 @@ export const RecipeCard = ({
     title={recipe.title}
     imageUri={recipe.coverImageUrl ?? FALLBACK_COVER_IMAGE}
     timeLabel={recipe.totalTimeMinutes ? `${recipe.totalTimeMinutes} min` : undefined}
-    tags={recipe.tags.slice(0, 2).map((t) => ({ label: t, variant: "orange" as const }))}
     onPress={onPress}
   />
 );

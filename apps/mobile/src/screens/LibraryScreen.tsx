@@ -115,7 +115,7 @@ export const LibraryScreen = ({
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  listContent: { paddingBottom: 120 },
+  listContent: { paddingBottom: 32 },
   columnWrapper: { gap: 12, paddingHorizontal: 16 },
   rowSeparator: { height: 12 },
   cardWrapper: { flex: 1 },

@@ -24,11 +24,13 @@ export const LibraryHeader = ({
   <View style={[styles.header, { paddingTop: topInset + 16 }]}>
     {/* Greeting */}
     <View style={styles.greeting}>
-      <Image
-        source={require("../../assets/mascot-symbol.png")}
-        style={styles.mascot}
-        resizeMode="contain"
-      />
+      <View style={styles.mascotWrap}>
+        <Image
+          source={require("../../assets/mascot-symbol.png")}
+          style={styles.mascot}
+          resizeMode="contain"
+        />
+      </View>
       <View style={styles.greetingText}>
         <DSText style={styles.greetingTitle}>Olá, Chefitu! 👋</DSText>
         <DSText style={styles.greetingSubtitle}>O que vamos cozinhar hoje?</DSText>
@@ -79,9 +81,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: SPACING[3],
   },
+  mascotWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    overflow: "hidden",
+    backgroundColor: COLORS.creme,
+  },
   mascot: {
-    width: 72,
-    height: 72,
+    width: 64,
+    height: 64,
   },
   greetingText: {
     flex: 1,
