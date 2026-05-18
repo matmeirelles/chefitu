@@ -60,9 +60,13 @@ export const LibraryScreen = ({
       <FlatList
         data={filteredRecipes}
         keyExtractor={(item) => item.id}
+        numColumns={2}
         renderItem={({ item }) => (
-          <RecipeCard recipe={item} onPress={() => onOpenRecipe(item)} />
+          <View style={styles.cardWrapper}>
+            <RecipeCard recipe={item} onPress={() => onOpenRecipe(item)} />
+          </View>
         )}
+        columnWrapperStyle={styles.columnWrapper}
         ListHeaderComponent={
           <LibraryHeader
             topInset={insets.top}
@@ -95,7 +99,7 @@ export const LibraryScreen = ({
             />
           )
         }
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ItemSeparatorComponent={() => <View style={styles.rowSeparator} />}
         contentContainerStyle={styles.listContent}
         refreshControl={
           <RefreshControl
@@ -111,8 +115,8 @@ export const LibraryScreen = ({
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  listContent: {
-    paddingBottom: 120,
-  },
-  separator: { height: 8, marginHorizontal: 16 },
+  listContent: { paddingBottom: 120 },
+  columnWrapper: { gap: 12, paddingHorizontal: 16 },
+  rowSeparator: { height: 12 },
+  cardWrapper: { flex: 1 },
 });

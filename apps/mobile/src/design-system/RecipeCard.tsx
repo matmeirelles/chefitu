@@ -11,6 +11,7 @@ export type TagData = { label: string; variant?: TagVariant };
 type RecipeCardProps = {
   title: string;
   timeLabel?: string;
+  rating?: number;
   tags?: TagData[];
   imageUri?: string;
   isFavorite?: boolean;
@@ -21,6 +22,7 @@ type RecipeCardProps = {
 export const DSRecipeCard = ({
   title,
   timeLabel,
+  rating,
   tags = [],
   imageUri,
   isFavorite = false,
@@ -60,10 +62,20 @@ export const DSRecipeCard = ({
         <View style={styles.body}>
           <DSText style={styles.title} numberOfLines={2}>{title}</DSText>
 
-          {timeLabel && (
+          {(timeLabel || rating != null) && (
             <View style={styles.meta}>
-              <DSIcon name="Clock" size={13} color={COLORS.marromSoft} strokeWidth={2} />
-              <DSText style={styles.metaText}>{timeLabel}</DSText>
+              {timeLabel && (
+                <>
+                  <DSIcon name="Clock" size={13} color={COLORS.marromSoft} strokeWidth={2} />
+                  <DSText style={styles.metaText}>{timeLabel}</DSText>
+                </>
+              )}
+              {rating != null && (
+                <>
+                  <DSIcon name="Star" size={13} color={COLORS.laranja} strokeWidth={0} fill={COLORS.laranja} />
+                  <DSText style={[styles.metaText, { color: COLORS.marrom }]}>{rating.toFixed(1)}</DSText>
+                </>
+              )}
             </View>
           )}
 
