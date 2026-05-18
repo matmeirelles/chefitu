@@ -302,6 +302,112 @@ test("GET /recipes/:id returns 404 when the recipe does not exist", async (t) =>
   await app.close();
 });
 
+test("POST /recipes/generate returns generated recipe payload", async (t) => {
+  stubMethod(t, aiProviderFactory, "getAIProvider", () => ({
+    extractRecipe: async () => {
+      throw new Error("not used in this test");
+    },
+    adjustRecipe: async () => {
+      throw new Error("not used in this test");
+    },
+    generateRecipe: async () => ({
+      kind: "recipe" as const,
+      recipe: {
+        title: "Risoto de Cogumelos",
+        category: "Almoço",
+        cuisine: "Italiana",
+        ingredients: [{ amount: "1", unit: "xícara", item: "arroz arbóreo" }],
+        steps: [{ order: 1, title: null, instruction: "Refogue a cebola." }],
+        totalTimeMinutes: 40,
+        servings: "4 porções",
+        tags: ["Vegetariano", "Comfort Food"],
+      },
+      metadata: {
+        provider: "anthropic",
+        model: "claude-haiku-4-5",
+        inputTokens: 55,
+        outputTokens: 89,
+      },
+    }),
+  }));
+  const app = await buildApp();
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/recipes/generate",
+    payload: {
+      sessionId: "session_generate_1",
+      messages: [{ role: "user", content: "Quero um risoto de cogumelos para 4 pessoas" }],
+    },
+  });
+
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(response.json(), {
+    kind: "recipe",
+    recipe: {
+      title: "Risoto de Cogumelos",
+      category: "Almoço",
+      cuisine: "Italiana",
+      ingredients: [{ amount: "1", unit: "xícara", item: "arroz arbóreo" }],
+      steps: [{ order: 1, title: null, instruction: "Refogue a cebola." }],
+      totalTimeMinutes: 40,
+      servings: "4 porções",
+      tags: ["Vegetariano", "Comfort Food"],
+    },
+  });
+
+  await app.close();
+});
+
+test("POST /recipes/generated saves an explicitly generated recipe", async (t) => {
+  stubMethod(t, db.import, "create", async () => ({
+    id: "imp_generated_1",
+    sourcePlatform: "generated",
+    sourceUrl: "generated:1760000000000",
+    sourceAuthorName: null,
+    rawDescription: null,
+    coverImageUrl: null,
+    status: "ready",
+    failureReason: null,
+    recipeId: null,
+    createdAt: new Date("2026-05-05T12:00:00.000Z"),
+    updatedAt: new Date("2026-05-05T12:00:00.000Z"),
+  }) as never);
+  stubMethod(t, db.recipe, "create", async ({ data }: { data: any }) => ({
+    id: "rec_generated_1",
+    createdAt: new Date("2026-05-05T12:00:01.000Z"),
+    updatedAt: new Date("2026-05-05T12:00:01.000Z"),
+    ...data,
+  }) as never);
+  stubMethod(t, db.import, "update", async () => ({
+    id: "imp_generated_1",
+    recipeId: "rec_generated_1",
+  }) as never);
+  const app = await buildApp();
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/recipes/generated",
+    payload: {
+      title: "Bolo de Chocolate Simples",
+      category: "Sobremesa",
+      cuisine: "Outro",
+      ingredients: [{ amount: "2", unit: "xícaras", item: "farinha" }],
+      steps: [{ order: 1, title: null, instruction: "Misture tudo." }],
+      totalTimeMinutes: 50,
+      servings: "8 porções",
+      tags: ["Fácil", "Assado"],
+    },
+  });
+
+  assert.equal(response.statusCode, 201);
+  const body = response.json() as { item: { id: string; instructionsGeneratedByAi: boolean } };
+  assert.equal(body.item.id, "rec_generated_1");
+  assert.equal(body.item.instructionsGeneratedByAi, true);
+
+  await app.close();
+});
+
 test("POST /recipes/:id/adjust returns the adjusted recipe and persists the adjustment log", async (t) => {
   stubMethod(t, db.recipe, "findUnique", async () => ({
     id: "rec_1",
@@ -321,6 +427,9 @@ test("POST /recipes/:id/adjust returns the adjusted recipe and persists the adju
 
   stubMethod(t, aiProviderFactory, "getAIProvider", () => ({
     extractRecipe: async () => {
+      throw new Error("not used in this test");
+    },
+    generateRecipe: async () => {
       throw new Error("not used in this test");
     },
     adjustRecipe: async () => ({
@@ -427,6 +536,9 @@ test("POST /recipes/:id/adjust returns AI message response when provider returns
     extractRecipe: async () => {
       throw new Error("not used in this test");
     },
+    generateRecipe: async () => {
+      throw new Error("not used in this test");
+    },
     adjustRecipe: async () => ({
       kind: "message" as const,
       message: "Posso remover glúten, lactose ou ambos?",
@@ -483,6 +595,9 @@ test("POST /recipes/:id/adjust returns 500 when provider throws", async (t) => {
     extractRecipe: async () => {
       throw new Error("not used in this test");
     },
+    generateRecipe: async () => {
+      throw new Error("not used in this test");
+    },
     adjustRecipe: async () => {
       throw new Error("provider timeout");
     },
@@ -525,6 +640,9 @@ test("POST /recipes/:id/adjust uses fallback sessionId and still returns adjustm
   }) as never);
   stubMethod(t, aiProviderFactory, "getAIProvider", () => ({
     extractRecipe: async () => {
+      throw new Error("not used in this test");
+    },
+    generateRecipe: async () => {
       throw new Error("not used in this test");
     },
     adjustRecipe: async () => ({

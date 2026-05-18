@@ -79,6 +79,9 @@ test("processImport logs usage and marks no_recipe_in_description when AI finds 
         rawResponse: '{"noRecipe":true}',
       },
     }),
+    generateRecipe: async () => {
+      throw new Error("not used in this test");
+    },
     adjustRecipe: async () => { throw new Error("not used in this test"); },
   };
 
@@ -140,6 +143,7 @@ test("processImport saves the recipe, logs usage, and marks the import as ready"
         cuisine: "Italian",
         ingredients: [{ amount: "200", unit: "g", item: "pasta" }],
         steps: [{ order: 1, instruction: "Cook pasta." }],
+        instructionsGeneratedByAi: true,
         totalTimeMinutes: 15,
         servings: "2 servings",
         tags: ["Quick"],
@@ -152,6 +156,9 @@ test("processImport saves the recipe, logs usage, and marks the import as ready"
         rawResponse: '{"title":"Garlic Pasta"}',
       },
     }),
+    generateRecipe: async () => {
+      throw new Error("not used in this test");
+    },
     adjustRecipe: async () => { throw new Error("not used in this test"); },
   };
 
@@ -197,6 +204,7 @@ test("processImport saves the recipe, logs usage, and marks the import as ready"
       cuisine: "Italian",
       ingredients: [{ amount: "200", unit: "g", item: "pasta" }],
       steps: [{ order: 1, instruction: "Cook pasta." }],
+      instructionsGeneratedByAi: true,
       totalTimeMinutes: 15,
       servings: "2 servings",
       tags: ["Quick"],
@@ -211,6 +219,7 @@ test("processImport saves the recipe, logs usage, and marks the import as ready"
     cuisine: "Italian",
     ingredients: [{ amount: "200", unit: "g", item: "pasta" }],
     steps: [{ order: 1, instruction: "Cook pasta." }],
+    instructionsGeneratedByAi: true,
     totalTimeMinutes: 15,
     servings: "2 servings",
     tags: ["Quick"],

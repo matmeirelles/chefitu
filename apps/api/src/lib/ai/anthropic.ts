@@ -1,8 +1,17 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { AIAdjustmentResult, AdjustedRecipeFields, AIExtractionResult, AIProvider, ChatMessage, ExtractedRecipe } from "./types.js";
+import type {
+  AIAdjustmentResult,
+  AIGenerationResult,
+  AIExtractionResult,
+  AIProvider,
+  ChatMessage,
+  ExtractedRecipe,
+} from "./types.js";
 import { ADJUSTMENT_SYSTEM_PROMPT } from "./adjustmentPrompt.js";
 import { parseAdjustmentResponse } from "./parse-adjustment-response.js";
 import { EXTRACTION_SYSTEM_PROMPT } from "./extractionPrompt.js";
+import { GENERATION_SYSTEM_PROMPT } from "./generationPrompt.js";
+import { parseGenerationResponse } from "./parse-generation-response.js";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -60,5 +69,29 @@ export class AnthropicProvider implements AIProvider {
     };
 
     return parseAdjustmentResponse(raw, metadata);
+  }
+
+  async generateRecipe(messages: ChatMessage[]): Promise<AIGenerationResult> {
+    const response = await client.messages.create({
+      model: this.model,
+      max_tokens: 4096,
+      system: GENERATION_SYSTEM_PROMPT,
+      messages: messages.map((message) => ({
+        role: message.role,
+        content: message.content,
+      })),
+    });
+
+    const raw =
+      response.content[0]?.type === "text" ? response.content[0].text : "";
+
+    const metadata = {
+      provider: "anthropic",
+      model: this.model,
+      inputTokens: response.usage?.input_tokens ?? null,
+      outputTokens: response.usage?.output_tokens ?? null,
+    };
+
+    return parseGenerationResponse(raw, metadata);
   }
 }

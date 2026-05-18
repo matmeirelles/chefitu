@@ -73,7 +73,7 @@
         }
       ],
       "totalTimeMinutes": 90,
-      "servings": "4",
+      "servings": "2",
       "tags": [
         "Fácil",
         "Peixe"
@@ -439,7 +439,7 @@
       "title": "Hot Dog Saudável",
       "category": "Lanche",
       "categorySuggestion": null,
-      "cuisine": "Americana",
+      "cuisine": "Brasileira",
       "cuisineSuggestion": null,
       "ingredients": [
         {
@@ -491,7 +491,7 @@
           "instruction": "Remova o plástico filme, doure as salsichas em uma frigideira e, em seguida, termine o cozimento em molho de tomate antes de servir."
         }
       ],
-      "totalTimeMinutes": 45,
+      "totalTimeMinutes": 120,
       "servings": "10",
       "tags": [
         "Fitness",
@@ -585,8 +585,8 @@
           "instruction": "Corte e sirva."
         }
       ],
-      "totalTimeMinutes": 240,
-      "servings": "4",
+      "totalTimeMinutes": 180,
+      "servings": "6",
       "tags": [
         "Poucos Ingredientes",
         "Fácil"

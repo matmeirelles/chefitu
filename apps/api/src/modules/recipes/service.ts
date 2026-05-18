@@ -1,4 +1,9 @@
-import type { CreateAdjustedRecipeRequest, RecipeRecord, UpdateRecipeRequest } from "@my-recipes/shared";
+import type {
+  CreateAdjustedRecipeRequest,
+  RecipeRecord,
+  SaveGeneratedRecipeRequest,
+  UpdateRecipeRequest,
+} from "@my-recipes/shared";
 import { db } from "../../lib/db.js";
 
 const toRecipeRecord = (row: {
@@ -10,6 +15,7 @@ const toRecipeRecord = (row: {
   cuisine: string | null;
   ingredients: unknown;
   steps: unknown;
+  instructionsGeneratedByAi: boolean;
   totalTimeMinutes: number | null;
   servings: string | null;
   tags: string[];
@@ -24,6 +30,7 @@ const toRecipeRecord = (row: {
   cuisine: row.cuisine,
   ingredients: row.ingredients as RecipeRecord["ingredients"],
   steps: row.steps as RecipeRecord["steps"],
+  instructionsGeneratedByAi: row.instructionsGeneratedByAi,
   totalTimeMinutes: row.totalTimeMinutes,
   servings: row.servings,
   tags: row.tags,
@@ -78,6 +85,8 @@ export const updateRecipe = async (
 export const createAdjustedRecipe = async (
   data: CreateAdjustedRecipeRequest,
 ): Promise<RecipeRecord> => {
+  const sourceRecipe = await db.recipe.findUnique({ where: { id: data.sourceRecipeId } });
+
   const newImport = await db.import.create({
     data: {
       sourcePlatform: "adjusted",
@@ -95,6 +104,42 @@ export const createAdjustedRecipe = async (
       cuisine: data.cuisine ?? null,
       ingredients: data.ingredients as never,
       steps: data.steps as never,
+      instructionsGeneratedByAi: sourceRecipe?.instructionsGeneratedByAi ?? false,
+      totalTimeMinutes: data.totalTimeMinutes ?? null,
+      servings: data.servings ?? null,
+      tags: data.tags,
+    },
+  });
+
+  await db.import.update({
+    where: { id: newImport.id },
+    data: { recipeId: recipe.id },
+  });
+
+  return toRecipeRecord(recipe);
+};
+
+export const createGeneratedRecipe = async (
+  data: SaveGeneratedRecipeRequest,
+): Promise<RecipeRecord> => {
+  const newImport = await db.import.create({
+    data: {
+      sourcePlatform: "generated",
+      sourceUrl: `generated:${Date.now()}`,
+      status: "ready",
+    },
+  });
+
+  const recipe = await db.recipe.create({
+    data: {
+      importId: newImport.id,
+      title: data.title,
+      coverImageUrl: null,
+      category: data.category ?? null,
+      cuisine: data.cuisine ?? null,
+      ingredients: data.ingredients as never,
+      steps: data.steps as never,
+      instructionsGeneratedByAi: true,
       totalTimeMinutes: data.totalTimeMinutes ?? null,
       servings: data.servings ?? null,
       tags: data.tags,
