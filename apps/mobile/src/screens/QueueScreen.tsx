@@ -13,14 +13,17 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Icon, Text, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ImportListItem, ImportStatus } from "@my-recipes/shared";
 import { createImport, deleteImport, fetchImports, retryImport } from "../services/api";
 import { formatRelativeTime } from "../utils/time";
+import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../design-system/tokens";
+import { DSText } from "../design-system/Text";
+import { DSIcon } from "../design-system/Icon";
+
+const OUTLINE = "rgba(74, 44, 26, 0.14)";
 
 export const QueueScreen = () => {
-  const theme = useTheme();
   const insets = useSafeAreaInsets();
   const [items, setItems] = useState<ImportListItem[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -35,26 +38,16 @@ export const QueueScreen = () => {
     } catch {}
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useEffect(() => { void load(); }, [load]);
 
   const handleRetry = async (id: string) => {
-    try {
-      await retryImport(id);
-      await load();
-    } catch {
-      Alert.alert("Could not retry", "Please try again.");
-    }
+    try { await retryImport(id); await load(); }
+    catch { Alert.alert("Não foi possível tentar novamente", "Tente mais tarde."); }
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await deleteImport(id);
-      await load();
-    } catch {
-      Alert.alert("Could not delete", "Please try again.");
-    }
+    try { await deleteImport(id); await load(); }
+    catch { Alert.alert("Não foi possível deletar", "Tente mais tarde."); }
   };
 
   const handleAdd = async () => {
@@ -66,7 +59,7 @@ export const QueueScreen = () => {
       setModalVisible(false);
       await load();
     } catch {
-      Alert.alert("Could not add recipe", "Please check the link and try again.");
+      Alert.alert("Não foi possível adicionar a receita", "Verifique o link e tente novamente.");
     } finally {
       setSubmitting(false);
     }
@@ -74,38 +67,26 @@ export const QueueScreen = () => {
 
   const queued = items.filter((i) => i.status === "queued").length;
   const processing = items.filter((i) => i.status === "processing").length;
-
   const subtitleParts: string[] = [];
-  if (queued > 0) subtitleParts.push(`${queued} queued`);
-  if (processing > 0) subtitleParts.push(`${processing} processing`);
+  if (queued > 0) subtitleParts.push(`${queued} na fila`);
+  if (processing > 0) subtitleParts.push(`${processing} processando`);
 
   return (
-    <View style={[styles.root, { backgroundColor: theme.colors.background }]}>
+    <View style={[styles.root, { backgroundColor: COLORS.creme }]}>
       <ScrollView
-        contentContainerStyle={[
-          styles.scroll,
-          { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 100 },
-        ]}
+        contentContainerStyle={[styles.scroll, { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 100 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.colors.onSurface }]}>
-            Queue
-          </Text>
+          <DSText style={styles.title}>Fila de importação</DSText>
           {subtitleParts.length > 0 && (
-            <Text style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
-              {subtitleParts.join(" · ")}
-            </Text>
+            <DSText style={styles.subtitle}>{subtitleParts.join(" · ")}</DSText>
           )}
         </View>
 
-        {/* List */}
         <View style={styles.list}>
           {items.length === 0 ? (
-            <Text style={[styles.empty, { color: theme.colors.onSurfaceVariant }]}>
-              No items in queue.
-            </Text>
+            <DSText style={styles.empty}>Nenhum item na fila.</DSText>
           ) : (
             items.map((item) => (
               <QueueItemCard
@@ -125,88 +106,44 @@ export const QueueScreen = () => {
       {/* FAB */}
       <Pressable
         onPress={() => setModalVisible(true)}
-        style={[
-          styles.fab,
-          { bottom: insets.bottom + 16, backgroundColor: theme.colors.primary },
-        ]}
+        style={[styles.fab, { bottom: insets.bottom + 16 }]}
       >
-        <Icon source="plus" size={20} color={theme.colors.onPrimary} />
-        <Text style={[styles.fabText, { color: theme.colors.onPrimary }]}>
-          Add recipe
-        </Text>
+        <DSIcon name="Plus" size={20} color={COLORS.white} strokeWidth={2.5} />
+        <DSText style={styles.fabText}>Adicionar receita</DSText>
       </Pressable>
 
-      {/* Add Recipe Modal */}
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          style={styles.modalOverlay}
-        >
+      {/* Modal */}
+      <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => setModalVisible(false)}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.modalOverlay}>
           <Pressable style={styles.modalBackdrop} onPress={() => setModalVisible(false)} />
-          <View style={[styles.modalSheet, { backgroundColor: theme.colors.surface, paddingBottom: insets.bottom + 24 }]}>
+          <View style={[styles.modalSheet, { paddingBottom: insets.bottom + 24 }]}>
             <View style={styles.modalHandle} />
-            <Text style={[styles.modalTitle, { color: theme.colors.onSurface }]}>
-              Add recipe
-            </Text>
-            <Text style={[styles.modalSubtitle, { color: theme.colors.onSurfaceVariant }]}>
-              Paste an Instagram post URL
-            </Text>
+            <DSText style={styles.modalTitle}>Adicionar receita</DSText>
+            <DSText style={styles.modalSubtitle}>Cole a URL de um post do Instagram</DSText>
 
             <TextInput
               value={url}
               onChangeText={setUrl}
               placeholder="https://www.instagram.com/p/..."
-              placeholderTextColor={theme.colors.onSurfaceVariant}
+              placeholderTextColor={COLORS.marromSoft}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="url"
-              style={[
-                styles.input,
-                {
-                  backgroundColor: theme.colors.surfaceVariant,
-                  color: theme.colors.onSurface,
-                },
-              ]}
+              style={styles.input}
             />
 
             <View style={styles.modalActions}>
-              <Pressable
-                onPress={() => { setModalVisible(false); setUrl(""); }}
-                style={[styles.cancelBtn, { borderColor: theme.colors.outline }]}
-              >
-                <Text style={{ color: theme.colors.onSurfaceVariant, fontWeight: "500" }}>
-                  Cancel
-                </Text>
+              <Pressable onPress={() => { setModalVisible(false); setUrl(""); }} style={styles.cancelBtn}>
+                <DSText style={{ color: COLORS.marromSoft, fontWeight: "500" }}>Cancelar</DSText>
               </Pressable>
               <Pressable
                 onPress={() => void handleAdd()}
                 disabled={submitting || !url.trim()}
-                style={[
-                  styles.addBtn,
-                  {
-                    backgroundColor:
-                      submitting || !url.trim()
-                        ? theme.colors.surfaceVariant
-                        : theme.colors.primary,
-                  },
-                ]}
+                style={[styles.addBtn, { opacity: submitting || !url.trim() ? 0.5 : 1 }]}
               >
-                <Text
-                  style={{
-                    color:
-                      submitting || !url.trim()
-                        ? theme.colors.onSurfaceVariant
-                        : theme.colors.onPrimary,
-                    fontWeight: "600",
-                  }}
-                >
-                  {submitting ? "Adding…" : "Add"}
-                </Text>
+                <DSText style={{ color: COLORS.white, fontWeight: "600" }}>
+                  {submitting ? "Adicionando…" : "Adicionar"}
+                </DSText>
               </Pressable>
             </View>
           </View>
@@ -231,18 +168,13 @@ const QueueItemCard = ({
   onRetry: () => void;
   onDelete: () => void;
 }) => {
-  const theme = useTheme();
   const canRetry = item.status === "failed" || item.status === "no_recipe_in_description";
   const scale = useRef(new Animated.Value(1)).current;
   const menuAnim = useRef(new Animated.Value(0)).current;
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   useEffect(() => {
-    Animated.timing(menuAnim, {
-      toValue: menuOpen ? 1 : 0,
-      duration: menuOpen ? 150 : 100,
-      useNativeDriver: true,
-    }).start();
+    Animated.timing(menuAnim, { toValue: menuOpen ? 1 : 0, duration: menuOpen ? 150 : 100, useNativeDriver: true }).start();
   }, [menuAnim, menuOpen]);
 
   const handlePressIn = () =>
@@ -251,38 +183,22 @@ const QueueItemCard = ({
   const handlePressOut = () =>
     Animated.spring(scale, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 2 }).start();
 
-  const handleDeletePress = () => {
-    onCloseMenu();
-    setTimeout(() => setConfirmVisible(true), 120);
-  };
-
   return (
     <>
       <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
-        {/* Row 1: status + timestamp + menu */}
         <View style={styles.cardRow}>
-          <StatusIndicator status={item.status} />
+          <StatusPill status={item.status} />
           <View style={styles.cardRowRight}>
-            <Text style={[styles.timestamp, { color: theme.colors.onSurfaceVariant }]}>
-              {formatRelativeTime(item.createdAt)}
-            </Text>
+            <DSText style={styles.timestamp}>{formatRelativeTime(item.createdAt)}</DSText>
             <View>
               <Pressable onPress={menuOpen ? onCloseMenu : onOpenMenu} hitSlop={8}>
-                <Icon source="dots-vertical" size={18} color={theme.colors.onSurfaceVariant} />
+                <DSIcon name="MoreVertical" size={18} color={COLORS.marromSoft} strokeWidth={1.75} />
               </Pressable>
               {menuOpen && (
-                <Animated.View
-                  style={[
-                    styles.cardMenu,
-                    {
-                      opacity: menuAnim,
-                      transform: [{ scale: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }],
-                    },
-                  ]}
-                >
-                  <Pressable style={styles.cardMenuItem} onPress={handleDeletePress}>
-                    <Icon source="trash-can-outline" size={16} color="#B3261E" />
-                    <Text style={styles.cardMenuItemText}>Deletar</Text>
+                <Animated.View style={[styles.cardMenu, { opacity: menuAnim, transform: [{ scale: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }] }]}>
+                  <Pressable style={styles.cardMenuItem} onPress={() => { onCloseMenu(); setTimeout(() => setConfirmVisible(true), 120); }}>
+                    <DSIcon name="Trash2" size={16} color={COLORS.danger} strokeWidth={1.75} />
+                    <DSText style={styles.cardMenuItemText}>Deletar</DSText>
                   </Pressable>
                 </Animated.View>
               )}
@@ -290,56 +206,32 @@ const QueueItemCard = ({
           </View>
         </View>
 
-        {/* Row 2: URL */}
-        <Pressable
-          onPress={() => void Linking.openURL(item.sourceUrl)}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-        >
+        <Pressable onPress={() => void Linking.openURL(item.sourceUrl)} onPressIn={handlePressIn} onPressOut={handlePressOut}>
           <View style={styles.urlRow}>
-            <Icon source="link-variant" size={16} color={theme.colors.onSurfaceVariant} />
-            <Text
-              style={[styles.url, { color: theme.colors.onSurface }]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {item.sourceUrl}
-            </Text>
+            <DSIcon name="Link" size={16} color={COLORS.marromSoft} strokeWidth={1.75} />
+            <DSText style={styles.url} numberOfLines={1} ellipsizeMode="tail">{item.sourceUrl}</DSText>
           </View>
         </Pressable>
 
-        {/* Row 3: Try again (conditional) */}
         {canRetry && (
           <Pressable onPress={onRetry} style={styles.retryBtn}>
-            <Icon source="refresh" size={14} color={theme.colors.primary} />
-            <Text style={[styles.retryText, { color: theme.colors.primary }]}>
-              Tentar novamente
-            </Text>
+            <DSIcon name="RefreshCw" size={14} color={COLORS.laranja} strokeWidth={2} />
+            <DSText style={styles.retryText}>Tentar novamente</DSText>
           </Pressable>
         )}
       </Animated.View>
 
       <Modal visible={confirmVisible} transparent animationType="fade" onRequestClose={() => setConfirmVisible(false)}>
         <View style={styles.dialogOverlay}>
-          <View style={[styles.dialogBox, { backgroundColor: theme.colors.surface }]}>
-            <Text style={[styles.dialogTitle, { color: theme.colors.onSurface }]}>
-              Remover da fila?
-            </Text>
-            <Text style={[styles.dialogBody, { color: theme.colors.onSurfaceVariant }]}>
-              Esse item será removido permanentemente da fila.
-            </Text>
+          <View style={styles.dialogBox}>
+            <DSText style={styles.dialogTitle}>Remover da fila?</DSText>
+            <DSText style={styles.dialogBody}>Esse item será removido permanentemente da fila.</DSText>
             <View style={styles.dialogActions}>
-              <Pressable
-                style={[styles.dialogCancelBtn, { borderColor: theme.colors.outline }]}
-                onPress={() => setConfirmVisible(false)}
-              >
-                <Text style={{ color: theme.colors.onSurface, fontWeight: "500" }}>Cancelar</Text>
+              <Pressable style={styles.dialogCancelBtn} onPress={() => setConfirmVisible(false)}>
+                <DSText style={{ color: COLORS.marrom, fontWeight: "500" }}>Cancelar</DSText>
               </Pressable>
-              <Pressable
-                style={styles.dialogDeleteBtn}
-                onPress={() => { setConfirmVisible(false); onDelete(); }}
-              >
-                <Text style={{ color: "#fff", fontWeight: "600" }}>Deletar</Text>
+              <Pressable style={styles.dialogDeleteBtn} onPress={() => { setConfirmVisible(false); onDelete(); }}>
+                <DSText style={{ color: COLORS.white, fontWeight: "600" }}>Deletar</DSText>
               </Pressable>
             </View>
           </View>
@@ -349,308 +241,79 @@ const QueueItemCard = ({
   );
 };
 
-const STATUS_CONFIG: Record<
-  ImportStatus,
-  { label: string; icon: string; bg: string; color: string }
-> = {
-  queued: {
-    label: "Queued",
-    icon: "clock-outline",
-    bg: "#F3E5DD",
-    color: "#52443D",
-  },
-  processing: {
-    label: "Processing",
-    icon: "loading",
-    bg: "#FFDBC9",
-    color: "#341000",
-  },
-  failed: {
-    label: "Failed",
-    icon: "alert-circle-outline",
-    bg: "#FFEBEE",
-    color: "#BA1A1A",
-  },
-  no_recipe_in_description: {
-    label: "No Recipe",
-    icon: "help-circle-outline",
-    bg: "#FFF3E0",
-    color: "#8B5E00",
-  },
-  ready: {
-    label: "Ready",
-    icon: "check-circle-outline",
-    bg: "#E8F5E9",
-    color: "#1B5E20",
-  },
+const STATUS_CONFIG: Record<ImportStatus, { label: string; icon: string; bg: string; color: string }> = {
+  queued:                  { label: "Na fila",     icon: "Clock",        bg: COLORS.bege,     color: COLORS.marromSoft },
+  processing:              { label: "Processando", icon: "Loader2",      bg: COLORS.laranjaSoft, color: COLORS.laranjaDark },
+  failed:                  { label: "Falhou",      icon: "AlertCircle",  bg: COLORS.dangerBg, color: COLORS.danger },
+  no_recipe_in_description:{ label: "Sem receita", icon: "HelpCircle",   bg: COLORS.warningBg, color: COLORS.warning },
+  ready:                   { label: "Pronto",      icon: "CheckCircle2", bg: COLORS.salvia,   color: COLORS.verdeDark },
 };
 
-const StatusIndicator = ({ status }: { status: ImportStatus }) => {
+const StatusPill = ({ status }: { status: ImportStatus }) => {
   const config = STATUS_CONFIG[status];
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (status !== "processing") return;
-    const anim = Animated.loop(
-      Animated.timing(spinValue, {
-        toValue: 1,
-        duration: 900,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    );
+    const anim = Animated.loop(Animated.timing(spinValue, { toValue: 1, duration: 900, easing: Easing.linear, useNativeDriver: true }));
     anim.start();
     return () => anim.stop();
   }, [status, spinValue]);
 
-  const rotate = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
-  });
+  const rotate = spinValue.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] });
 
   return (
     <View style={[styles.pill, { backgroundColor: config.bg }]}>
       {status === "processing" ? (
         <Animated.View style={{ transform: [{ rotate }] }}>
-          <Icon source="loading" size={13} color={config.color} />
+          <DSIcon name="Loader2" size={13} color={config.color} strokeWidth={2} />
         </Animated.View>
       ) : (
-        <Icon source={config.icon} size={13} color={config.color} />
+        <DSIcon name={config.icon as any} size={13} color={config.color} strokeWidth={1.75} />
       )}
-      <Text style={[styles.pillText, { color: config.color }]}>
-        {config.label}
-      </Text>
+      <DSText style={[styles.pillText, { color: config.color }]}>{config.label}</DSText>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  scroll: {
-    paddingHorizontal: 20,
-    paddingBottom: 32,
-  },
-  header: {
-    marginBottom: 24,
-    gap: 4,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "400",
-  },
-  subtitle: {
-    fontSize: 12,
-    letterSpacing: 0.3,
-  },
-  empty: {
-    fontSize: 14,
-    textAlign: "center",
-    marginTop: 48,
-  },
-  list: {
-    gap: 0,
-  },
-  card: {
-    backgroundColor: "#FEF1EB",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    gap: 10,
-  },
-  cardRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  timestamp: {
-    fontSize: 11,
-    letterSpacing: 0.2,
-  },
-  urlRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  url: {
-    fontSize: 13,
-    flex: 1,
-  },
-  retryBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    alignSelf: "flex-start",
-  },
-  retryText: {
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  cardRowRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  cardMenu: {
-    position: "absolute",
-    right: 0,
-    top: 26,
-    backgroundColor: "#FFF8F5",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(26,22,18,0.20)",
-    minWidth: 140,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    elevation: 8,
-    zIndex: 100,
-    overflow: "hidden",
-  },
-  cardMenuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  cardMenuItemText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#B3261E",
-  },
-  dialogOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 32,
-  },
-  dialogBox: {
-    width: "100%",
-    borderRadius: 24,
-    padding: 24,
-    gap: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 24,
-    elevation: 12,
-  },
-  dialogTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  dialogBody: {
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  dialogActions: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 8,
-  },
-  dialogCancelBtn: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 14,
-    borderRadius: 999,
-    borderWidth: 1,
-  },
-  dialogDeleteBtn: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 14,
-    borderRadius: 999,
-    backgroundColor: "#B3261E",
-  },
-  pill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-  pillText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  fab: {
-    position: "absolute",
-    right: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderRadius: 999,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 4,
-  },
-  fabText: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-  modalSheet: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    gap: 4,
-  },
-  modalHandle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#00000020",
-    alignSelf: "center",
-    marginBottom: 16,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 2,
-  },
-  modalSubtitle: {
-    fontSize: 13,
-    marginBottom: 16,
-  },
-  input: {
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 14,
-    marginBottom: 20,
-  },
-  modalActions: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  cancelBtn: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 13,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  addBtn: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 13,
-    borderRadius: 12,
-  },
+  root: { flex: 1 },
+  scroll: { paddingHorizontal: SPACING[5], paddingBottom: 32 },
+  header: { marginBottom: SPACING[6], gap: 4 },
+  title: { fontFamily: FONTS.displayBold, fontWeight: "700", fontSize: TYPE_SCALE.h1, color: COLORS.marrom },
+  subtitle: { fontSize: TYPE_SCALE.caption, color: COLORS.marromSoft, letterSpacing: 0.3 },
+  empty: { fontSize: TYPE_SCALE.bodySm, textAlign: "center", marginTop: 48, color: COLORS.marromSoft },
+  list: { gap: 0 },
+  card: { backgroundColor: COLORS.bege, borderRadius: RADIUS.card, padding: SPACING[4], marginBottom: SPACING[3], gap: 10 },
+  cardRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  cardRowRight: { flexDirection: "row", alignItems: "center", gap: SPACING[2] },
+  timestamp: { fontSize: 11, color: COLORS.marromSoft, letterSpacing: 0.2 },
+  urlRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  url: { fontSize: 13, flex: 1, color: COLORS.marrom },
+  retryBtn: { flexDirection: "row", alignItems: "center", gap: 5, alignSelf: "flex-start" },
+  retryText: { fontSize: 13, fontWeight: "500", color: COLORS.laranja },
+  cardMenu: { position: "absolute", right: 0, top: 26, backgroundColor: COLORS.creme, borderRadius: RADIUS.sm, borderWidth: 1, borderColor: OUTLINE, minWidth: 140, ...SHADOWS.md, zIndex: 100, overflow: "hidden" },
+  cardMenuItem: { flexDirection: "row", alignItems: "center", gap: SPACING[2], paddingHorizontal: SPACING[3] + 2, paddingVertical: 12 },
+  cardMenuItemText: { fontSize: 14, fontWeight: "500", color: COLORS.danger },
+  pill: { flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, paddingVertical: 4, borderRadius: RADIUS.pill },
+  pillText: { fontSize: 12, fontWeight: "500" },
+  fab: { position: "absolute", right: 20, flexDirection: "row", alignItems: "center", gap: SPACING[2], paddingHorizontal: SPACING[5], paddingVertical: 14, borderRadius: RADIUS.pill, backgroundColor: COLORS.laranja, ...SHADOWS.cta },
+  fabText: { fontSize: 15, fontWeight: "600", color: COLORS.white },
+  modalOverlay: { flex: 1, justifyContent: "flex-end" },
+  modalBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.4)" },
+  modalSheet: { borderTopLeftRadius: RADIUS.sheet, borderTopRightRadius: RADIUS.sheet, paddingHorizontal: SPACING[6], paddingTop: 12, gap: 4, backgroundColor: COLORS.creme },
+  modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: OUTLINE, alignSelf: "center", marginBottom: SPACING[4] },
+  modalTitle: { fontFamily: FONTS.displayBold, fontWeight: "700", fontSize: TYPE_SCALE.h2, color: COLORS.marrom, marginBottom: 2 },
+  modalSubtitle: { fontSize: 13, color: COLORS.marromSoft, marginBottom: SPACING[4] },
+  input: { borderRadius: RADIUS.sm, paddingHorizontal: SPACING[3] + 2, paddingVertical: 12, fontSize: TYPE_SCALE.bodySm, marginBottom: SPACING[5], backgroundColor: COLORS.bege, color: COLORS.marrom },
+  modalActions: { flexDirection: "row", gap: 12 },
+  cancelBtn: { flex: 1, alignItems: "center", paddingVertical: 13, borderRadius: RADIUS.sm, borderWidth: 1, borderColor: OUTLINE },
+  addBtn: { flex: 1, alignItems: "center", paddingVertical: 13, borderRadius: RADIUS.sm, backgroundColor: COLORS.laranja },
+  dialogOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center", paddingHorizontal: 32 },
+  dialogBox: { width: "100%", borderRadius: RADIUS.sheet, padding: SPACING[6], gap: 12, backgroundColor: COLORS.creme, ...SHADOWS.lg },
+  dialogTitle: { fontSize: TYPE_SCALE.h2, fontWeight: "700", color: COLORS.marrom },
+  dialogBody: { fontSize: TYPE_SCALE.body, lineHeight: 22, color: COLORS.marromSoft },
+  dialogActions: { flexDirection: "row", gap: 12, marginTop: SPACING[2] },
+  dialogCancelBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE },
+  dialogDeleteBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: RADIUS.pill, backgroundColor: COLORS.danger },
 });
