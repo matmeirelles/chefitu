@@ -1,37 +1,34 @@
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { MD3LightTheme, PaperProvider } from "react-native-paper";
+import { useFonts } from "expo-font";
+import {
+  Baloo2_700Bold,
+  Baloo2_800ExtraBold,
+} from "@expo-google-fonts/baloo-2";
+import {
+  Nunito_400Regular,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+  Nunito_800ExtraBold,
+} from "@expo-google-fonts/nunito";
 import { AppShell } from "./src/AppShell";
 
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#8E4D22",
-    onPrimary: "#FFFFFF",
-    primaryContainer: "#FFDBC9",
-    onPrimaryContainer: "#341000",
-    secondary: "#76574A",
-    onSecondary: "#FFFFFF",
-    secondaryContainer: "#FFDBC9",
-    onSecondaryContainer: "#2C160B",
-    surface: "#FFF8F5",
-    surfaceVariant: "#F3E5DD",
-    onSurface: "#221A16",
-    onSurfaceVariant: "#52443D",
-    outline: "#D6C3BA",
-    background: "#FFF8F5",
-    error: "#BA1A1A",
-  },
-};
-
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Baloo2_700Bold,
+    Baloo2_800ExtraBold,
+    Nunito_400Regular,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+    Nunito_800ExtraBold,
+  });
+
+  if (!fontsLoaded) return null;
+
   return (
     <SafeAreaProvider>
-      <PaperProvider theme={theme}>
-        <StatusBar style="dark" />
-        <AppShell />
-      </PaperProvider>
+      <StatusBar style="dark" />
+      <AppShell />
     </SafeAreaProvider>
   );
 }

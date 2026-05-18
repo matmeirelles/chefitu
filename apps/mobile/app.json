@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "My Recipes",
-    "slug": "my-recipes",
+    "name": "Chefitu",
+    "slug": "chefitu",
+    "entryPoint": "./index.js",
     "version": "1.0.0",
     "runtimeVersion": {
       "policy": "appVersion"
@@ -9,21 +10,22 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "splash": {
+      "image": "./assets/logo-full.png",
       "resizeMode": "contain",
-      "backgroundColor": "#f4efe6"
+      "backgroundColor": "#FFF6E9"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.mateusmeirelles.myrecipes"
+      "bundleIdentifier": "com.mateusmeirelles.chefitu"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#f4efe6"
       },
-      "package": "com.mateusmeirelles.myrecipes"
+      "package": "com.mateusmeirelles.chefitu"
     },
     "extra": {
       "eas": {

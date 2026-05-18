@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert, Animated, Image, Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import type { ChatMessage, RecipeIngredient, RecipeRecord, RecipeStep } from "@my-recipes/shared";
-import { Icon, Text, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AdjustRecipePanel, type UIMessage } from "../components/AdjustRecipePanel";
 import { MetricCard } from "../components/MetricCard";
 import { FALLBACK_COVER_IMAGE } from "../constants";
 import { deleteRecipe, saveNewRecipe, updateRecipe } from "../services/api";
+import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../design-system/tokens";
+import { DSText } from "../design-system/Text";
+import { DSIcon } from "../design-system/Icon";
+import { DSButton } from "../design-system/Button";
 
 type DetailTab = "ingredients" | "instructions";
 
@@ -22,10 +25,8 @@ export const RecipeDetailScreen = ({
   onBack: () => void;
   onDelete: () => void;
 }) => {
-  const theme = useTheme();
   const insets = useSafeAreaInsets();
 
-  // ── Base UI state ──────────────────────────────────────────────────────────
   const [currentRecipe, setCurrentRecipe] = useState(recipe);
   const [activeTab, setActiveTab] = useState<DetailTab>("ingredients");
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
@@ -34,7 +35,6 @@ export const RecipeDetailScreen = ({
   const [deleting, setDeleting] = useState(false);
   const menuAnim = useRef(new Animated.Value(0)).current;
 
-  // ── Adjust state ───────────────────────────────────────────────────────────
   const [panelOpen, setPanelOpen] = useState(false);
   const [adjustmentSessionId] = useState(() => createAdjustmentSessionId(recipe.id));
   const [apiHistory, setApiHistory] = useState<ChatMessage[]>([]);
@@ -42,7 +42,6 @@ export const RecipeDetailScreen = ({
   const [appliedRecipe, setAppliedRecipe] = useState<RecipeRecord | null>(null);
   const [viewingOriginal, setViewingOriginal] = useState(false);
 
-  // ── Dialog state ───────────────────────────────────────────────────────────
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -51,11 +50,8 @@ export const RecipeDetailScreen = ({
   const displayedRecipe = hasAdjustment && !viewingOriginal ? appliedRecipe : currentRecipe;
   const hasHistory = uiMessages.some((m) => m.kind === "user");
 
-  useEffect(() => {
-    setCurrentRecipe(recipe);
-  }, [recipe]);
+  useEffect(() => { setCurrentRecipe(recipe); }, [recipe]);
 
-  // ── Menu animation ─────────────────────────────────────────────────────────
   const openMenu = () => {
     setMenuOpen(true);
     Animated.timing(menuAnim, { toValue: 1, duration: 150, useNativeDriver: true }).start();
@@ -66,10 +62,7 @@ export const RecipeDetailScreen = ({
     );
   };
 
-  const handleDeletePress = () => {
-    closeMenu();
-    setTimeout(() => setConfirmDelete(true), 120);
-  };
+  const handleDeletePress = () => { closeMenu(); setTimeout(() => setConfirmDelete(true), 120); };
 
   const handleConfirmDelete = async () => {
     setDeleting(true);
@@ -91,28 +84,21 @@ export const RecipeDetailScreen = ({
     });
   };
 
-  // ── Back handling ──────────────────────────────────────────────────────────
   const handleBack = () => {
-    if (hasAdjustment) {
-      setShowUnsavedWarning(true);
-    } else {
-      onBack();
-    }
+    if (hasAdjustment) { setShowUnsavedWarning(true); } else { onBack(); }
   };
 
-  // ── Adjust apply ───────────────────────────────────────────────────────────
   const handleApply = (adjusted: RecipeRecord) => {
     setAppliedRecipe(adjusted);
     setViewingOriginal(false);
     setCheckedIngredients(new Set());
   };
 
-  // ── Save handlers ──────────────────────────────────────────────────────────
   const handleSaveOverwrite = async () => {
     if (!appliedRecipe) return;
     setSaving(true);
     try {
-      const updatedRecipe = await updateRecipe(recipe.id, {
+      const updated = await updateRecipe(recipe.id, {
         title: appliedRecipe.title,
         category: appliedRecipe.category,
         cuisine: appliedRecipe.cuisine,
@@ -122,7 +108,7 @@ export const RecipeDetailScreen = ({
         servings: appliedRecipe.servings,
         tags: appliedRecipe.tags,
       });
-      setCurrentRecipe(updatedRecipe);
+      setCurrentRecipe(updated);
       setShowSaveDialog(false);
       setAppliedRecipe(null);
       setUiMessages([]);
@@ -165,7 +151,7 @@ export const RecipeDetailScreen = ({
 
   return (
     <View style={styles.root}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         {/* Hero */}
         <View>
           <Image
@@ -175,18 +161,18 @@ export const RecipeDetailScreen = ({
           <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
             <View style={[styles.heroNav, { top: insets.top + 8 }]}>
               <Pressable onPress={handleBack} style={styles.glassBtn}>
-                <Icon source="arrow-left" size={22} color="#221A16" />
+                <DSIcon name="ArrowLeft" size={22} color={COLORS.marrom} strokeWidth={2} />
               </Pressable>
               <View style={styles.heroNavRight}>
                 <Pressable style={styles.glassBtn}>
-                  <Icon source="bookmark-outline" size={20} color="#221A16" />
+                  <DSIcon name="Bookmark" size={20} color={COLORS.marrom} strokeWidth={1.75} />
                 </Pressable>
                 <Pressable style={styles.glassBtn}>
-                  <Icon source="share-variant-outline" size={20} color="#221A16" />
+                  <DSIcon name="Share2" size={20} color={COLORS.marrom} strokeWidth={1.75} />
                 </Pressable>
                 <View>
                   <Pressable style={styles.glassBtn} onPress={menuOpen ? closeMenu : openMenu}>
-                    <Icon source="dots-vertical" size={20} color="#221A16" />
+                    <DSIcon name="MoreVertical" size={20} color={COLORS.marrom} strokeWidth={1.75} />
                   </Pressable>
                   {menuOpen && (
                     <Animated.View
@@ -194,20 +180,13 @@ export const RecipeDetailScreen = ({
                         styles.dropdownMenu,
                         {
                           opacity: menuAnim,
-                          transform: [
-                            {
-                              scale: menuAnim.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0.9, 1],
-                              }),
-                            },
-                          ],
+                          transform: [{ scale: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) }],
                         },
                       ]}
                     >
                       <Pressable style={styles.menuItem} onPress={handleDeletePress}>
-                        <Icon source="trash-can-outline" size={18} color="#B3261E" />
-                        <Text style={styles.menuItemText}>Deletar</Text>
+                        <DSIcon name="Trash2" size={18} color={COLORS.danger} strokeWidth={1.75} />
+                        <DSText style={styles.menuItemText}>Deletar</DSText>
                       </Pressable>
                     </Animated.View>
                   )}
@@ -218,89 +197,70 @@ export const RecipeDetailScreen = ({
         </View>
 
         {/* Body card */}
-        <View style={[styles.detailBody, { backgroundColor: theme.colors.surface }]}>
-          {/* Adjusted indicator */}
+        <View style={styles.detailBody}>
           {hasAdjustment && (
-            <View style={[styles.adjustedBadge, { backgroundColor: theme.colors.primaryContainer }]}>
-              <Icon source="auto-fix" size={14} color={theme.colors.onPrimaryContainer} />
-              <Text variant="bodySmall" style={{ color: theme.colors.onPrimaryContainer, fontWeight: "500" }}>
+            <View style={styles.adjustedBadge}>
+              <DSIcon name="Sparkles" size={14} color={COLORS.laranja} strokeWidth={1.75} />
+              <DSText style={{ color: COLORS.laranja, fontSize: TYPE_SCALE.bodySm, fontWeight: "500" }}>
                 {viewingOriginal ? "Visualizando original" : "Receita ajustada"}
-              </Text>
+              </DSText>
             </View>
           )}
 
-          {/* Eyebrow */}
           {(displayedRecipe.category || displayedRecipe.cuisine) && (
-            <Text style={[styles.eyebrow, { color: theme.colors.primary }]}>
-              {[displayedRecipe.category, displayedRecipe.cuisine]
-                .filter(Boolean)
-                .join(" · ")
-                .toUpperCase()}
-            </Text>
+            <DSText style={styles.eyebrow}>
+              {[displayedRecipe.category, displayedRecipe.cuisine].filter(Boolean).join(" · ").toUpperCase()}
+            </DSText>
           )}
 
-          {/* Title */}
-          <Text
-            variant="headlineSmall"
-            style={[styles.detailTitle, { color: theme.colors.onSurface }]}
-          >
-            {displayedRecipe.title}
-          </Text>
+          <DSText style={styles.detailTitle}>{displayedRecipe.title}</DSText>
 
-          {/* Stats */}
           <View style={styles.statsRow}>
             <MetricCard value={displayedRecipe.totalTimeMinutes?.toString() ?? "—"} label="Min" />
-            <MetricCard value={displayedRecipe.servings?.split(" ")[0] ?? "—"} label="Servings" />
-            <MetricCard
-              value={displayedRecipe.ingredients.length.toString()}
-              label="Items"
-            />
+            <MetricCard value={displayedRecipe.servings?.split(" ")[0] ?? "—"} label="Porções" />
+            <MetricCard value={displayedRecipe.ingredients.length.toString()} label="Ingredientes" />
           </View>
 
           {/* Segmented control */}
-          <View style={[styles.segmented, { borderColor: theme.colors.outline }]}>
+          <View style={styles.segmented}>
             {(["ingredients", "instructions"] as DetailTab[]).map((tab) => {
               const active = activeTab === tab;
               return (
                 <Pressable key={tab} onPress={() => setActiveTab(tab)} style={styles.segmentTab}>
-                  <View
-                    style={[
-                      styles.segmentPill,
-                      active && { backgroundColor: theme.colors.secondaryContainer },
-                    ]}
-                  >
-                    {active && (
-                      <Icon source="check" size={15} color={theme.colors.onSecondaryContainer} />
-                    )}
-                    <Text
-                      variant="labelLarge"
-                      style={{
-                        color: active
-                          ? theme.colors.onSecondaryContainer
-                          : theme.colors.onSurface,
-                      }}
-                    >
-                      {tab === "ingredients" ? "Ingredients" : "Instructions"}
-                    </Text>
+                  <View style={[styles.segmentPill, active && styles.segmentPillActive]}>
+                    {active && <DSIcon name="Check" size={15} color={COLORS.marrom} strokeWidth={2.5} />}
+                    <DSText style={[styles.segmentLabel, { color: active ? COLORS.marrom : COLORS.marromSoft }]}>
+                      {tab === "ingredients" ? "Ingredientes" : "Instruções"}
+                    </DSText>
                   </View>
                 </Pressable>
               );
             })}
           </View>
 
-          {/* Section heading */}
           <View style={styles.sectionHeading}>
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-              {activeTab === "ingredients" ? "Ingredients" : "Instructions"}
-            </Text>
-            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+            <DSText style={styles.sectionTitle}>
+              {activeTab === "ingredients" ? "Ingredientes" : "Instruções"}
+            </DSText>
+            <DSText style={styles.sectionSubtitle}>
               {activeTab === "ingredients"
-                ? `For ${displayedRecipe.servings ?? "your recipe"}`
-                : `${displayedRecipe.steps.length} steps`}
-            </Text>
+                ? `Para ${displayedRecipe.servings ?? "sua receita"}`
+                : `${displayedRecipe.steps.length} passos`}
+            </DSText>
           </View>
 
-          {/* Content */}
+          {activeTab === "instructions" && displayedRecipe.instructionsGeneratedByAi && (
+            <View style={styles.aiNotice}>
+              <View style={styles.aiNoticeHeader}>
+                <DSIcon name="Sparkles" size={16} color={COLORS.laranja} strokeWidth={1.75} />
+                <DSText style={styles.aiNoticeTitle}>Instruções geradas por IA</DSText>
+              </View>
+              <DSText style={styles.aiNoticeBody}>
+                A fonte original tinha apenas ingredientes. Esses passos são uma sugestão da IA — revise antes de cozinhar.
+              </DSText>
+            </View>
+          )}
+
           {activeTab === "ingredients"
             ? displayedRecipe.ingredients.map((ingredient, index) => (
                 <IngredientRow
@@ -321,260 +281,156 @@ export const RecipeDetailScreen = ({
         </View>
       </ScrollView>
 
-      {/* ── Bottom bar ──────────────────────────────────────────────────────── */}
+      {/* Bottom bar */}
       {hasAdjustment ? (
-        <View
-          style={[
-            styles.adjustedBar,
-            {
-              bottom: insets.bottom + 8,
-              borderColor: theme.colors.outlineVariant,
-              backgroundColor: theme.colors.surface,
-            },
-          ]}
-        >
-          {/* Original / Adjusted toggle */}
-          <View style={[styles.versionToggle, { borderColor: theme.colors.outline }]}>
+        <View style={[styles.adjustedBar, { bottom: insets.bottom + 8 }]}>
+          <View style={styles.versionToggle}>
             <Pressable
-              onPress={() => {
-                setViewingOriginal(true);
-                setCheckedIngredients(new Set());
-              }}
-              style={[
-                styles.toggleOption,
-                viewingOriginal && { backgroundColor: theme.colors.secondaryContainer },
-              ]}
+              onPress={() => { setViewingOriginal(true); setCheckedIngredients(new Set()); }}
+              style={[styles.toggleOption, viewingOriginal && styles.toggleOptionActive]}
             >
-              <Text
-                variant="labelSmall"
-                style={{
-                  color: viewingOriginal
-                    ? theme.colors.onSecondaryContainer
-                    : theme.colors.onSurfaceVariant,
-                  fontWeight: "500",
-                }}
-              >
+              <DSText style={[styles.toggleLabel, { color: viewingOriginal ? COLORS.marrom : COLORS.marromSoft }]}>
                 Original
-              </Text>
+              </DSText>
             </Pressable>
             <Pressable
-              onPress={() => {
-                setViewingOriginal(false);
-                setCheckedIngredients(new Set());
-              }}
-              style={[
-                styles.toggleOption,
-                !viewingOriginal && { backgroundColor: theme.colors.secondaryContainer },
-              ]}
+              onPress={() => { setViewingOriginal(false); setCheckedIngredients(new Set()); }}
+              style={[styles.toggleOption, !viewingOriginal && styles.toggleOptionActive]}
             >
-              <Text
-                variant="labelSmall"
-                style={{
-                  color: !viewingOriginal
-                    ? theme.colors.onSecondaryContainer
-                    : theme.colors.onSurfaceVariant,
-                  fontWeight: "500",
-                }}
-              >
-                Adjusted
-              </Text>
+              <DSText style={[styles.toggleLabel, { color: !viewingOriginal ? COLORS.marrom : COLORS.marromSoft }]}>
+                Ajustada
+              </DSText>
             </Pressable>
           </View>
 
-          {/* Continue adjusting */}
-          <Pressable
-            onPress={() => setPanelOpen(true)}
-            style={[styles.adjustMoreBtn, { borderColor: theme.colors.outline }]}
-          >
-            <Icon source="auto-fix" size={14} color={theme.colors.primary} />
-            <Text variant="labelSmall" style={{ color: theme.colors.onSurface, fontWeight: "500" }}>
-              Adjust more
-            </Text>
+          <Pressable onPress={() => setPanelOpen(true)} style={styles.adjustMoreBtn}>
+            <DSIcon name="Sparkles" size={14} color={COLORS.laranja} strokeWidth={1.75} />
+            <DSText style={{ color: COLORS.marrom, fontSize: TYPE_SCALE.bodySm, fontWeight: "500" }}>
+              Ajustar mais
+            </DSText>
           </Pressable>
 
-          {/* Save */}
-          <Pressable
-            onPress={() => setShowSaveDialog(true)}
-            style={[styles.saveBtn, { backgroundColor: theme.colors.primary }]}
-          >
-            <Text variant="labelSmall" style={{ color: theme.colors.onPrimary, fontWeight: "600" }}>
-              Save
-            </Text>
+          <Pressable onPress={() => setShowSaveDialog(true)} style={styles.saveBtn}>
+            <DSText style={{ color: COLORS.white, fontSize: TYPE_SCALE.bodySm, fontWeight: "600" }}>
+              Salvar
+            </DSText>
           </Pressable>
         </View>
       ) : (
         <Pressable
           onPress={() => setPanelOpen(true)}
-          style={[
-            styles.aiBar,
-            { bottom: insets.bottom + 16, backgroundColor: theme.colors.surfaceVariant },
-          ]}
+          style={[styles.aiBar, { bottom: insets.bottom + 16 }]}
         >
-          <Icon source="auto-fix" size={hasHistory ? 20 : 20} color={theme.colors.primary} />
-          <Text
-            variant="bodyLarge"
-            style={{ flex: 1, color: hasHistory ? theme.colors.onSurface : theme.colors.onSurfaceVariant, fontWeight: hasHistory ? "500" : "400" }}
-            numberOfLines={1}
-          >
-            {hasHistory ? "Continue adjusting..." : "Adjust this recipe…"}
-          </Text>
+          <DSIcon name="Sparkles" size={20} color={COLORS.laranja} strokeWidth={1.75} />
+          <DSText style={{ flex: 1, color: hasHistory ? COLORS.marrom : COLORS.marromSoft, fontWeight: hasHistory ? "500" : "400" }} numberOfLines={1}>
+            {hasHistory ? "Continuar ajustando…" : "Adaptar ao meu gosto…"}
+          </DSText>
           {hasHistory ? (
-            <View style={[styles.historyBadge, { backgroundColor: theme.colors.primary }]}>
-              <Text variant="labelSmall" style={{ color: theme.colors.onPrimary, fontWeight: "700", fontSize: 11 }}>
+            <View style={styles.historyBadge}>
+              <DSText style={{ color: COLORS.white, fontWeight: "700", fontSize: 11 }}>
                 {uiMessages.filter((m) => m.kind === "user").length}
-              </Text>
+              </DSText>
             </View>
           ) : (
-            <View style={[styles.aiSendBtn, { backgroundColor: theme.colors.primary }]}>
-              <Icon source="arrow-up" size={20} color={theme.colors.onPrimary} />
+            <View style={styles.aiSendBtn}>
+              <DSIcon name="ArrowUp" size={20} color={COLORS.white} strokeWidth={2} />
             </View>
           )}
         </Pressable>
       )}
 
-      {/* ── Adjust chat panel ────────────────────────────────────────────────── */}
-          <AdjustRecipePanel
-            visible={panelOpen}
-            onClose={() => setPanelOpen(false)}
-            recipeId={recipe.id}
-            sessionId={adjustmentSessionId}
-            originalRecipe={recipe}
-            apiHistory={apiHistory}
-            onApiHistoryChange={setApiHistory}
+      <AdjustRecipePanel
+        visible={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        recipeId={recipe.id}
+        sessionId={adjustmentSessionId}
+        originalRecipe={recipe}
+        apiHistory={apiHistory}
+        onApiHistoryChange={setApiHistory}
         uiMessages={uiMessages}
         onUiMessagesChange={setUiMessages}
         onApply={handleApply}
       />
 
-      {/* ── Delete confirmation ──────────────────────────────────────────────── */}
-      <Modal
-        visible={confirmDelete}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setConfirmDelete(false)}
-      >
+      {/* Delete confirmation */}
+      <Modal visible={confirmDelete} transparent animationType="fade" onRequestClose={() => setConfirmDelete(false)}>
         <View style={styles.dialogOverlay}>
-          <View style={[styles.dialogBox, { backgroundColor: theme.colors.surface }]}>
-            <Text style={[styles.dialogTitle, { color: theme.colors.onSurface }]}>
-              Deletar receita?
-            </Text>
-            <Text style={[styles.dialogBody, { color: theme.colors.onSurfaceVariant }]}>
+          <View style={styles.dialogBox}>
+            <DSText style={styles.dialogTitle}>Deletar receita?</DSText>
+            <DSText style={styles.dialogBody}>
               Isso vai remover permanentemente{" "}
-              <Text style={{ fontWeight: "700", color: theme.colors.onSurface }}>
-                {recipe.title}
-              </Text>{" "}
+              <DSText style={{ fontWeight: "700", color: COLORS.marrom }}>{recipe.title}</DSText>{" "}
               da sua biblioteca. Essa ação não pode ser desfeita.
-            </Text>
+            </DSText>
             <View style={styles.dialogActions}>
-              <Pressable
-                style={[styles.dialogCancelBtn, { borderColor: theme.colors.outline }]}
-                onPress={() => setConfirmDelete(false)}
-                disabled={deleting}
-              >
-                <Text style={{ color: theme.colors.onSurface, fontWeight: "500" }}>Cancelar</Text>
+              <Pressable style={styles.dialogCancelBtn} onPress={() => setConfirmDelete(false)} disabled={deleting}>
+                <DSText style={{ color: COLORS.marrom, fontWeight: "500" }}>Cancelar</DSText>
               </Pressable>
               <Pressable
                 style={[styles.dialogDeleteBtn, { opacity: deleting ? 0.6 : 1 }]}
                 onPress={() => void handleConfirmDelete()}
                 disabled={deleting}
               >
-                <Text style={{ color: "#fff", fontWeight: "600" }}>
+                <DSText style={{ color: COLORS.white, fontWeight: "600" }}>
                   {deleting ? "Deletando…" : "Deletar"}
-                </Text>
+                </DSText>
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
 
-      {/* ── Unsaved changes warning ──────────────────────────────────────────── */}
-      <Modal
-        visible={showUnsavedWarning}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowUnsavedWarning(false)}
-      >
+      {/* Unsaved warning */}
+      <Modal visible={showUnsavedWarning} transparent animationType="fade" onRequestClose={() => setShowUnsavedWarning(false)}>
         <View style={styles.dialogOverlay}>
-          <View style={[styles.dialogBox, { backgroundColor: theme.colors.surface }]}>
-            <Text style={[styles.dialogTitle, { color: theme.colors.onSurface }]}>
-              Sair sem salvar?
-            </Text>
-            <Text style={[styles.dialogBody, { color: theme.colors.onSurfaceVariant }]}>
+          <View style={styles.dialogBox}>
+            <DSText style={styles.dialogTitle}>Sair sem salvar?</DSText>
+            <DSText style={styles.dialogBody}>
               Se você sair, perderá os ajustes realizados na receita.
-            </Text>
+            </DSText>
             <View style={styles.dialogActions}>
-              <Pressable
-                style={[styles.dialogCancelBtn, { borderColor: theme.colors.outline }]}
-                onPress={() => setShowUnsavedWarning(false)}
-              >
-                <Text style={{ color: theme.colors.onSurface, fontWeight: "500" }}>Voltar</Text>
+              <Pressable style={styles.dialogCancelBtn} onPress={() => setShowUnsavedWarning(false)}>
+                <DSText style={{ color: COLORS.marrom, fontWeight: "500" }}>Voltar</DSText>
               </Pressable>
               <Pressable
-                style={[styles.dialogDeleteBtn, { backgroundColor: theme.colors.error }]}
-                onPress={() => {
-                  setShowUnsavedWarning(false);
-                  onBack();
-                }}
+                style={[styles.dialogDeleteBtn, { backgroundColor: COLORS.danger }]}
+                onPress={() => { setShowUnsavedWarning(false); onBack(); }}
               >
-                <Text style={{ color: "#fff", fontWeight: "600" }}>Sair</Text>
+                <DSText style={{ color: COLORS.white, fontWeight: "600" }}>Sair</DSText>
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
 
-      {/* ── Save dialog ──────────────────────────────────────────────────────── */}
-      <Modal
-        visible={showSaveDialog}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowSaveDialog(false)}
-      >
+      {/* Save dialog */}
+      <Modal visible={showSaveDialog} transparent animationType="fade" onRequestClose={() => setShowSaveDialog(false)}>
         <View style={styles.dialogOverlay}>
-          <View style={[styles.dialogBox, { backgroundColor: theme.colors.surface }]}>
-            <Text style={[styles.dialogTitle, { color: theme.colors.onSurface }]}>
-              Salvar receita ajustada
-            </Text>
-            <Text style={[styles.dialogBody, { color: theme.colors.onSurfaceVariant }]}>
-              Como você quer salvar essa receita?
-            </Text>
+          <View style={styles.dialogBox}>
+            <DSText style={styles.dialogTitle}>Salvar receita ajustada</DSText>
+            <DSText style={styles.dialogBody}>Como você quer salvar essa receita?</DSText>
             <View style={[styles.dialogActions, { flexDirection: "column" }]}>
               <Pressable
-                style={[
-                  styles.dialogSecondaryBtn,
-                  { borderColor: theme.colors.outline, opacity: saving ? 0.6 : 1 },
-                ]}
+                style={[styles.dialogSecondaryBtn, { opacity: saving ? 0.6 : 1 }]}
                 onPress={() => void handleSaveOverwrite()}
                 disabled={saving}
               >
-                <Text style={[styles.dialogSecondaryBtnText, { color: theme.colors.onSurface }]}>
-                  Replace original
-                </Text>
+                <DSText style={{ color: COLORS.marrom, fontWeight: "600", fontSize: TYPE_SCALE.body }}>
+                  Substituir original
+                </DSText>
               </Pressable>
-              <Pressable
-                style={[
-                  styles.dialogSaveNewBtn,
-                  { backgroundColor: theme.colors.primary, opacity: saving ? 0.6 : 1 },
-                ]}
+              <DSButton
+                variant="primary"
                 onPress={() => void handleSaveAsNew()}
-                disabled={saving}
+                style={{ opacity: saving ? 0.6 : 1 }}
               >
-                <Text style={{ color: theme.colors.onPrimary, fontWeight: "600" }}>
-                  Salvar como nova receita
-                </Text>
-              </Pressable>
+                Salvar como nova receita
+              </DSButton>
             </View>
-            <Pressable
-              style={styles.dialogCancelText}
-              onPress={() => setShowSaveDialog(false)}
-              disabled={saving}
-            >
-              <Text
-                variant="bodySmall"
-                style={{ color: theme.colors.onSurfaceVariant, textAlign: "center" }}
-              >
+            <Pressable style={styles.dialogCancelText} onPress={() => setShowSaveDialog(false)} disabled={saving}>
+              <DSText style={{ color: COLORS.marromSoft, textAlign: "center", fontSize: TYPE_SCALE.bodySm }}>
                 Cancelar
-              </Text>
+              </DSText>
             </Pressable>
           </View>
         </View>
@@ -596,356 +452,98 @@ const IngredientRow = ({
   checked: boolean;
   onToggle: () => void;
 }) => {
-  const theme = useTheme();
   const qty = [ingredient.amount, ingredient.unit].filter(Boolean).join(" ");
-
   return (
     <Pressable onPress={onToggle}>
-      <View
-        style={[
-          styles.ingredientRow,
-          !isLast && { borderBottomWidth: 1, borderBottomColor: theme.colors.surfaceVariant },
-        ]}
-      >
-        <View
-          style={[
-            styles.checkbox,
-            {
-              borderColor: checked ? theme.colors.primary : theme.colors.outline,
-              backgroundColor: checked ? theme.colors.primary : "transparent",
-            },
-          ]}
-        >
-          {checked && <Icon source="check" size={12} color={theme.colors.onPrimary} />}
+      <View style={[styles.ingredientRow, !isLast && styles.ingredientRowBorder]}>
+        <View style={[styles.checkbox, { borderColor: checked ? COLORS.laranja : "rgba(74,44,26,0.14)", backgroundColor: checked ? COLORS.laranja : "transparent" }]}>
+          {checked && <DSIcon name="Check" size={12} color={COLORS.white} strokeWidth={2.5} />}
         </View>
-
-        <Text
-          variant="bodyLarge"
-          style={[
-            styles.ingredientName,
-            {
-              color: checked ? theme.colors.onSurfaceVariant : theme.colors.onSurface,
-              textDecorationLine: checked ? "line-through" : "none",
-            },
-          ]}
-        >
+        <DSText style={[styles.ingredientName, { color: checked ? COLORS.marromSoft : COLORS.marrom, textDecorationLine: checked ? "line-through" : "none" }]}>
           {ingredient.item}
-        </Text>
-
-        {qty ? (
-          <Text style={[styles.ingredientQty, { color: theme.colors.onSurfaceVariant }]}>
-            {qty}
-          </Text>
-        ) : null}
+        </DSText>
+        {qty ? <DSText style={styles.ingredientQty}>{qty}</DSText> : null}
       </View>
     </Pressable>
   );
 };
 
-const StepRow = ({
-  step,
-  isLast,
-}: {
-  step: RecipeStep;
-  isLast: boolean;
-}) => {
-  const theme = useTheme();
-
-  return (
-    <View style={styles.stepRow}>
-      <View style={styles.stepLeft}>
-        <View style={[styles.stepCircle, { backgroundColor: theme.colors.primaryContainer }]}>
-          <Text style={[styles.stepNum, { color: theme.colors.onPrimaryContainer }]}>
-            {step.order}
-          </Text>
-        </View>
-        {!isLast && (
-          <View style={[styles.stepConnector, { backgroundColor: theme.colors.outline }]} />
-        )}
+const StepRow = ({ step, isLast }: { step: RecipeStep; isLast: boolean }) => (
+  <View style={styles.stepRow}>
+    <View style={styles.stepLeft}>
+      <View style={styles.stepCircle}>
+        <DSText style={styles.stepNum}>{step.order}</DSText>
       </View>
-
-      <View style={styles.stepContent}>
-        {step.title ? (
-          <Text style={[styles.stepTitle, { color: theme.colors.onSurface }]}>{step.title}</Text>
-        ) : null}
-        <Text
-          variant="bodyLarge"
-          style={[styles.stepInstruction, { color: theme.colors.onSurfaceVariant }]}
-        >
-          {step.instruction}
-        </Text>
-      </View>
+      {!isLast && <View style={styles.stepConnector} />}
     </View>
-  );
-};
+    <View style={styles.stepContent}>
+      {step.title ? <DSText style={styles.stepTitle}>{step.title}</DSText> : null}
+      <DSText style={styles.stepInstruction}>{step.instruction}</DSText>
+    </View>
+  </View>
+);
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
+const OUTLINE = "rgba(74, 44, 26, 0.14)";
+const OUTLINE_FAINT = "rgba(74, 44, 26, 0.10)";
+
 const styles = StyleSheet.create({
-  root: { flex: 1 },
+  root: { flex: 1, backgroundColor: COLORS.creme },
   heroImage: { width: "100%", height: 320 },
-  heroNav: {
-    position: "absolute",
-    left: 8,
-    right: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+  heroNav: { position: "absolute", left: 8, right: 8, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   heroNavRight: { flexDirection: "row", gap: 4 },
-  glassBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 248, 245, 0.90)",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 0.5,
-    borderColor: "rgba(26, 22, 18, 0.10)",
-  },
-  detailBody: {
-    marginTop: -20,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingHorizontal: 24,
-    paddingTop: 28,
-    gap: 20,
-    zIndex: 2,
-  },
-  adjustedBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    marginBottom: -4,
-  },
-  eyebrow: {
-    fontSize: 11,
-    fontWeight: "500",
-    letterSpacing: 0.12,
-    textTransform: "uppercase",
-  },
-  detailTitle: { marginTop: -8 },
-  statsRow: { flexDirection: "row", gap: 8 },
-  segmented: {
-    flexDirection: "row",
-    borderRadius: 999,
-    borderWidth: 1,
-    height: 48,
-    padding: 4,
-  },
+  glassBtn: { width: 40, height: 40, borderRadius: RADIUS.pill, backgroundColor: "rgba(255, 246, 233, 0.92)", alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: OUTLINE_FAINT },
+  detailBody: { marginTop: -20, borderTopLeftRadius: RADIUS.sheet, borderTopRightRadius: RADIUS.sheet, paddingHorizontal: SPACING[6], paddingTop: SPACING[8], gap: SPACING[5], backgroundColor: COLORS.creme, zIndex: 2 },
+  adjustedBadge: { flexDirection: "row", alignItems: "center", gap: SPACING[2], paddingHorizontal: SPACING[3], paddingVertical: SPACING[2], borderRadius: RADIUS.sm, backgroundColor: COLORS.laranjaSoft, marginBottom: -SPACING[1] },
+  eyebrow: { fontSize: TYPE_SCALE.caption, fontWeight: "500", letterSpacing: 0.12, textTransform: "uppercase", color: COLORS.laranja },
+  detailTitle: { fontFamily: FONTS.displayBold, fontWeight: "700", fontSize: TYPE_SCALE.h1, color: COLORS.marrom, marginTop: -SPACING[2] },
+  statsRow: { flexDirection: "row", gap: SPACING[2] },
+  segmented: { flexDirection: "row", borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE, height: 48, padding: 4 },
   segmentTab: { flex: 1 },
-  segmentPill: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    borderRadius: 999,
-    paddingHorizontal: 8,
-  },
-  sectionHeading: { gap: 2, marginBottom: -4 },
-  ingredientRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-    minHeight: 52,
-    paddingVertical: 10,
-  },
-  checkbox: {
-    width: 18,
-    height: 18,
-    borderRadius: 3,
-    borderWidth: 1.5,
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
-  ingredientName: { flex: 1 },
-  ingredientQty: {
-    fontSize: 13,
-    fontWeight: "500",
-    fontVariant: ["tabular-nums"],
-    flexShrink: 0,
-  },
-  stepRow: { flexDirection: "row", gap: 14 },
+  segmentPill: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderRadius: RADIUS.pill, paddingHorizontal: SPACING[2] },
+  segmentPillActive: { backgroundColor: COLORS.salvia },
+  segmentLabel: { fontFamily: FONTS.uiSemiBold, fontWeight: "600", fontSize: TYPE_SCALE.bodySm },
+  sectionHeading: { gap: 2, marginBottom: -SPACING[1] },
+  sectionTitle: { fontFamily: FONTS.uiBold, fontWeight: "700", fontSize: TYPE_SCALE.h3, color: COLORS.marrom },
+  sectionSubtitle: { fontSize: TYPE_SCALE.bodySm, color: COLORS.marromSoft },
+  aiNotice: { borderWidth: 1, borderColor: COLORS.laranjaSoft, borderRadius: RADIUS.input, paddingHorizontal: SPACING[4], paddingVertical: SPACING[4], gap: SPACING[2], marginTop: -SPACING[1] },
+  aiNoticeHeader: { flexDirection: "row", alignItems: "center", gap: SPACING[2] },
+  aiNoticeTitle: { fontFamily: FONTS.uiBold, fontWeight: "700", fontSize: TYPE_SCALE.bodySm, color: COLORS.marrom },
+  aiNoticeBody: { fontSize: TYPE_SCALE.bodySm, color: COLORS.marromSoft, lineHeight: 20 },
+  ingredientRow: { flexDirection: "row", alignItems: "center", gap: SPACING[3] + 2, minHeight: 52, paddingVertical: SPACING[2] + 2 },
+  ingredientRowBorder: { borderBottomWidth: 1, borderBottomColor: COLORS.bege },
+  checkbox: { width: 18, height: 18, borderRadius: 3, borderWidth: 1.5, alignItems: "center", justifyContent: "center", flexShrink: 0 },
+  ingredientName: { flex: 1, fontSize: TYPE_SCALE.body },
+  ingredientQty: { fontSize: 13, fontWeight: "500", color: COLORS.marromSoft, fontVariant: ["tabular-nums"], flexShrink: 0 },
+  stepRow: { flexDirection: "row", gap: SPACING[3] + 2 },
   stepLeft: { width: 32, alignItems: "center" },
-  stepCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
-  stepNum: { fontSize: 14, fontWeight: "500" },
-  stepConnector: { flex: 1, width: 1.5, marginVertical: 4 },
-  stepContent: { flex: 1, paddingBottom: 24, paddingTop: 4, gap: 4 },
-  stepTitle: { fontSize: 16, fontWeight: "700", lineHeight: 22 },
-  stepInstruction: { lineHeight: 22 },
-  dropdownMenu: {
-    position: "absolute",
-    right: 0,
-    top: 52,
-    backgroundColor: "#FFF8F5",
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "rgba(26,22,18,0.20)",
-    minWidth: 180,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-    zIndex: 100,
-    overflow: "hidden",
-    transformOrigin: "top right",
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-  },
-  menuItemText: { fontSize: 15, fontWeight: "500", color: "#B3261E" },
-
-  // Bottom bars
-  aiBar: {
-    position: "absolute",
-    left: 16,
-    right: 16,
-    height: 56,
-    borderRadius: 28,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    gap: 10,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-  },
-  aiSendBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  historyBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  adjustedBar: {
-    position: "absolute",
-    left: 12,
-    right: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 24,
-    borderWidth: StyleSheet.hairlineWidth,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-  },
-  versionToggle: {
-    flexDirection: "row",
-    borderRadius: 999,
-    borderWidth: 1,
-    height: 36,
-    padding: 3,
-  },
-  toggleOption: {
-    paddingHorizontal: 10,
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  adjustMoreBtn: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 5,
-    height: 36,
-    borderRadius: 999,
-    borderWidth: 1,
-  },
-  saveBtn: {
-    paddingHorizontal: 16,
-    height: 36,
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  // Dialogs
-  dialogOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 32,
-  },
-  dialogBox: {
-    width: "100%",
-    borderRadius: 24,
-    padding: 24,
-    gap: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 24,
-    elevation: 12,
-  },
-  dialogTitle: { fontSize: 20, fontWeight: "700" },
-  dialogBody: { fontSize: 15, lineHeight: 22 },
-  dialogActions: { flexDirection: "row", gap: 12, marginTop: 8 },
-  dialogCancelBtn: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 14,
-    borderRadius: 999,
-    borderWidth: 1,
-  },
-  dialogDeleteBtn: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 14,
-    borderRadius: 999,
-    backgroundColor: "#B3261E",
-  },
-  dialogSaveNewBtn: {
-    alignItems: "center",
-    paddingVertical: 14,
-    borderRadius: 999,
-  },
-  dialogSecondaryBtn: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 14,
-    borderRadius: 999,
-    borderWidth: 1,
-    backgroundColor: "transparent",
-  },
-  dialogSecondaryBtnText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  dialogCancelText: {
-    paddingVertical: 8,
-  },
+  stepCircle: { width: 32, height: 32, borderRadius: 16, backgroundColor: COLORS.laranjaSoft, alignItems: "center", justifyContent: "center", flexShrink: 0 },
+  stepNum: { fontSize: TYPE_SCALE.bodySm, fontWeight: "500", color: COLORS.marrom },
+  stepConnector: { flex: 1, width: 1.5, marginVertical: 4, backgroundColor: OUTLINE },
+  stepContent: { flex: 1, paddingBottom: SPACING[6], paddingTop: 4, gap: 4 },
+  stepTitle: { fontSize: TYPE_SCALE.body, fontWeight: "700", lineHeight: 22, color: COLORS.marrom },
+  stepInstruction: { fontSize: TYPE_SCALE.body, lineHeight: 22, color: COLORS.marromSoft },
+  dropdownMenu: { position: "absolute", right: 0, top: 52, backgroundColor: COLORS.creme, borderRadius: RADIUS.sm, borderWidth: 1, borderColor: OUTLINE, minWidth: 180, ...SHADOWS.md, zIndex: 100, overflow: "hidden" },
+  menuItem: { flexDirection: "row", alignItems: "center", gap: SPACING[2] + 2, paddingHorizontal: SPACING[4], paddingVertical: SPACING[3] + 2 },
+  menuItemText: { fontSize: 15, fontWeight: "500", color: COLORS.danger },
+  aiBar: { position: "absolute", left: 16, right: 16, height: 56, borderRadius: 28, flexDirection: "row", alignItems: "center", paddingHorizontal: 16, gap: 10, backgroundColor: COLORS.bege, ...SHADOWS.md },
+  aiSendBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.laranja, alignItems: "center", justifyContent: "center" },
+  historyBadge: { width: 24, height: 24, borderRadius: 12, backgroundColor: COLORS.laranja, alignItems: "center", justifyContent: "center" },
+  adjustedBar: { position: "absolute", left: 12, right: 12, flexDirection: "row", alignItems: "center", gap: SPACING[2], paddingHorizontal: 12, paddingVertical: 10, borderRadius: RADIUS.sheet, borderWidth: StyleSheet.hairlineWidth, borderColor: OUTLINE, backgroundColor: COLORS.creme, ...SHADOWS.md },
+  versionToggle: { flexDirection: "row", borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE, height: 36, padding: 3 },
+  toggleOption: { paddingHorizontal: 10, borderRadius: RADIUS.pill, alignItems: "center", justifyContent: "center" },
+  toggleOptionActive: { backgroundColor: COLORS.salvia },
+  toggleLabel: { fontSize: TYPE_SCALE.bodySm, fontWeight: "500" },
+  adjustMoreBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, height: 36, borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE },
+  saveBtn: { paddingHorizontal: 16, height: 36, borderRadius: RADIUS.pill, backgroundColor: COLORS.laranja, alignItems: "center", justifyContent: "center" },
+  dialogOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center", paddingHorizontal: 32 },
+  dialogBox: { width: "100%", borderRadius: RADIUS.sheet, padding: SPACING[6], gap: 12, backgroundColor: COLORS.creme, ...SHADOWS.lg },
+  dialogTitle: { fontSize: TYPE_SCALE.h2, fontWeight: "700", color: COLORS.marrom },
+  dialogBody: { fontSize: TYPE_SCALE.body, lineHeight: 22, color: COLORS.marromSoft },
+  dialogActions: { flexDirection: "row", gap: 12, marginTop: SPACING[2] },
+  dialogCancelBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE },
+  dialogDeleteBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: RADIUS.pill, backgroundColor: COLORS.danger },
+  dialogSecondaryBtn: { width: "100%", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE, backgroundColor: "transparent" },
+  dialogCancelText: { paddingVertical: 8 },
 });
