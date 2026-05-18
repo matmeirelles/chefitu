@@ -55,15 +55,20 @@ export const LibraryScreen = ({
     [recipes, selectedFilter, deferredSearchQuery],
   );
 
+  const gridData = useMemo(
+    () => filteredRecipes.length % 2 !== 0 ? [...filteredRecipes, null] : filteredRecipes,
+    [filteredRecipes],
+  );
+
   return (
     <View style={[styles.root, { backgroundColor: COLORS.creme }]}>
       <FlatList
-        data={filteredRecipes}
-        keyExtractor={(item) => item.id}
+        data={gridData}
+        keyExtractor={(item, index) => item?.id ?? `spacer-${index}`}
         numColumns={2}
         renderItem={({ item }) => (
           <View style={styles.cardWrapper}>
-            <RecipeCard recipe={item} onPress={() => onOpenRecipe(item)} />
+            {item && <RecipeCard recipe={item} onPress={() => onOpenRecipe(item)} />}
           </View>
         )}
         columnWrapperStyle={styles.columnWrapper}
