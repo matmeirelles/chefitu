@@ -1,21 +1,19 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import type { RecipeRecord } from "@my-recipes/shared";
-import { useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { COLORS } from "../design-system/tokens";
 import { fetchRecipes } from "../services/api";
 import { LibraryHeader } from "../components/LibraryHeader";
 import { RecipeCard } from "../components/RecipeCard";
 import { StateCard } from "../components/StateCard";
 import { buildFilterList, filterRecipes } from "../utils/filter";
 
-
 export const LibraryScreen = ({
   onOpenRecipe,
 }: {
   onOpenRecipe: (recipe: RecipeRecord) => void;
 }) => {
-  const theme = useTheme();
   const insets = useSafeAreaInsets();
   const [recipes, setRecipes] = useState<RecipeRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,17 +30,13 @@ export const LibraryScreen = ({
     } else {
       setIsLoading(true);
     }
-
     setErrorMessage(null);
-
     try {
       const response = await fetchRecipes();
       setRecipes(response.items);
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "We could not load your recipes right now.";
+        error instanceof Error ? error.message : "Não foi possível carregar suas receitas.";
       setErrorMessage(message);
     } finally {
       setIsLoading(false);
@@ -62,7 +56,7 @@ export const LibraryScreen = ({
   );
 
   return (
-    <View style={[styles.root, { backgroundColor: theme.colors.background }]}>
+    <View style={[styles.root, { backgroundColor: COLORS.creme }]}>
       <FlatList
         data={filteredRecipes}
         keyExtractor={(item) => item.id}
@@ -83,21 +77,21 @@ export const LibraryScreen = ({
         ListEmptyComponent={
           isLoading ? (
             <StateCard
-              title="Loading recipes"
-              body="We are preparing your recipe library."
+              title="Carregando receitas"
+              body="Preparando sua biblioteca."
               loading
             />
           ) : errorMessage ? (
             <StateCard
-              title="Could not load recipes"
+              title="Não foi possível carregar"
               body={errorMessage}
-              actionLabel="Try again"
+              actionLabel="Tentar novamente"
               onAction={() => void loadRecipes()}
             />
           ) : (
             <StateCard
-              title="No recipes found"
-              body="Try another search or a different filter."
+              title="Nenhuma receita encontrada"
+              body="Tente outra busca ou um filtro diferente."
             />
           )
         }
@@ -107,25 +101,18 @@ export const LibraryScreen = ({
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={() => void loadRecipes(true)}
-            tintColor={theme.colors.primary}
+            tintColor={COLORS.laranja}
           />
         }
       />
-
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
+  root: { flex: 1 },
   listContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
     paddingBottom: 120,
   },
-  separator: {
-    height: 8,
-  },
+  separator: { height: 8, marginHorizontal: 16 },
 });
