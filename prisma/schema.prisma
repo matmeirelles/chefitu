@@ -41,6 +41,7 @@ model Recipe {
   cuisine          String?
   ingredients      Json
   steps            Json
+  instructionsGeneratedByAi Boolean @default(false)
   totalTimeMinutes Int?
   servings         String?
   tags             String[]

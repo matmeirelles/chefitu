@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildFilterList, filterRecipes } from "./filter.js";
+import { buildFilterList, filterRecipes } from "./filter";
 import type { RecipeRecord } from "@my-recipes/shared";
 
 const makeRecipe = (overrides: Partial<RecipeRecord> = {}): RecipeRecord => ({
@@ -12,6 +12,7 @@ const makeRecipe = (overrides: Partial<RecipeRecord> = {}): RecipeRecord => ({
   cuisine: "Italian",
   ingredients: [{ amount: "200", unit: "g", item: "pasta" }],
   steps: [{ order: 1, instruction: "Cook." }],
+  instructionsGeneratedByAi: false,
   totalTimeMinutes: 15,
   servings: "2 servings",
   tags: ["Quick"],

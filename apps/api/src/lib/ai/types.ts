@@ -1,4 +1,9 @@
-import type { ChatMessage, RecipeIngredient, RecipeStep } from "@my-recipes/shared";
+import type {
+  ChatMessage,
+  GeneratedRecipeFields,
+  RecipeIngredient,
+  RecipeStep,
+} from "@my-recipes/shared";
 
 export type { ChatMessage };
 
@@ -15,6 +20,7 @@ export type ExtractedRecipe =
       cuisineSuggestion?: string | null;
       ingredients: RecipeIngredient[];
       steps: RecipeStep[];
+      instructionsGeneratedByAi?: boolean;
       totalTimeMinutes?: number | null;
       servings?: string | null;
       tags: string[];
@@ -57,7 +63,22 @@ export type AIAdjustmentResult = (
   | { kind: "adjustment"; adjustedFields: AdjustedRecipeFields }
 ) & { metadata: AIAdjustmentMetadata };
 
+export type { GeneratedRecipeFields };
+
+export type AIGenerationMetadata = {
+  provider: string;
+  model: string;
+  inputTokens: number | null;
+  outputTokens: number | null;
+};
+
+export type AIGenerationResult = (
+  | { kind: "message"; message: string }
+  | { kind: "recipe"; recipe: GeneratedRecipeFields }
+) & { metadata: AIGenerationMetadata };
+
 export interface AIProvider {
   extractRecipe(description: string): Promise<AIExtractionResult>;
   adjustRecipe(messages: ChatMessage[]): Promise<AIAdjustmentResult>;
+  generateRecipe(messages: ChatMessage[]): Promise<AIGenerationResult>;
 }

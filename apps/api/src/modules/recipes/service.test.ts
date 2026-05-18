@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { db } from "../../lib/db.js";
-import { deleteRecipe, getRecipeById, listRecipes } from "./service.js";
+import { createGeneratedRecipe, deleteRecipe, getRecipeById, listRecipes } from "./service.js";
 import { stubMethod } from "../../test/helpers.js";
 
 test("listRecipes maps rows into recipe records", async (t) => {
@@ -112,4 +112,95 @@ test("deleteRecipe deletes the recipe and its source import", async (t) => {
   assert.equal(result, true);
   assert.equal(deletedRecipeId, "rec_2");
   assert.equal(deletedImportId, "imp_2");
+});
+
+test("createGeneratedRecipe creates a generated import and recipe linked together", async (t) => {
+  const originalDateNow = Date.now;
+  Date.now = () => 1760000000000;
+  t.after(() => {
+    Date.now = originalDateNow;
+  });
+
+  const createdImports: Array<Record<string, unknown>> = [];
+  const createdRecipes: Array<Record<string, unknown>> = [];
+  const updatedImports: Array<Record<string, unknown>> = [];
+
+  stubMethod(t, db.import, "create", async ({ data }: { data: Record<string, unknown> }) => {
+    createdImports.push(data);
+    return {
+      id: "imp_generated_1",
+      sourceAuthorName: null,
+      rawDescription: null,
+      coverImageUrl: null,
+      failureReason: null,
+      recipeId: null,
+      createdAt: new Date("2026-05-05T12:00:00.000Z"),
+      updatedAt: new Date("2026-05-05T12:00:00.000Z"),
+      ...data,
+    } as never;
+  });
+
+  stubMethod(t, db.recipe, "create", async ({ data }: { data: Record<string, unknown> }) => {
+    createdRecipes.push(data);
+    return {
+      id: "rec_generated_1",
+      importId: "imp_generated_1",
+      createdAt: new Date("2026-05-05T12:00:01.000Z"),
+      updatedAt: new Date("2026-05-05T12:00:01.000Z"),
+      ...data,
+    } as never;
+  });
+
+  stubMethod(t, db.import, "update", async ({ where, data }: { where: Record<string, unknown>; data: Record<string, unknown> }) => {
+    updatedImports.push({ where, data });
+    return {
+      id: "imp_generated_1",
+      recipeId: "rec_generated_1",
+      ...data,
+    } as never;
+  });
+
+  const item = await createGeneratedRecipe({
+    title: "Risoto de Cogumelos",
+    category: "Almoço",
+    cuisine: "Italiana",
+    ingredients: [{ amount: "1", unit: "xícara", item: "arroz arbóreo" }],
+    steps: [{ order: 1, title: null, instruction: "Refogue a cebola." }],
+    totalTimeMinutes: 40,
+    servings: "4 porções",
+    tags: ["Vegetariano", "Comfort Food"],
+  });
+
+  assert.deepEqual(createdImports, [
+    {
+      sourcePlatform: "generated",
+      sourceUrl: "generated:1760000000000",
+      status: "ready",
+    },
+  ]);
+  assert.deepEqual(createdRecipes, [
+    {
+      importId: "imp_generated_1",
+      title: "Risoto de Cogumelos",
+      coverImageUrl: null,
+      category: "Almoço",
+      cuisine: "Italiana",
+      ingredients: [{ amount: "1", unit: "xícara", item: "arroz arbóreo" }],
+      steps: [{ order: 1, title: null, instruction: "Refogue a cebola." }],
+      instructionsGeneratedByAi: true,
+      totalTimeMinutes: 40,
+      servings: "4 porções",
+      tags: ["Vegetariano", "Comfort Food"],
+    },
+  ]);
+  assert.deepEqual(updatedImports, [
+    {
+      where: { id: "imp_generated_1" },
+      data: { recipeId: "rec_generated_1" },
+    },
+  ]);
+  assert.equal(item.id, "rec_generated_1");
+  assert.equal(item.importId, "imp_generated_1");
+  assert.equal(item.instructionsGeneratedByAi, true);
+  assert.equal(item.coverImageUrl, null);
 });
