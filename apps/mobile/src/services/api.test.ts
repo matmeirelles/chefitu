@@ -9,6 +9,7 @@ import {
   fetchImports,
   fetchRecipeById,
   fetchRecipes,
+  resolveApiBaseUrl,
   retryImport,
 } from "./api";
 
@@ -74,6 +75,23 @@ test("request falls back to generic message when error body is not JSON", async 
   );
 });
 
+test("request throws a helpful error when the API is unreachable", async () => {
+  globalThis.fetch = async () => {
+    throw new TypeError("Network request failed");
+  };
+
+  await assert.rejects(
+    () => fetchRecipes(),
+    (err) => {
+      assert.ok(err instanceof ApiError);
+      assert.equal(err.statusCode, 0);
+      assert.match(err.message, /Could not reach the API at http:\/\/127\.0\.0\.1:3333/);
+      assert.match(err.message, /EXPO_PUBLIC_API_BASE_URL/);
+      return true;
+    },
+  );
+});
+
 test("request returns parsed JSON on a successful response", async () => {
   const payload = { items: [{ id: "rec_1", title: "Banana Oat Pancakes" }] };
   mockFetch(200, payload);
@@ -81,6 +99,12 @@ test("request returns parsed JSON on a successful response", async () => {
   const result = await fetchRecipes();
 
   assert.deepEqual(result, payload);
+});
+
+test("resolveApiBaseUrl keeps explicit non-loopback URLs unchanged", () => {
+  const result = resolveApiBaseUrl("http://192.168.0.15:3333");
+
+  assert.equal(result, "http://192.168.0.15:3333");
 });
 
 test("fetchRecipeById returns the recipe on a successful response", async () => {

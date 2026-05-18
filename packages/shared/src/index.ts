@@ -96,6 +96,7 @@ export type RecipeRecord = {
   cuisine?: string | null;
   ingredients: RecipeIngredient[];
   steps: RecipeStep[];
+  instructionsGeneratedByAi: boolean;
   totalTimeMinutes?: number | null;
   servings?: string | null;
   tags: string[];
@@ -105,7 +106,7 @@ export type RecipeRecord = {
 
 export type ImportRecord = {
   id: string;
-  sourcePlatform: "instagram";
+  sourcePlatform: "instagram" | "adjusted" | "generated";
   sourceUrl: string;
   sourceAuthorName?: string | null;
   rawDescription?: string | null;
@@ -145,6 +146,26 @@ export type AdjustRecipeResponse =
   | { kind: "message"; message: string }
   | { kind: "adjustment"; adjustedRecipe: RecipeRecord };
 
+export type GeneratedRecipeFields = {
+  title: string;
+  category?: string | null;
+  cuisine?: string | null;
+  ingredients: RecipeIngredient[];
+  steps: RecipeStep[];
+  totalTimeMinutes?: number | null;
+  servings?: string | null;
+  tags: string[];
+};
+
+export type GenerateRecipeRequest = {
+  sessionId: string;
+  messages: ChatMessage[];
+};
+
+export type GenerateRecipeResponse =
+  | { kind: "message"; message: string }
+  | { kind: "recipe"; recipe: GeneratedRecipeFields };
+
 export type UpdateRecipeRequest = {
   title: string;
   category?: string | null;
@@ -170,5 +191,11 @@ export type CreateAdjustedRecipeRequest = {
 };
 
 export type CreateAdjustedRecipeResponse = {
+  item: RecipeRecord;
+};
+
+export type SaveGeneratedRecipeRequest = GeneratedRecipeFields;
+
+export type SaveGeneratedRecipeResponse = {
   item: RecipeRecord;
 };

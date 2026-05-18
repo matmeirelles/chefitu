@@ -1,3 +1,4 @@
+import "./lib/langfuse/instrumentation.js";
 import { appName } from "@my-recipes/shared";
 import { buildApp } from "./app.js";
 import { loadRootEnv } from "./lib/load-root-env.js";
