@@ -166,7 +166,8 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: TYPE_SCALE.h3,
     color: COLORS.marrom,
-    lineHeight: TYPE_SCALE.h3 * 1.2,
+    lineHeight: TYPE_SCALE.h3 * 1.3,
+    minHeight: TYPE_SCALE.h3 * 1.3 * 2,
   },
   meta: {
     flexDirection: "row",

@@ -82,15 +82,16 @@ const styles = StyleSheet.create({
     gap: SPACING[3],
   },
   mascotWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     overflow: "hidden",
-    backgroundColor: COLORS.creme,
+    backgroundColor: COLORS.bege,
+    flexShrink: 0,
   },
   mascot: {
-    width: 64,
-    height: 64,
+    width: 56,
+    height: 56,
   },
   greetingText: {
     flex: 1,
@@ -99,11 +100,11 @@ const styles = StyleSheet.create({
   greetingTitle: {
     fontFamily: FONTS.display,
     fontWeight: "800",
-    fontSize: TYPE_SCALE.h2,
+    fontSize: TYPE_SCALE.h3,
     color: COLORS.marrom,
   },
   greetingSubtitle: {
-    fontSize: TYPE_SCALE.body,
+    fontSize: TYPE_SCALE.bodySm,
     color: COLORS.marromSoft,
   },
   titleBlock: {
