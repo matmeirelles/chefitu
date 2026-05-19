@@ -82,13 +82,13 @@ const styles = StyleSheet.create({
     gap: SPACING[3],
   },
   mascotWrap: {
-    width: 72,
-    height: 72,
+    width: 92,
+    height: 92,
     flexShrink: 0,
   },
   mascot: {
-    width: 72,
-    height: 72,
+    width: 92,
+    height: 92,
   },
   greetingText: {
     flex: 1,
@@ -97,13 +97,13 @@ const styles = StyleSheet.create({
   greetingTitle: {
     fontFamily: FONTS.display,
     fontWeight: "800",
-    fontSize: TYPE_SCALE.h2,
-    lineHeight: TYPE_SCALE.h2 * 1.6,
+    fontSize: 26,
+    lineHeight: 26 * 1.6,
     color: COLORS.marrom,
   },
   greetingSubtitle: {
-    fontSize: TYPE_SCALE.body,
-    lineHeight: TYPE_SCALE.body * 1.5,
+    fontSize: 18,
+    lineHeight: 18 * 1.5,
     color: COLORS.marromSoft,
   },
   titleBlock: {
