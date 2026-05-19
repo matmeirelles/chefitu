@@ -21,7 +21,7 @@ export const LibraryHeader = ({
   onSelectFilter: (value: string) => void;
   recipeCount: number;
 }) => (
-  <View style={[styles.header, { paddingTop: topInset + 16 }]}>
+  <View style={[styles.header, { paddingTop: topInset + 28 }]}>
     {/* Greeting */}
     <View style={styles.greeting}>
       <View style={styles.mascotWrap}>
@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
   },
   titleBlock: {
     marginTop: SPACING[2],
+    paddingTop: 4,
     gap: 2,
   },
   title: {
