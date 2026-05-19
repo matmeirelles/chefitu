@@ -98,10 +98,12 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.display,
     fontWeight: "800",
     fontSize: TYPE_SCALE.h2,
+    lineHeight: TYPE_SCALE.h2 * 1.6,
     color: COLORS.marrom,
   },
   greetingSubtitle: {
     fontSize: TYPE_SCALE.body,
+    lineHeight: TYPE_SCALE.body * 1.5,
     color: COLORS.marromSoft,
   },
   titleBlock: {
@@ -113,10 +115,12 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.displayBold,
     fontWeight: "700",
     fontSize: TYPE_SCALE.h2,
+    lineHeight: TYPE_SCALE.h2 * 1.6,
     color: COLORS.marrom,
   },
   subtitle: {
     fontSize: TYPE_SCALE.bodySm,
+    lineHeight: TYPE_SCALE.bodySm * 1.5,
     color: COLORS.marromSoft,
   },
   chipsRow: {
