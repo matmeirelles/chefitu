@@ -24,7 +24,7 @@ const COMPOSER_VERTICAL_PADDING = 24;
 const COMPOSER_BASE_HEIGHT = 56;
 const DRAG_CLOSE_THRESHOLD = 96;
 const DRAG_HANDLE_HEIGHT = 44;
-import type { ChatMessage, RecipeIngredient, RecipeRecord } from "@my-recipes/shared";
+import type { ChatMessage, RecipeIngredient, RecipeRecord } from "@chefitu/shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { adjustRecipe as adjustRecipeApi } from "../services/api";
 import { COLORS, FONTS, RADIUS, SHADOWS, TYPE_SCALE } from "../design-system/tokens";

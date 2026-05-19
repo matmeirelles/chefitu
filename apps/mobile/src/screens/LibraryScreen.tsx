@@ -1,6 +1,6 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
-import type { RecipeRecord } from "@my-recipes/shared";
+import type { RecipeRecord } from "@chefitu/shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { COLORS } from "../design-system/tokens";
 import { fetchRecipes } from "../services/api";

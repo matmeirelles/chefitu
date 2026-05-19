@@ -1,5 +1,5 @@
 {
-  "name": "@my-recipes/shared",
+  "name": "@chefitu/shared",
   "private": true,
   "version": "0.0.1",
   "type": "module",

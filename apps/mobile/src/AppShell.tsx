@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { ChatMessage, RecipeRecord } from "@my-recipes/shared";
+import type { ChatMessage, RecipeRecord } from "@chefitu/shared";
 import { COLORS } from "./design-system/index";
 import { DSBottomNav, type BottomNavTab } from "./design-system/BottomNav";
 import { LibraryScreen } from "./screens/LibraryScreen";

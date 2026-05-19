@@ -1,5 +1,5 @@
-import type { RecipeRecord } from "@my-recipes/shared";
-import { RECIPE_CATEGORIES } from "@my-recipes/shared";
+import type { RecipeRecord } from "@chefitu/shared";
+import { RECIPE_CATEGORIES } from "@chefitu/shared";
 
 export const filterRecipes = (
   recipes: RecipeRecord[],

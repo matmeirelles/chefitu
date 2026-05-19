@@ -1,4 +1,4 @@
-import { RECIPE_CATEGORIES, RECIPE_CUISINES, RECIPE_TAGS } from "@my-recipes/shared";
+import { RECIPE_CATEGORIES, RECIPE_CUISINES, RECIPE_TAGS } from "@chefitu/shared";
 
 const categories = RECIPE_CATEGORIES.map((value) => `- ${value}`).join("\n");
 const cuisines = RECIPE_CUISINES.map((value) => `- ${value}`).join("\n");

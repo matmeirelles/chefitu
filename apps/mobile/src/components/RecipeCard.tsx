@@ -1,4 +1,4 @@
-import type { RecipeRecord } from "@my-recipes/shared";
+import type { RecipeRecord } from "@chefitu/shared";
 import { DSRecipeCard } from "../design-system/RecipeCard";
 import { FALLBACK_COVER_IMAGE } from "../constants";
 import { resolveImageUrl } from "../services/api";
