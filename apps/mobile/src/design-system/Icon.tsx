@@ -9,9 +9,10 @@ type Props = {
   size?: number;
   color?: string;
   strokeWidth?: number;
+  fill?: string;
 };
 
-export const DSIcon = ({ name, size = 22, color = COLORS.marrom, strokeWidth = 1.75 }: Props) => {
-  const LucideIcon = LucideIcons[name] as React.ComponentType<{ size: number; color: string; strokeWidth: number }>;
-  return <LucideIcon size={size} color={color} strokeWidth={strokeWidth} />;
+export const DSIcon = ({ name, size = 22, color = COLORS.marrom, strokeWidth = 1.75, fill }: Props) => {
+  const LucideIcon = LucideIcons[name] as React.ComponentType<{ size: number; color: string; strokeWidth: number; fill?: string }>;
+  return <LucideIcon size={size} color={color} strokeWidth={strokeWidth} fill={fill} />;
 };

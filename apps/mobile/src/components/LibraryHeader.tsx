@@ -82,32 +82,30 @@ const styles = StyleSheet.create({
     gap: SPACING[3],
   },
   mascotWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    overflow: "hidden",
-    backgroundColor: COLORS.bege,
+    width: 72,
+    height: 72,
     flexShrink: 0,
   },
   mascot: {
-    width: 56,
-    height: 56,
+    width: 72,
+    height: 72,
   },
   greetingText: {
     flex: 1,
-    gap: 2,
+    gap: 4,
   },
   greetingTitle: {
     fontFamily: FONTS.display,
     fontWeight: "800",
-    fontSize: TYPE_SCALE.h3,
+    fontSize: TYPE_SCALE.h2,
     color: COLORS.marrom,
   },
   greetingSubtitle: {
-    fontSize: TYPE_SCALE.bodySm,
+    fontSize: TYPE_SCALE.body,
     color: COLORS.marromSoft,
   },
   titleBlock: {
+    marginTop: SPACING[2],
     gap: 2,
   },
   title: {
