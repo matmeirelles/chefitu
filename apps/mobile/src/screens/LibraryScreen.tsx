@@ -55,14 +55,23 @@ export const LibraryScreen = ({
     [recipes, selectedFilter, deferredSearchQuery],
   );
 
+  const gridData = useMemo(
+    () => filteredRecipes.length % 2 !== 0 ? [...filteredRecipes, null] : filteredRecipes,
+    [filteredRecipes],
+  );
+
   return (
     <View style={[styles.root, { backgroundColor: COLORS.creme }]}>
       <FlatList
-        data={filteredRecipes}
-        keyExtractor={(item) => item.id}
+        data={gridData}
+        keyExtractor={(item, index) => item?.id ?? `spacer-${index}`}
+        numColumns={2}
         renderItem={({ item }) => (
-          <RecipeCard recipe={item} onPress={() => onOpenRecipe(item)} />
+          <View style={styles.cardWrapper}>
+            {item && <RecipeCard recipe={item} onPress={() => onOpenRecipe(item)} />}
+          </View>
         )}
+        columnWrapperStyle={styles.columnWrapper}
         ListHeaderComponent={
           <LibraryHeader
             topInset={insets.top}
@@ -95,7 +104,7 @@ export const LibraryScreen = ({
             />
           )
         }
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ItemSeparatorComponent={() => <View style={styles.rowSeparator} />}
         contentContainerStyle={styles.listContent}
         refreshControl={
           <RefreshControl
@@ -111,8 +120,8 @@ export const LibraryScreen = ({
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  listContent: {
-    paddingBottom: 120,
-  },
-  separator: { height: 8, marginHorizontal: 16 },
+  listContent: { paddingBottom: 32 },
+  columnWrapper: { gap: 12, paddingHorizontal: 16 },
+  rowSeparator: { height: 12 },
+  cardWrapper: { flex: 1 },
 });

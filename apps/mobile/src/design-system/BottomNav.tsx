@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "./tokens";
+import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "./tokens";
 import { DSIcon, type IconName } from "./Icon";
 import { DSText } from "./Text";
 
@@ -14,7 +14,7 @@ type TabConfig = {
 
 const TABS: TabConfig[] = [
   { id: "library", label: "Início",    icon: "Home" },
-  { id: "create",  label: "",          icon: "Plus", isFab: true },
+  { id: "create",  label: "Criar",     icon: "ChefHat", isFab: true },
   { id: "queue",   label: "Pendentes", icon: "Inbox" },
 ];
 
@@ -25,12 +25,18 @@ type Props = {
 };
 
 export const DSBottomNav = ({ activeTab, onTabPress, bottomInset = 0 }: Props) => (
-  <View style={[styles.container, { bottom: 16 + bottomInset }]}>
+  <View style={[styles.container, { paddingBottom: bottomInset + SPACING[2] }]}>
     {TABS.map((tab) => {
       if (tab.isFab) {
+        const isActive = activeTab === tab.id;
         return (
-          <Pressable key={tab.id} onPress={() => onTabPress(tab.id)} style={styles.fab}>
-            <DSIcon name="Plus" size={28} color={COLORS.white} strokeWidth={2.5} />
+          <Pressable key={tab.id} onPress={() => onTabPress(tab.id)} style={styles.fabItem}>
+            <View style={[styles.fabIconWrap, isActive && styles.fabIconWrapActive]}>
+              <DSIcon name="ChefHat" size={24} color={isActive ? COLORS.white : COLORS.marromSoft} strokeWidth={1.75} />
+            </View>
+            <DSText style={[styles.tabLabel, { color: isActive ? COLORS.laranja : COLORS.marromSoft }]}>
+              {tab.label}
+            </DSText>
           </Pressable>
         );
       }
@@ -55,22 +61,15 @@ export const DSBottomNav = ({ activeTab, onTabPress, bottomInset = 0 }: Props) =
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    left: 12,
-    right: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
     backgroundColor: COLORS.white,
-    borderRadius: RADIUS.sheet,
-    paddingVertical: SPACING[2],
+    paddingTop: SPACING[2],
     paddingHorizontal: SPACING[2],
-    ...SHADOWS.md,
-    // Extra shadow for the floating pill effect
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.10,
-    shadowRadius: 32,
-    elevation: 8,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(74, 44, 26, 0.08)",
+    ...SHADOWS.sm,
   },
   tabItem: {
     flex: 1,
@@ -84,13 +83,33 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   fab: {
-    width: 56,
-    height: 56,
+    width: 52,
+    height: 52,
     borderRadius: RADIUS.pill,
     backgroundColor: COLORS.laranja,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -22,
+    marginTop: -18,
+    ...SHADOWS.cta,
+  },
+  fabItem: {
+    flex: 1,
+    alignItems: "center",
+    gap: 2,
+    paddingVertical: SPACING[1],
+  },
+  fabIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.bege,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: -20,
+    ...SHADOWS.sm,
+  },
+  fabIconWrapActive: {
+    backgroundColor: COLORS.laranja,
     ...SHADOWS.cta,
   },
 });
