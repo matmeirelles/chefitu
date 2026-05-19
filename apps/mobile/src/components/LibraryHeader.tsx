@@ -1,5 +1,5 @@
-import { ScrollView, StyleSheet, View } from "react-native";
-import { COLORS, FONTS, TYPE_SCALE } from "../design-system/tokens";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { COLORS, FONTS, SPACING, TYPE_SCALE } from "../design-system/tokens";
 import { DSText } from "../design-system/Text";
 import { DSSearchBar } from "../design-system/SearchBar";
 import { DSChip } from "../design-system/Chip";
@@ -21,20 +21,38 @@ export const LibraryHeader = ({
   onSelectFilter: (value: string) => void;
   recipeCount: number;
 }) => (
-  <View style={[styles.header, { paddingTop: topInset + 12 }]}>
+  <View style={[styles.header, { paddingTop: topInset + 28 }]}>
+    {/* Greeting */}
+    <View style={styles.greeting}>
+      <View style={styles.mascotWrap}>
+        <Image
+          source={require("../../assets/mascot-symbol.png")}
+          style={styles.mascot}
+          resizeMode="contain"
+        />
+      </View>
+      <View style={styles.greetingText}>
+        <DSText style={styles.greetingTitle}>Olá, Chefitu! 👋</DSText>
+        <DSText style={styles.greetingSubtitle}>O que vamos cozinhar hoje?</DSText>
+      </View>
+    </View>
+
+    {/* Search */}
     <DSSearchBar
       value={searchQuery}
       onChangeText={onChangeSearch}
       placeholder="Buscar receitas, ingredientes…"
     />
 
+    {/* Section title */}
     <View style={styles.titleBlock}>
-      <DSText style={styles.title}>Minhas receitas</DSText>
+      <DSText style={styles.title}>Suas receitas</DSText>
       <DSText style={styles.subtitle}>
-        {recipeCount} {recipeCount === 1 ? "receita salva" : "receitas salvas"}
+        {recipeCount} {recipeCount === 1 ? "receita" : "receitas"}
       </DSText>
     </View>
 
+    {/* Filter chips */}
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
@@ -54,21 +72,55 @@ export const LibraryHeader = ({
 
 const styles = StyleSheet.create({
   header: {
-    gap: 16,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
+    gap: SPACING[4],
+    paddingBottom: SPACING[4],
+    paddingHorizontal: SPACING[4],
+  },
+  greeting: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING[3],
+  },
+  mascotWrap: {
+    width: 92,
+    height: 92,
+    flexShrink: 0,
+  },
+  mascot: {
+    width: 92,
+    height: 92,
+  },
+  greetingText: {
+    flex: 1,
+    gap: 4,
+  },
+  greetingTitle: {
+    fontFamily: FONTS.display,
+    fontWeight: "800",
+    fontSize: 26,
+    lineHeight: 26 * 1.6,
+    color: COLORS.marrom,
+  },
+  greetingSubtitle: {
+    fontSize: 18,
+    lineHeight: 18 * 1.5,
+    color: COLORS.marromSoft,
   },
   titleBlock: {
+    marginTop: SPACING[2],
+    paddingTop: 4,
     gap: 2,
   },
   title: {
     fontFamily: FONTS.displayBold,
     fontWeight: "700",
-    fontSize: TYPE_SCALE.h1,
+    fontSize: TYPE_SCALE.h2,
+    lineHeight: TYPE_SCALE.h2 * 1.6,
     color: COLORS.marrom,
   },
   subtitle: {
     fontSize: TYPE_SCALE.bodySm,
+    lineHeight: TYPE_SCALE.bodySm * 1.5,
     color: COLORS.marromSoft,
   },
   chipsRow: {

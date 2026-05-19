@@ -23,6 +23,12 @@ export const resolveApiBaseUrl = (configuredBaseUrl?: string): string => {
 
 const getBaseUrl = (): string => resolveApiBaseUrl(process.env.EXPO_PUBLIC_API_BASE_URL);
 
+export const resolveImageUrl = (path: string | null | undefined): string | undefined => {
+  if (!path) return undefined;
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  return `${getBaseUrl()}${path}`;
+};
+
 export class ApiError extends Error {
   constructor(message: string, readonly statusCode: number) {
     super(message);
