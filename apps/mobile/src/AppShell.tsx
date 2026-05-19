@@ -38,17 +38,24 @@ export const AppShell = () => {
   return (
     <View style={[styles.root, { backgroundColor: COLORS.creme }]}>
       <View style={styles.content}>
-        {activeTab === "library" ? (
-          screenState.kind === "detail" ? (
+        {/* LibraryScreen: always mounted, hidden only when showing detail */}
+        <View style={[styles.screen, isDetail && styles.hidden]}>
+          <LibraryScreen key={librarySeed} onOpenRecipe={onDetailOpen} />
+        </View>
+
+        {/* RecipeDetailScreen: conditionally mounted (fresh state per recipe) */}
+        {screenState.kind === "detail" && (
+          <View style={[styles.screen, !isDetail && styles.hidden]}>
             <RecipeDetailScreen
               recipe={screenState.recipe}
               onBack={onDetailClose}
               onDelete={onDetailClose}
             />
-          ) : (
-            <LibraryScreen key={librarySeed} onOpenRecipe={onDetailOpen} />
-          )
-        ) : activeTab === "create" ? (
+          </View>
+        )}
+
+        {/* GenerateRecipeScreen: always mounted to preserve chat state */}
+        <View style={[styles.screen, activeTab !== "create" && styles.hidden]}>
           <GenerateRecipeScreen
             apiHistory={generateApiHistory}
             onApiHistoryChange={setGenerateApiHistory}
@@ -58,9 +65,12 @@ export const AppShell = () => {
             onSessionReset={onSessionReset}
             onRecipeSaved={onRecipeSaved}
           />
-        ) : (
+        </View>
+
+        {/* QueueScreen: always mounted */}
+        <View style={[styles.screen, activeTab !== "queue" && styles.hidden]}>
           <QueueScreen />
-        )}
+        </View>
       </View>
 
       {!isDetail && (
@@ -77,4 +87,6 @@ export const AppShell = () => {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { flex: 1 },
+  screen: { ...StyleSheet.absoluteFillObject },
+  hidden: { display: "none" },
 });
