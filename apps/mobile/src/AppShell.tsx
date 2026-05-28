@@ -68,7 +68,7 @@ export const AppShell = () => {
         </View>
 
         {/* QueueScreen: always mounted */}
-        <View style={[styles.screen, activeTab !== "queue" && styles.hidden]}>
+        <View style={[styles.screen, activeTab !== "list" && styles.hidden]}>
           <QueueScreen />
         </View>
       </View>
