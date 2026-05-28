@@ -1,21 +1,20 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING } from "./tokens";
 import { DSIcon, type IconName } from "./Icon";
 import { DSText } from "./Text";
 
-export type BottomNavTab = "library" | "create" | "queue";
+export type BottomNavTab = "library" | "favorites" | "create" | "list" | "profile";
 
-type TabConfig = {
-  id: BottomNavTab;
-  label: string;
-  icon: IconName;
-  isFab?: boolean;
-};
+type TabConfig =
+  | { id: BottomNavTab; label: string; icon: IconName; isMascot?: false }
+  | { id: BottomNavTab; label: string; isMascot: true };
 
 const TABS: TabConfig[] = [
-  { id: "library", label: "Início",    icon: "Home" },
-  { id: "create",  label: "Criar",     icon: "ChefHat", isFab: true },
-  { id: "queue",   label: "Pendentes", icon: "Inbox" },
+  { id: "library",   label: "Início",    icon: "Home" },
+  { id: "favorites", label: "Favoritos", icon: "Heart" },
+  { id: "create",    label: "Chefitu",   isMascot: true },
+  { id: "list",      label: "Lista",     icon: "ShoppingBag" },
+  { id: "profile",   label: "Perfil",    icon: "User" },
 ];
 
 type Props = {
@@ -27,12 +26,15 @@ type Props = {
 export const DSBottomNav = ({ activeTab, onTabPress, bottomInset = 0 }: Props) => (
   <View style={[styles.container, { paddingBottom: bottomInset + SPACING[2] }]}>
     {TABS.map((tab) => {
-      if (tab.isFab) {
+      if (tab.isMascot) {
         const isActive = activeTab === tab.id;
         return (
           <Pressable key={tab.id} onPress={() => onTabPress(tab.id)} style={styles.fabItem}>
-            <View style={[styles.fabIconWrap, isActive && styles.fabIconWrapActive]}>
-              <DSIcon name="ChefHat" size={24} color={isActive ? COLORS.white : COLORS.marromSoft} strokeWidth={1.75} />
+            <View style={[styles.mascotButton, isActive && styles.mascotButtonActive]}>
+              <Image
+                source={require("../../assets/mascot-symbol.png")}
+                style={styles.mascotImage}
+              />
             </View>
             <DSText style={[styles.tabLabel, { color: isActive ? COLORS.laranja : COLORS.marromSoft }]}>
               {tab.label}
@@ -77,39 +79,37 @@ const styles = StyleSheet.create({
     gap: 2,
     paddingVertical: SPACING[1],
   },
+  fabItem: {
+    flex: 1,
+    alignItems: "center",
+    gap: 4,
+    paddingVertical: SPACING[1],
+  },
   tabLabel: {
     fontFamily: FONTS.uiBold,
     fontWeight: "700",
     fontSize: 11,
   },
-  fab: {
-    width: 52,
-    height: 52,
+  mascotButton: {
+    width: 56,
+    height: 56,
     borderRadius: RADIUS.pill,
     backgroundColor: COLORS.laranja,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -18,
-    ...SHADOWS.cta,
+    marginTop: -22,
+    shadowColor: COLORS.laranja,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.42,
+    shadowRadius: 14,
+    elevation: 8,
   },
-  fabItem: {
-    flex: 1,
-    alignItems: "center",
-    gap: 2,
-    paddingVertical: SPACING[1],
+  mascotButtonActive: {
+    shadowOpacity: 0.55,
   },
-  fabIconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: RADIUS.pill,
-    backgroundColor: COLORS.bege,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: -20,
-    ...SHADOWS.sm,
-  },
-  fabIconWrapActive: {
-    backgroundColor: COLORS.laranja,
-    ...SHADOWS.cta,
+  mascotImage: {
+    width: 42,
+    height: 42,
+    resizeMode: "contain",
   },
 });
