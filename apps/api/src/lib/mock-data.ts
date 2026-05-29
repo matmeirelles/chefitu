@@ -1,4 +1,4 @@
-import type { ImportRecord, RecipeRecord } from "@my-recipes/shared";
+import type { ImportRecord, RecipeRecord } from "@chefitu/shared";
 
 export const mockImports: ImportRecord[] = [
   {

@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import type { RecipeIngredient, RecipeStep } from "@my-recipes/shared";
+import type { RecipeIngredient, RecipeStep } from "@chefitu/shared";
 import { aiProviderFactory } from "../../src/lib/ai/index.js";
 import type { ExtractedRecipe } from "../../src/lib/ai/types.js";
 import { instagramFetcher } from "../../src/lib/fetch-instagram.js";

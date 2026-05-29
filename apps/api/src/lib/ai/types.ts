@@ -3,7 +3,7 @@ import type {
   GeneratedRecipeFields,
   RecipeIngredient,
   RecipeStep,
-} from "@my-recipes/shared";
+} from "@chefitu/shared";
 
 export type { ChatMessage };
 

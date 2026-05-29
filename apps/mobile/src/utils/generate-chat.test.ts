@@ -5,7 +5,7 @@ import {
   appendAssistantMessage,
   buildSessionId,
 } from "./generate-chat";
-import type { GenerateRecipeResponse } from "@my-recipes/shared";
+import type { GenerateRecipeResponse } from "@chefitu/shared";
 
 // ─── buildSessionId ───────────────────────────────────────────────────────────
 

@@ -14,7 +14,7 @@ The project should be organized so that:
 ## Proposed structure
 
 ```txt
-my-recipes/
+chefitu/
   apps/
     mobile/
     api/
