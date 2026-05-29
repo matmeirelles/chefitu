@@ -1,17 +1,26 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, Animated, Image, Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  Animated,
+  Image,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import type { ChatMessage, RecipeIngredient, RecipeRecord, RecipeStep } from "@my-recipes/shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AdjustRecipePanel, type UIMessage } from "../components/AdjustRecipePanel";
 import { MetricCard } from "../components/MetricCard";
 import { FALLBACK_COVER_IMAGE } from "../constants";
-import { deleteRecipe, saveNewRecipe, updateRecipe } from "../services/api";
+import { deleteRecipe, resolveImageUrl, saveNewRecipe, updateRecipe } from "../services/api";
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../design-system/tokens";
 import { DSText } from "../design-system/Text";
 import { DSIcon } from "../design-system/Icon";
 import { DSButton } from "../design-system/Button";
 
-type DetailTab = "ingredients" | "instructions";
+const MASCOT = require("../../assets/mascot-symbol.png") as number;
 
 const createAdjustmentSessionId = (recipeId: string) =>
   `adj_${recipeId}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
@@ -28,7 +37,6 @@ export const RecipeDetailScreen = ({
   const insets = useSafeAreaInsets();
 
   const [currentRecipe, setCurrentRecipe] = useState(recipe);
-  const [activeTab, setActiveTab] = useState<DetailTab>("ingredients");
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -152,27 +160,25 @@ export const RecipeDetailScreen = ({
   return (
     <View style={styles.root}>
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
-        {/* Hero */}
+        {/* Hero: image + nav overlay */}
         <View>
           <Image
-            source={{ uri: displayedRecipe.coverImageUrl ?? FALLBACK_COVER_IMAGE }}
+            source={{ uri: resolveImageUrl(displayedRecipe.coverImageUrl) ?? FALLBACK_COVER_IMAGE }}
             style={styles.heroImage}
+            resizeMode="cover"
           />
           <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
             <View style={[styles.heroNav, { top: insets.top + 8 }]}>
-              <Pressable onPress={handleBack} style={styles.glassBtn}>
-                <DSIcon name="ArrowLeft" size={22} color={COLORS.marrom} strokeWidth={2} />
+              <Pressable onPress={handleBack} style={styles.navBtn}>
+                <DSIcon name="ArrowLeft" size={20} color={COLORS.marrom} strokeWidth={2} />
               </Pressable>
               <View style={styles.heroNavRight}>
-                <Pressable style={styles.glassBtn}>
-                  <DSIcon name="Bookmark" size={20} color={COLORS.marrom} strokeWidth={1.75} />
-                </Pressable>
-                <Pressable style={styles.glassBtn}>
-                  <DSIcon name="Share2" size={20} color={COLORS.marrom} strokeWidth={1.75} />
+                <Pressable style={styles.navBtn}>
+                  <DSIcon name="Heart" size={19} color={COLORS.marrom} strokeWidth={1.75} />
                 </Pressable>
                 <View>
-                  <Pressable style={styles.glassBtn} onPress={menuOpen ? closeMenu : openMenu}>
-                    <DSIcon name="MoreVertical" size={20} color={COLORS.marrom} strokeWidth={1.75} />
+                  <Pressable style={styles.navBtn} onPress={menuOpen ? closeMenu : openMenu}>
+                    <DSIcon name="MoreHorizontal" size={19} color={COLORS.marrom} strokeWidth={1.75} />
                   </Pressable>
                   {menuOpen && (
                     <Animated.View
@@ -185,7 +191,7 @@ export const RecipeDetailScreen = ({
                       ]}
                     >
                       <Pressable style={styles.menuItem} onPress={handleDeletePress}>
-                        <DSIcon name="Trash2" size={18} color={COLORS.danger} strokeWidth={1.75} />
+                        <DSIcon name="Trash2" size={17} color={COLORS.danger} strokeWidth={1.75} />
                         <DSText style={styles.menuItemText}>Deletar</DSText>
                       </Pressable>
                     </Animated.View>
@@ -207,49 +213,45 @@ export const RecipeDetailScreen = ({
             </View>
           )}
 
-          {(displayedRecipe.category || displayedRecipe.cuisine) && (
-            <DSText style={styles.eyebrow}>
-              {[displayedRecipe.category, displayedRecipe.cuisine].filter(Boolean).join(" · ").toUpperCase()}
-            </DSText>
-          )}
-
           <DSText style={styles.detailTitle}>{displayedRecipe.title}</DSText>
 
+          {/* Metric cards: tempo | dificuldade | avaliação */}
           <View style={styles.statsRow}>
-            <MetricCard value={displayedRecipe.totalTimeMinutes?.toString() ?? "—"} label="Min" />
-            <MetricCard value={displayedRecipe.servings?.split(" ")[0] ?? "—"} label="Porções" />
-            <MetricCard value={displayedRecipe.ingredients.length.toString()} label="Ingredientes" />
+            <MetricCard
+              icon="Clock"
+              label="Tempo"
+              value={displayedRecipe.totalTimeMinutes ? `${displayedRecipe.totalTimeMinutes} min` : "—"}
+            />
+            <MetricCard icon="Gauge" label="Dificuldade" />
+            <MetricCard icon="Star" label="Avaliação" />
           </View>
 
-          {/* Segmented control */}
-          <View style={styles.segmented}>
-            {(["ingredients", "instructions"] as DetailTab[]).map((tab) => {
-              const active = activeTab === tab;
-              return (
-                <Pressable key={tab} onPress={() => setActiveTab(tab)} style={styles.segmentTab}>
-                  <View style={[styles.segmentPill, active && styles.segmentPillActive]}>
-                    {active && <DSIcon name="Check" size={15} color={COLORS.marrom} strokeWidth={2.5} />}
-                    <DSText style={[styles.segmentLabel, { color: active ? COLORS.marrom : COLORS.marromSoft }]}>
-                      {tab === "ingredients" ? "Ingredientes" : "Instruções"}
-                    </DSText>
-                  </View>
-                </Pressable>
-              );
-            })}
+          {/* Ingredients section */}
+          <View style={styles.sectionHeadingRow}>
+            <DSText style={styles.sectionTitle}>Ingredientes</DSText>
+            {displayedRecipe.servings && (
+              <DSText style={styles.sectionSubtitle}>{displayedRecipe.servings} porções</DSText>
+            )}
           </View>
 
+          <View>
+            {displayedRecipe.ingredients.map((ingredient, index) => (
+              <IngredientRow
+                key={`${displayedRecipe.id}-ing-${index}`}
+                ingredient={ingredient}
+                isLast={index === displayedRecipe.ingredients.length - 1}
+                checked={checkedIngredients.has(index)}
+                onToggle={() => toggleIngredient(index)}
+              />
+            ))}
+          </View>
+
+          {/* Steps section */}
           <View style={styles.sectionHeading}>
-            <DSText style={styles.sectionTitle}>
-              {activeTab === "ingredients" ? "Ingredientes" : "Instruções"}
-            </DSText>
-            <DSText style={styles.sectionSubtitle}>
-              {activeTab === "ingredients"
-                ? `Para ${displayedRecipe.servings ?? "sua receita"}`
-                : `${displayedRecipe.steps.length} passos`}
-            </DSText>
+            <DSText style={styles.sectionTitle}>Modo de preparo</DSText>
           </View>
 
-          {activeTab === "instructions" && displayedRecipe.instructionsGeneratedByAi && (
+          {displayedRecipe.instructionsGeneratedByAi && (
             <View style={styles.aiNotice}>
               <View style={styles.aiNoticeHeader}>
                 <DSIcon name="Sparkles" size={16} color={COLORS.laranja} strokeWidth={1.75} />
@@ -261,23 +263,15 @@ export const RecipeDetailScreen = ({
             </View>
           )}
 
-          {activeTab === "ingredients"
-            ? displayedRecipe.ingredients.map((ingredient, index) => (
-                <IngredientRow
-                  key={`${displayedRecipe.id}-ing-${index}`}
-                  ingredient={ingredient}
-                  isLast={index === displayedRecipe.ingredients.length - 1}
-                  checked={checkedIngredients.has(index)}
-                  onToggle={() => toggleIngredient(index)}
-                />
-              ))
-            : displayedRecipe.steps.map((step, index) => (
-                <StepRow
-                  key={`${displayedRecipe.id}-step-${step.order}`}
-                  step={step}
-                  isLast={index === displayedRecipe.steps.length - 1}
-                />
-              ))}
+          <View style={styles.stepsContainer}>
+            {displayedRecipe.steps.map((step, index) => (
+              <StepRow
+                key={`${displayedRecipe.id}-step-${step.order}`}
+                step={step}
+                isLast={index === displayedRecipe.steps.length - 1}
+              />
+            ))}
+          </View>
         </View>
       </ScrollView>
 
@@ -321,19 +315,29 @@ export const RecipeDetailScreen = ({
           onPress={() => setPanelOpen(true)}
           style={[styles.aiBar, { bottom: insets.bottom + 16 }]}
         >
-          <DSIcon name="Sparkles" size={20} color={COLORS.laranja} strokeWidth={1.75} />
-          <DSText style={{ flex: 1, color: hasHistory ? COLORS.marrom : COLORS.marromSoft, fontWeight: hasHistory ? "500" : "400" }} numberOfLines={1}>
-            {hasHistory ? "Continuar ajustando…" : "Adaptar ao meu gosto…"}
+          <View style={styles.aiChefIcon}>
+            <Image source={MASCOT} style={{ width: 22, height: 22 }} resizeMode="contain" />
+          </View>
+          <DSText
+            style={{
+              flex: 1,
+              fontSize: TYPE_SCALE.body,
+              color: hasHistory ? COLORS.marrom : COLORS.marromSoft,
+              fontWeight: hasHistory ? "500" : "400",
+            }}
+            numberOfLines={1}
+          >
+            {hasHistory ? "Continuar ajustando…" : "Peça ajustes ao Chefitu…"}
           </DSText>
           {hasHistory ? (
-            <View style={styles.historyBadge}>
-              <DSText style={{ color: COLORS.white, fontWeight: "700", fontSize: 11 }}>
+            <View style={styles.aiSendBtn}>
+              <DSText style={{ color: COLORS.white, fontWeight: "700", fontSize: 13 }}>
                 {uiMessages.filter((m) => m.kind === "user").length}
               </DSText>
             </View>
           ) : (
             <View style={styles.aiSendBtn}>
-              <DSIcon name="ArrowUp" size={20} color={COLORS.white} strokeWidth={2} />
+              <DSIcon name="ArrowRight" size={18} color={COLORS.white} strokeWidth={2.5} />
             </View>
           )}
         </Pressable>
@@ -456,25 +460,38 @@ const IngredientRow = ({
   return (
     <Pressable onPress={onToggle}>
       <View style={[styles.ingredientRow, !isLast && styles.ingredientRowBorder]}>
-        <View style={[styles.checkbox, { borderColor: checked ? COLORS.laranja : "rgba(74,44,26,0.14)", backgroundColor: checked ? COLORS.laranja : "transparent" }]}>
-          {checked && <DSIcon name="Check" size={12} color={COLORS.white} strokeWidth={2.5} />}
-        </View>
-        <DSText style={[styles.ingredientName, { color: checked ? COLORS.marromSoft : COLORS.marrom, textDecorationLine: checked ? "line-through" : "none" }]}>
+        <DSText
+          style={[
+            styles.ingredientName,
+            {
+              color: checked ? COLORS.marromSoft : COLORS.marrom,
+              textDecorationLine: checked ? "line-through" : "none",
+            },
+          ]}
+        >
           {ingredient.item}
         </DSText>
         {qty ? <DSText style={styles.ingredientQty}>{qty}</DSText> : null}
+        <View
+          style={[
+            styles.checkbox,
+            {
+              borderColor: checked ? COLORS.verdeFolha : "rgba(74,44,26,0.18)",
+              backgroundColor: checked ? COLORS.verdeFolha : "transparent",
+            },
+          ]}
+        >
+          {checked && <DSIcon name="Check" size={11} color={COLORS.white} strokeWidth={2.5} />}
+        </View>
       </View>
     </Pressable>
   );
 };
 
 const StepRow = ({ step, isLast }: { step: RecipeStep; isLast: boolean }) => (
-  <View style={styles.stepRow}>
-    <View style={styles.stepLeft}>
-      <View style={styles.stepCircle}>
-        <DSText style={styles.stepNum}>{step.order}</DSText>
-      </View>
-      {!isLast && <View style={styles.stepConnector} />}
+  <View style={[styles.stepCard, !isLast && styles.stepCardGap]}>
+    <View style={styles.stepNumBadge}>
+      <DSText style={styles.stepNum}>{step.order}</DSText>
     </View>
     <View style={styles.stepContent}>
       {step.title ? <DSText style={styles.stepTitle}>{step.title}</DSText> : null}
@@ -485,65 +502,310 @@ const StepRow = ({ step, isLast }: { step: RecipeStep; isLast: boolean }) => (
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const OUTLINE = "rgba(74, 44, 26, 0.14)";
-const OUTLINE_FAINT = "rgba(74, 44, 26, 0.10)";
+const OUTLINE = "rgba(74, 44, 26, 0.12)";
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.creme },
-  heroImage: { width: "100%", height: 320 },
-  heroNav: { position: "absolute", left: 8, right: 8, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  heroNavRight: { flexDirection: "row", gap: 4 },
-  glassBtn: { width: 40, height: 40, borderRadius: RADIUS.pill, backgroundColor: "rgba(255, 246, 233, 0.92)", alignItems: "center", justifyContent: "center", borderWidth: 0.5, borderColor: OUTLINE_FAINT },
-  detailBody: { marginTop: -20, borderTopLeftRadius: RADIUS.sheet, borderTopRightRadius: RADIUS.sheet, paddingHorizontal: SPACING[6], paddingTop: SPACING[8], gap: SPACING[5], backgroundColor: COLORS.creme, zIndex: 2 },
-  adjustedBadge: { flexDirection: "row", alignItems: "center", gap: SPACING[2], paddingHorizontal: SPACING[3], paddingVertical: SPACING[2], borderRadius: RADIUS.sm, backgroundColor: COLORS.laranjaSoft, marginBottom: -SPACING[1] },
-  eyebrow: { fontSize: TYPE_SCALE.caption, fontWeight: "500", letterSpacing: 0.12, textTransform: "uppercase", color: COLORS.laranja },
-  detailTitle: { fontFamily: FONTS.displayBold, fontWeight: "700", fontSize: TYPE_SCALE.h1, color: COLORS.marrom, marginTop: -SPACING[2] },
-  statsRow: { flexDirection: "row", gap: SPACING[2] },
-  segmented: { flexDirection: "row", borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE, height: 48, padding: 4 },
-  segmentTab: { flex: 1 },
-  segmentPill: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderRadius: RADIUS.pill, paddingHorizontal: SPACING[2] },
-  segmentPillActive: { backgroundColor: COLORS.salvia },
-  segmentLabel: { fontFamily: FONTS.uiSemiBold, fontWeight: "600", fontSize: TYPE_SCALE.bodySm },
-  sectionHeading: { gap: 2, marginBottom: -SPACING[1] },
-  sectionTitle: { fontFamily: FONTS.uiBold, fontWeight: "700", fontSize: TYPE_SCALE.h3, color: COLORS.marrom },
+
+  // Hero
+  heroImage: { width: "100%", height: 280 },
+  heroNav: {
+    position: "absolute",
+    left: 12,
+    right: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  heroNavRight: { flexDirection: "row", gap: 8 },
+  navBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.white,
+    alignItems: "center",
+    justifyContent: "center",
+    ...SHADOWS.sm,
+  },
+
+  // Body
+  detailBody: {
+    marginTop: -20,
+    borderTopLeftRadius: RADIUS.sheet,
+    borderTopRightRadius: RADIUS.sheet,
+    paddingHorizontal: SPACING[6],
+    paddingTop: SPACING[6],
+    gap: SPACING[5],
+    backgroundColor: COLORS.creme,
+  },
+  adjustedBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING[2],
+    paddingHorizontal: SPACING[3],
+    paddingVertical: SPACING[2],
+    borderRadius: RADIUS.sm,
+    backgroundColor: COLORS.laranjaSoft,
+    alignSelf: "flex-start",
+  },
+  detailTitle: {
+    fontFamily: FONTS.displayBold,
+    fontWeight: "700",
+    fontSize: 26,
+    lineHeight: 30,
+    color: COLORS.marrom,
+  },
+
+  // Stats
+  statsRow: { flexDirection: "row", gap: SPACING[2], alignItems: "flex-start" },
+
+  // Section headings
+  sectionHeadingRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    marginBottom: -SPACING[2],
+  },
+  sectionHeading: { marginBottom: -SPACING[2] },
+  sectionTitle: {
+    fontFamily: FONTS.displayBold,
+    fontWeight: "700",
+    fontSize: 18,
+    lineHeight: 22,
+    color: COLORS.marrom,
+  },
   sectionSubtitle: { fontSize: TYPE_SCALE.bodySm, color: COLORS.marromSoft },
-  aiNotice: { borderWidth: 1, borderColor: COLORS.laranjaSoft, borderRadius: RADIUS.input, paddingHorizontal: SPACING[4], paddingVertical: SPACING[4], gap: SPACING[2], marginTop: -SPACING[1] },
+
+  // AI notice
+  aiNotice: {
+    borderWidth: 1,
+    borderColor: COLORS.laranjaSoft,
+    borderRadius: RADIUS.input,
+    paddingHorizontal: SPACING[4],
+    paddingVertical: SPACING[4],
+    gap: SPACING[2],
+  },
   aiNoticeHeader: { flexDirection: "row", alignItems: "center", gap: SPACING[2] },
-  aiNoticeTitle: { fontFamily: FONTS.uiBold, fontWeight: "700", fontSize: TYPE_SCALE.bodySm, color: COLORS.marrom },
+  aiNoticeTitle: {
+    fontFamily: FONTS.uiBold,
+    fontWeight: "700",
+    fontSize: TYPE_SCALE.bodySm,
+    color: COLORS.marrom,
+  },
   aiNoticeBody: { fontSize: TYPE_SCALE.bodySm, color: COLORS.marromSoft, lineHeight: 20 },
-  ingredientRow: { flexDirection: "row", alignItems: "center", gap: SPACING[3] + 2, minHeight: 52, paddingVertical: SPACING[2] + 2 },
-  ingredientRowBorder: { borderBottomWidth: 1, borderBottomColor: COLORS.bege },
-  checkbox: { width: 18, height: 18, borderRadius: 3, borderWidth: 1.5, alignItems: "center", justifyContent: "center", flexShrink: 0 },
+
+  // Ingredient row
+  ingredientRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING[3],
+    paddingVertical: 10,
+  },
+  ingredientRowBorder: { borderBottomWidth: 1, borderBottomColor: "rgba(74,44,26,0.08)" },
   ingredientName: { flex: 1, fontSize: TYPE_SCALE.body },
-  ingredientQty: { fontSize: 13, fontWeight: "500", color: COLORS.marromSoft, fontVariant: ["tabular-nums"], flexShrink: 0 },
-  stepRow: { flexDirection: "row", gap: SPACING[3] + 2 },
-  stepLeft: { width: 32, alignItems: "center" },
-  stepCircle: { width: 32, height: 32, borderRadius: 16, backgroundColor: COLORS.laranjaSoft, alignItems: "center", justifyContent: "center", flexShrink: 0 },
-  stepNum: { fontSize: TYPE_SCALE.bodySm, fontWeight: "500", color: COLORS.marrom },
-  stepConnector: { flex: 1, width: 1.5, marginVertical: 4, backgroundColor: OUTLINE },
-  stepContent: { flex: 1, paddingBottom: SPACING[6], paddingTop: 4, gap: 4 },
+  ingredientQty: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: COLORS.marromSoft,
+    fontVariant: ["tabular-nums"],
+    flexShrink: 0,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+
+  // Steps
+  stepsContainer: { gap: SPACING[3] },
+  stepCard: {
+    flexDirection: "row",
+    gap: SPACING[3],
+    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.card,
+    padding: SPACING[4],
+    borderWidth: 1,
+    borderColor: OUTLINE,
+  },
+  stepCardGap: {},
+  stepNumBadge: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 1,
+    borderColor: OUTLINE,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    marginTop: 1,
+  },
+  stepNum: {
+    fontSize: TYPE_SCALE.bodySm,
+    fontWeight: "600",
+    color: COLORS.marromSoft,
+  },
+  stepContent: { flex: 1, gap: 4 },
   stepTitle: { fontSize: TYPE_SCALE.body, fontWeight: "700", lineHeight: 22, color: COLORS.marrom },
   stepInstruction: { fontSize: TYPE_SCALE.body, lineHeight: 22, color: COLORS.marromSoft },
-  dropdownMenu: { position: "absolute", right: 0, top: 52, backgroundColor: COLORS.creme, borderRadius: RADIUS.sm, borderWidth: 1, borderColor: OUTLINE, minWidth: 180, ...SHADOWS.md, zIndex: 100, overflow: "hidden" },
-  menuItem: { flexDirection: "row", alignItems: "center", gap: SPACING[2] + 2, paddingHorizontal: SPACING[4], paddingVertical: SPACING[3] + 2 },
+
+  // 3-dot dropdown
+  dropdownMenu: {
+    position: "absolute",
+    right: 0,
+    top: 44,
+    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: OUTLINE,
+    minWidth: 180,
+    ...SHADOWS.md,
+    zIndex: 100,
+    overflow: "hidden",
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING[2] + 2,
+    paddingHorizontal: SPACING[4],
+    paddingVertical: SPACING[3] + 2,
+  },
   menuItemText: { fontSize: 15, fontWeight: "500", color: COLORS.danger },
-  aiBar: { position: "absolute", left: 16, right: 16, height: 56, borderRadius: 28, flexDirection: "row", alignItems: "center", paddingHorizontal: 16, gap: 10, backgroundColor: COLORS.bege, ...SHADOWS.md },
-  aiSendBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.laranja, alignItems: "center", justifyContent: "center" },
-  historyBadge: { width: 24, height: 24, borderRadius: 12, backgroundColor: COLORS.laranja, alignItems: "center", justifyContent: "center" },
-  adjustedBar: { position: "absolute", left: 12, right: 12, flexDirection: "row", alignItems: "center", gap: SPACING[2], paddingHorizontal: 12, paddingVertical: 10, borderRadius: RADIUS.sheet, borderWidth: StyleSheet.hairlineWidth, borderColor: OUTLINE, backgroundColor: COLORS.creme, ...SHADOWS.md },
-  versionToggle: { flexDirection: "row", borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE, height: 36, padding: 3 },
-  toggleOption: { paddingHorizontal: 10, borderRadius: RADIUS.pill, alignItems: "center", justifyContent: "center" },
+
+  // AI chat bar
+  aiBar: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    height: 58,
+    borderRadius: RADIUS.pill,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 10,
+    paddingRight: 10,
+    gap: SPACING[3],
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderColor: OUTLINE,
+    ...SHADOWS.md,
+  },
+  aiChefIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: COLORS.laranja,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  aiSendBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: COLORS.laranja,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+
+  // Adjusted bar
+  adjustedBar: {
+    position: "absolute",
+    left: 12,
+    right: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING[2],
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: RADIUS.sheet,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: OUTLINE,
+    backgroundColor: COLORS.white,
+    ...SHADOWS.md,
+  },
+  versionToggle: {
+    flexDirection: "row",
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
+    borderColor: OUTLINE,
+    height: 36,
+    padding: 3,
+  },
+  toggleOption: {
+    paddingHorizontal: 10,
+    borderRadius: RADIUS.pill,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   toggleOptionActive: { backgroundColor: COLORS.salvia },
   toggleLabel: { fontSize: TYPE_SCALE.bodySm, fontWeight: "500" },
-  adjustMoreBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, height: 36, borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE },
-  saveBtn: { paddingHorizontal: 16, height: 36, borderRadius: RADIUS.pill, backgroundColor: COLORS.laranja, alignItems: "center", justifyContent: "center" },
-  dialogOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center", paddingHorizontal: 32 },
-  dialogBox: { width: "100%", borderRadius: RADIUS.sheet, padding: SPACING[6], gap: 12, backgroundColor: COLORS.creme, ...SHADOWS.lg },
+  adjustMoreBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    height: 36,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
+    borderColor: OUTLINE,
+  },
+  saveBtn: {
+    paddingHorizontal: 16,
+    height: 36,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.laranja,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  // Dialogs
+  dialogOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 32,
+  },
+  dialogBox: {
+    width: "100%",
+    borderRadius: RADIUS.sheet,
+    padding: SPACING[6],
+    gap: 12,
+    backgroundColor: COLORS.white,
+    ...SHADOWS.lg,
+  },
   dialogTitle: { fontSize: TYPE_SCALE.h2, fontWeight: "700", color: COLORS.marrom },
   dialogBody: { fontSize: TYPE_SCALE.body, lineHeight: 22, color: COLORS.marromSoft },
   dialogActions: { flexDirection: "row", gap: 12, marginTop: SPACING[2] },
-  dialogCancelBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE },
-  dialogDeleteBtn: { flex: 1, alignItems: "center", paddingVertical: 14, borderRadius: RADIUS.pill, backgroundColor: COLORS.danger },
-  dialogSecondaryBtn: { width: "100%", alignItems: "center", justifyContent: "center", paddingVertical: 14, borderRadius: RADIUS.pill, borderWidth: 1, borderColor: OUTLINE, backgroundColor: "transparent" },
+  dialogCancelBtn: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 14,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
+    borderColor: OUTLINE,
+  },
+  dialogDeleteBtn: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 14,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.danger,
+  },
+  dialogSecondaryBtn: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
+    borderColor: OUTLINE,
+    backgroundColor: "transparent",
+  },
   dialogCancelText: { paddingVertical: 8 },
 });
