@@ -23,6 +23,7 @@ export const DSMetricCard = ({ icon, label, value }: Props) => (
 const styles = StyleSheet.create({
   card: {
     flex: 1,
+    minHeight: 72,
     alignItems: "center",
     justifyContent: "flex-start",
     borderRadius: 14,

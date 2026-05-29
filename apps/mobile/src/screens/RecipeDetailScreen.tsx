@@ -708,7 +708,11 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderWidth: 1,
     borderColor: OUTLINE,
-    ...SHADOWS.md,
+    ...SHADOWS.lg,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.34,
+    shadowRadius: 24,
+    elevation: 16,
   },
   aiChefIcon: {
     width: 38,

@@ -7,6 +7,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+- `DSMetricCard`: added `minHeight: 72` to card style so Dificuldade and Avaliação cards render at the same height as the Tempo card (CHE-14)
+- `RecipeDetailScreen`: strengthened `aiBar` floating shadow (higher opacity, tighter blur, higher elevation) so it clearly separates from scrollable content (CHE-14)
+
 ## [0.6.0] — 2026-05-29
 
 ### Added
