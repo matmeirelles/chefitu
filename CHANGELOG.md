@@ -7,6 +7,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-05-29
+
+### Added
+- Spec Writer agent (`spec-writer.py`): conversational CLI agent (Claude Agent SDK) that reads a Linear issue, optionally analyzes the codebase via Repomix, asks clarifying questions, and writes a production-ready spec back to the issue
+- `Instructions.md`: spec template used by the agent, including a "Before coding" section that reminds the developer to create a branch from the Linear issue
+- `docs/design-system.md`: full design system reference (tokens, voice, palette, typography, iconography)
+- `docs/design-system-tokens.css`: CSS color and type tokens
+- `.repomixignore`: excludes worktrees, eval results, and lock files from Repomix output (reduces from 190k to 14k lines)
+- `.github/pull_request_template.md`: PR checklist including CHANGELOG update reminder
+
 ## [0.5.0] — 2026-05-29
 
 ### Changed
