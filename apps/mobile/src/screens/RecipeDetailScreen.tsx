@@ -12,6 +12,7 @@ import {
 import type { ChatMessage, RecipeIngredient, RecipeRecord, RecipeStep } from "@chefitu/shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AdjustRecipePanel, type UIMessage } from "../components/AdjustRecipePanel";
+import { ConfirmDeleteBottomSheet } from "../components/ConfirmDeleteBottomSheet";
 import { MetricCard } from "../components/MetricCard";
 import { FALLBACK_COVER_IMAGE } from "../constants";
 import { deleteRecipe, resolveImageUrl, saveNewRecipe, updateRecipe } from "../services/api";
@@ -54,6 +55,18 @@ export const RecipeDetailScreen = ({
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const [snackbar, setSnackbar] = useState<{ message: string; kind: "success" | "error" } | null>(null);
+  const snackbarAnim = useRef(new Animated.Value(0)).current;
+
+  const showSnackbar = (message: string, kind: "success" | "error") => {
+    setSnackbar({ message, kind });
+    Animated.sequence([
+      Animated.timing(snackbarAnim, { toValue: 1, duration: 220, useNativeDriver: true }),
+      Animated.delay(2400),
+      Animated.timing(snackbarAnim, { toValue: 0, duration: 220, useNativeDriver: true }),
+    ]).start(() => setSnackbar(null));
+  };
+
   const hasAdjustment = appliedRecipe !== null;
   const displayedRecipe = hasAdjustment && !viewingOriginal ? appliedRecipe : currentRecipe;
   const hasHistory = uiMessages.some((m) => m.kind === "user");
@@ -77,10 +90,12 @@ export const RecipeDetailScreen = ({
     try {
       await deleteRecipe(recipe.id);
       setConfirmDelete(false);
-      onDelete();
+      showSnackbar("Receita deletada com sucesso", "success");
+      setTimeout(() => onDelete(), 1600);
     } catch {
       setDeleting(false);
-      Alert.alert("Não foi possível deletar", "Tente novamente.");
+      setConfirmDelete(false);
+      showSnackbar("Não foi possível deletar. Tente novamente.", "error");
     }
   };
 
@@ -190,9 +205,12 @@ export const RecipeDetailScreen = ({
                         },
                       ]}
                     >
-                      <Pressable style={styles.menuItem} onPress={handleDeletePress}>
+                      <Pressable
+                        style={({ pressed }) => [styles.menuItem, pressed && styles.menuItemPressed]}
+                        onPress={handleDeletePress}
+                      >
                         <DSIcon name="Trash2" size={17} color={COLORS.danger} strokeWidth={1.75} />
-                        <DSText style={styles.menuItemText}>Deletar</DSText>
+                        <DSText style={styles.menuItemText}>Excluir</DSText>
                       </Pressable>
                     </Animated.View>
                   )}
@@ -356,33 +374,32 @@ export const RecipeDetailScreen = ({
         onApply={handleApply}
       />
 
-      {/* Delete confirmation */}
-      <Modal visible={confirmDelete} transparent animationType="fade" onRequestClose={() => setConfirmDelete(false)}>
-        <View style={styles.dialogOverlay}>
-          <View style={styles.dialogBox}>
-            <DSText style={styles.dialogTitle}>Deletar receita?</DSText>
-            <DSText style={styles.dialogBody}>
-              Isso vai remover permanentemente{" "}
-              <DSText style={{ fontWeight: "700", color: COLORS.marrom }}>{recipe.title}</DSText>{" "}
-              da sua biblioteca. Essa ação não pode ser desfeita.
-            </DSText>
-            <View style={styles.dialogActions}>
-              <Pressable style={styles.dialogCancelBtn} onPress={() => setConfirmDelete(false)} disabled={deleting}>
-                <DSText style={{ color: COLORS.marrom, fontWeight: "500" }}>Cancelar</DSText>
-              </Pressable>
-              <Pressable
-                style={[styles.dialogDeleteBtn, { opacity: deleting ? 0.6 : 1 }]}
-                onPress={() => void handleConfirmDelete()}
-                disabled={deleting}
-              >
-                <DSText style={{ color: COLORS.white, fontWeight: "600" }}>
-                  {deleting ? "Deletando…" : "Deletar"}
-                </DSText>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <ConfirmDeleteBottomSheet
+        visible={confirmDelete}
+        recipeTitle={recipe.title}
+        deleting={deleting}
+        onConfirm={() => void handleConfirmDelete()}
+        onCancel={() => setConfirmDelete(false)}
+      />
+
+      {snackbar && (
+        <Animated.View
+          style={[
+            styles.snackbar,
+            snackbar.kind === "error" && styles.snackbarError,
+            { bottom: insets.bottom + 24, opacity: snackbarAnim },
+          ]}
+          pointerEvents="none"
+        >
+          <DSIcon
+            name={snackbar.kind === "success" ? "CheckCircle" : "AlertCircle"}
+            size={16}
+            color={COLORS.white}
+            strokeWidth={2}
+          />
+          <DSText style={styles.snackbarText}>{snackbar.message}</DSText>
+        </Animated.View>
+      )}
 
       {/* Unsaved warning */}
       <Modal visible={showUnsavedWarning} transparent animationType="fade" onRequestClose={() => setShowUnsavedWarning(false)}>
@@ -674,6 +691,7 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING[3] + 2,
   },
   menuItemText: { fontSize: 15, fontWeight: "500", color: COLORS.danger },
+  menuItemPressed: { backgroundColor: COLORS.dangerBg },
 
   // AI chat bar
   aiBar: {
@@ -808,4 +826,28 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   dialogCancelText: { paddingVertical: 8 },
+
+  // Snackbar
+  snackbar: {
+    position: "absolute",
+    left: 16,
+    right: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING[2],
+    paddingHorizontal: SPACING[5],
+    paddingVertical: 14,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.marrom,
+    ...SHADOWS.md,
+  },
+  snackbarError: {
+    backgroundColor: COLORS.danger,
+  },
+  snackbarText: {
+    flex: 1,
+    fontSize: TYPE_SCALE.bodySm,
+    fontWeight: "500",
+    color: COLORS.white,
+  },
 });
