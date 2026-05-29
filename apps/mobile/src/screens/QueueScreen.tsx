@@ -14,7 +14,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { ImportListItem, ImportStatus } from "@my-recipes/shared";
+import type { ImportListItem, ImportStatus } from "@chefitu/shared";
 import { createImport, deleteImport, fetchImports, retryImport } from "../services/api";
 import { formatRelativeTime } from "../utils/time";
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../design-system/tokens";

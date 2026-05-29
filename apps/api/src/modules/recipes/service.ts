@@ -3,7 +3,7 @@ import type {
   RecipeRecord,
   SaveGeneratedRecipeRequest,
   UpdateRecipeRequest,
-} from "@my-recipes/shared";
+} from "@chefitu/shared";
 import { db } from "../../lib/db.js";
 
 const toRecipeRecord = (row: {

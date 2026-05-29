@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { buildFilterList, filterRecipes } from "./filter";
-import type { RecipeRecord } from "@my-recipes/shared";
+import type { RecipeRecord } from "@chefitu/shared";
 
 const makeRecipe = (overrides: Partial<RecipeRecord> = {}): RecipeRecord => ({
   id: "rec_1",

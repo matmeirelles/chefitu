@@ -1,6 +1,6 @@
-# my-recipes
+# Chefitu
 
-Monorepo for the My Recipes MVP.
+Monorepo for the Chefitu MVP.
 
 ## Running locally
 
@@ -13,7 +13,7 @@ npm install
 Run the API:
 
 ```bash
-npm run dev --workspace @my-recipes/api
+npm run dev --workspace @chefitu/api
 ```
 
 Optional: enable Langfuse tracing for AI requests in the API by setting `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, and optionally `LANGFUSE_BASE_URL` in the root `.env`.
@@ -21,7 +21,7 @@ Optional: enable Langfuse tracing for AI requests in the API by setting `LANGFUS
 Run the mobile app with Expo:
 
 ```bash
-npm run dev --workspace @my-recipes/mobile
+npm run dev --workspace @chefitu/mobile
 ```
 
 Open the Expo Go app on your phone and scan the QR code shown in the terminal.

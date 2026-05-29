@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { ImportListItem, ImportStatus } from "@my-recipes/shared";
+import type { ImportListItem, ImportStatus } from "@chefitu/shared";
 import { db } from "../../lib/db.js";
 
 const visibleImportStatuses: ImportStatus[] = [

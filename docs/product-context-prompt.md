@@ -126,7 +126,7 @@ The `rawDescription` field is always saved so any import can be re-processed wit
 - **Database**: PostgreSQL 16 (local for now, cloud deploy planned)
 - **AI**: Anthropic Claude API (planned)
 - **Monorepo**: Turborepo, npm workspaces
-- **Shared types**: `@my-recipes/shared` package consumed by both API and mobile
+- **Shared types**: `@chefitu/shared` package consumed by both API and mobile
 
 ---
 
