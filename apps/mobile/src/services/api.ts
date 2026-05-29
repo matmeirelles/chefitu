@@ -13,7 +13,7 @@ import type {
   SaveGeneratedRecipeRequest,
   SaveGeneratedRecipeResponse,
   UpdateRecipeRequest,
-} from "@my-recipes/shared";
+} from "@chefitu/shared";
 
 const FALLBACK_API_BASE_URL = "http://127.0.0.1:3333";
 

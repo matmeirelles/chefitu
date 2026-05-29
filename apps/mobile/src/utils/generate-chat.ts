@@ -1,4 +1,4 @@
-import type { ChatMessage, GenerateRecipeResponse } from "@my-recipes/shared";
+import type { ChatMessage, GenerateRecipeResponse } from "@chefitu/shared";
 
 export const buildSessionId = (): string =>
   `gen_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;

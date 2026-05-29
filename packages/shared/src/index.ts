@@ -1,4 +1,4 @@
-export const appName = "my-recipes";
+export const appName = "chefitu";
 
 export const RECIPE_TAGS = [
   "Rápido",

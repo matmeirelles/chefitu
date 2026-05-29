@@ -7,7 +7,7 @@
     "noImplicitOverride": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@my-recipes/shared": ["../../packages/shared/src/index.ts"]
+      "@chefitu/shared": ["../../packages/shared/src/index.ts"]
     }
   },
   "include": ["App.tsx", "index.js", "src/**/*.ts", "src/**/*.tsx"]

@@ -1,11 +1,11 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: my-recipes-postgres
+    container_name: chefitu-postgres
     environment:
-      POSTGRES_DB: my_recipes
-      POSTGRES_USER: my_recipes
-      POSTGRES_PASSWORD: my_recipes
+      POSTGRES_DB: chefitu
+      POSTGRES_USER: chefitu
+      POSTGRES_PASSWORD: chefitu
     ports:
       - "5432:5432"
     volumes:

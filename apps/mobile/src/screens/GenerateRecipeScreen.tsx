@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import type { ChatMessage, GeneratedRecipeFields, GenerateRecipeResponse } from "@my-recipes/shared";
+import type { ChatMessage, GeneratedRecipeFields, GenerateRecipeResponse } from "@chefitu/shared";
 import { generateRecipe as generateRecipeApi, saveGeneratedRecipe } from "../services/api";
 import { appendAssistantMessage, appendUserMessage, buildSessionId } from "../utils/generate-chat";
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../design-system/tokens";

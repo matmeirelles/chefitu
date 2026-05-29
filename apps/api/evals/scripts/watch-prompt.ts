@@ -23,7 +23,7 @@ import { instagramFetcher } from "../../src/lib/fetch-instagram.js";
 const ROOT_ENV_PATH = path.resolve(process.cwd(), "../../.env");
 const PROMPT_PATH = path.resolve(process.cwd(), "src/lib/ai/extractionPrompt.ts");
 const TRY_URL_SCRIPT = path.resolve(process.cwd(), "evals/scripts/try-url.ts");
-const TEMP_DESC_FILE = path.join(tmpdir(), "my-recipes-eval-desc.txt");
+const TEMP_DESC_FILE = path.join(tmpdir(), "chefitu-eval-desc.txt");
 
 const loadRootEnv = async () => {
   try {

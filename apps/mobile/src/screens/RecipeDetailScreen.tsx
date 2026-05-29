@@ -9,7 +9,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import type { ChatMessage, RecipeIngredient, RecipeRecord, RecipeStep } from "@my-recipes/shared";
+import type { ChatMessage, RecipeIngredient, RecipeRecord, RecipeStep } from "@chefitu/shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AdjustRecipePanel, type UIMessage } from "../components/AdjustRecipePanel";
 import { MetricCard } from "../components/MetricCard";

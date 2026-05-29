@@ -6,7 +6,7 @@ import type {
   GenerateRecipeRequest,
   SaveGeneratedRecipeRequest,
   UpdateRecipeRequest,
-} from "@my-recipes/shared";
+} from "@chefitu/shared";
 import { aiProviderFactory } from "../../lib/ai/index.js";
 import { db } from "../../lib/db.js";
 import { traceAiWorkflow } from "../../lib/langfuse/tracing.js";
