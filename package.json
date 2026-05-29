@@ -13,7 +13,8 @@
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "spec-writer": ".venv/bin/python spec-writer.py"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
