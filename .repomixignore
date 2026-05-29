@@ -1,0 +1,17 @@
+# Claude Code internals
+.claude/
+
+# Eval results (large JSON files, not useful for context)
+apps/api/evals/results/
+
+# Generated and build artifacts
+apps/api/generated/
+dist/
+build/
+
+# Package manager
+node_modules/
+package-lock.json
+
+# Infra and config
+repomix-output.xml
