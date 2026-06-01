@@ -18,13 +18,17 @@ export const AppShell = () => {
   const [activeTab, setActiveTab] = useState<BottomNavTab>("library");
   const [screenState, setScreenState] = useState<ScreenState>({ kind: "library" });
   const [librarySeed, setLibrarySeed] = useState(0);
+  const [libraryReturnKey, setLibraryReturnKey] = useState(0);
 
   const [generateApiHistory, setGenerateApiHistory] = useState<ChatMessage[]>([]);
   const [generateUiMessages, setGenerateUiMessages] = useState<UIMessage[]>([]);
   const [generateSessionId, setGenerateSessionId] = useState(() => buildSessionId());
 
   const onDetailOpen = (recipe: RecipeRecord) => setScreenState({ kind: "detail", recipe });
-  const onDetailClose = () => setScreenState({ kind: "library" });
+  const onDetailClose = () => {
+    setScreenState({ kind: "library" });
+    setLibraryReturnKey((k) => k + 1);
+  };
 
   const onRecipeSaved = () => {
     setLibrarySeed((s) => s + 1);
@@ -40,7 +44,11 @@ export const AppShell = () => {
       <View style={styles.content}>
         {/* LibraryScreen: always mounted, hidden only when showing detail */}
         <View style={[styles.screen, isDetail && styles.hidden]}>
-          <LibraryScreen key={librarySeed} onOpenRecipe={onDetailOpen} />
+          <LibraryScreen
+            key={librarySeed}
+            onOpenRecipe={onDetailOpen}
+            returnKey={libraryReturnKey}
+          />
         </View>
 
         {/* RecipeDetailScreen: conditionally mounted (fresh state per recipe) */}

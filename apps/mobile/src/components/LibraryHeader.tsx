@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { COLORS, FONTS, SPACING, TYPE_SCALE } from "../design-system/tokens";
 import { DSText } from "../design-system/Text";
@@ -12,6 +13,7 @@ export const LibraryHeader = ({
   selectedFilter,
   onSelectFilter,
   recipeCount,
+  afterTitle,
 }: {
   topInset: number;
   searchQuery: string;
@@ -20,6 +22,7 @@ export const LibraryHeader = ({
   selectedFilter: string;
   onSelectFilter: (value: string) => void;
   recipeCount: number;
+  afterTitle?: ReactNode;
 }) => (
   <View style={[styles.header, { paddingTop: topInset + 28 }]}>
     {/* Greeting */}
@@ -51,6 +54,8 @@ export const LibraryHeader = ({
         {recipeCount} {recipeCount === 1 ? "receita" : "receitas"}
       </DSText>
     </View>
+
+    {afterTitle}
 
     {/* Filter chips */}
     <ScrollView

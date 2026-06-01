@@ -7,7 +7,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- Design system brand assets: mascot stickers (`assets/stickers/`) and illustrations (`assets/illustrations/`) under `apps/mobile/src/design-system/assets/`, wired to import flow result states
+- New recipe import flow on the library screen (CHE-17): FAB opens a unified bottom sheet (paste link → loading with progress → success or error), top progress banner when dismissed, and polling until the recipe appears in the library
+- Import progress banner on the library (CHE-25): dismiss sheet during import to see mascot + progress at the top of the home list; success auto-dismisses after 3s; errors stay until tapped to reopen the sheet
+
+### Changed
+- Import loading progress (CHE-22): faster step-based bar without “Etapa X de 4”; 100% only when import finishes
+- Import success sheet (CHE-23): result sheets use full-body mascot stickers (cheering / worried / confused) at 168px via `DSMascotSticker`
+- Import source card (CHE-24): Instagram, YouTube, or generic link icons on loading and error states
+
 ### Fixed
+- Import flow sheet: transparent modal overlay so the library stays visible behind the dim layer; source link card opens the URL in the browser
+- Import problem pill: removed floating “N com problema” pill from library (import status lives in top banner + sheet only)
+- Import success banner: tapping “Receita pronta!” dismisses it immediately (auto-dismiss after 3s still applies if ignored)
+- Import progress banner (CHE-25): fixed infinite re-render when dismissing the sheet during import; progress keeps updating from live hook state
+- Import flow sheet (CHE-19–21): sheet titles use `h2` line height; keyboard area matches Creme background like Criar receita (dim overlay only above sheet); library FAB positioned in content area above bottom nav
+
 - `DSMetricCard`: added `minHeight: 72` to card style so Dificuldade and Avaliação cards render at the same height as the Tempo card (CHE-14)
 - `RecipeDetailScreen`: strengthened `aiBar` floating shadow (higher opacity, tighter blur, higher elevation) so it clearly separates from scrollable content (CHE-14)
 
