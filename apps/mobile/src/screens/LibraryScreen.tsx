@@ -2,17 +2,26 @@ import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "rea
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import type { RecipeRecord } from "@chefitu/shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { COLORS } from "../design-system/tokens";
+import { COLORS, SPACING } from "../design-system/tokens";
 import { fetchRecipes } from "../services/api";
 import { LibraryHeader } from "../components/LibraryHeader";
 import { RecipeCard } from "../components/RecipeCard";
 import { StateCard } from "../components/StateCard";
 import { buildFilterList, filterRecipes } from "../utils/filter";
+import { AddRecipeFab } from "../components/import/AddRecipeFab";
+import { ImportRecipeFlowSheet } from "../components/import/ImportRecipeFlowSheet";
+import { ImportProgressBanner } from "../components/import/ImportProgressBanner";
+import { useImportFlow } from "../hooks/use-import-flow";
+
+const FAB_SIZE = 56;
 
 export const LibraryScreen = ({
   onOpenRecipe,
+  returnKey = 0,
 }: {
   onOpenRecipe: (recipe: RecipeRecord) => void;
+  /** Bumped when user returns from recipe detail — refreshes the library list. */
+  returnKey?: number;
 }) => {
   const insets = useSafeAreaInsets();
   const [recipes, setRecipes] = useState<RecipeRecord[]>([]);
@@ -48,6 +57,12 @@ export const LibraryScreen = ({
     void loadRecipes();
   }, [loadRecipes]);
 
+  useEffect(() => {
+    void loadRecipes(true);
+  }, [returnKey, loadRecipes]);
+
+  const importFlow = useImportFlow(() => void loadRecipes(true));
+
   const filters = useMemo(() => buildFilterList(recipes), [recipes]);
 
   const filteredRecipes = useMemo(
@@ -56,8 +71,39 @@ export const LibraryScreen = ({
   );
 
   const gridData = useMemo(
-    () => filteredRecipes.length % 2 !== 0 ? [...filteredRecipes, null] : filteredRecipes,
+    () => (filteredRecipes.length % 2 !== 0 ? [...filteredRecipes, null] : filteredRecipes),
     [filteredRecipes],
+  );
+
+  const fabBottom = SPACING[4];
+
+  const handleViewRecipe = (recipe: RecipeRecord) => {
+    importFlow.resetFlow();
+    onOpenRecipe(recipe);
+  };
+
+  const showImportBanner = importFlow.banner && !importFlow.visible;
+
+  const listHeader = (
+    <LibraryHeader
+      topInset={insets.top}
+      searchQuery={searchQuery}
+      onChangeSearch={setSearchQuery}
+      filters={filters}
+      selectedFilter={selectedFilter}
+      onSelectFilter={setSelectedFilter}
+      recipeCount={filteredRecipes.length}
+      afterTitle={
+        showImportBanner && importFlow.banner ? (
+          <ImportProgressBanner
+            banner={importFlow.banner}
+            loadingStep={importFlow.loadingStep}
+            loadingPercent={importFlow.loadingPercent}
+            onPress={importFlow.openFromBanner}
+          />
+        ) : undefined
+      }
+    />
   );
 
   return (
@@ -72,17 +118,7 @@ export const LibraryScreen = ({
           </View>
         )}
         columnWrapperStyle={styles.columnWrapper}
-        ListHeaderComponent={
-          <LibraryHeader
-            topInset={insets.top}
-            searchQuery={searchQuery}
-            onChangeSearch={setSearchQuery}
-            filters={filters}
-            selectedFilter={selectedFilter}
-            onSelectFilter={setSelectedFilter}
-            recipeCount={filteredRecipes.length}
-          />
-        }
+        ListHeaderComponent={listHeader}
         ListEmptyComponent={
           isLoading ? (
             <StateCard
@@ -105,7 +141,7 @@ export const LibraryScreen = ({
           )
         }
         ItemSeparatorComponent={() => <View style={styles.rowSeparator} />}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: fabBottom + FAB_SIZE + SPACING[4] }]}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
@@ -113,6 +149,25 @@ export const LibraryScreen = ({
             tintColor={COLORS.laranja}
           />
         }
+      />
+
+      <AddRecipeFab onPress={() => importFlow.open()} bottomOffset={fabBottom} />
+
+      <ImportRecipeFlowSheet
+        visible={importFlow.visible}
+        phase={importFlow.phase}
+        sourceUrl={importFlow.sourceUrl}
+        recipe={importFlow.recipe}
+        loadingStep={importFlow.loadingStep}
+        loadingPercent={importFlow.loadingPercent}
+        isSubmitting={importFlow.isSubmitting}
+        isActionLoading={importFlow.isActionLoading}
+        onClose={importFlow.resetFlow}
+        onDismiss={importFlow.dismissSheet}
+        onSubmitUrl={(url) => void importFlow.startImport(url)}
+        onDiscard={() => void importFlow.discardImport()}
+        onRetry={() => void importFlow.retryImportFlow()}
+        onViewRecipe={handleViewRecipe}
       />
     </View>
   );

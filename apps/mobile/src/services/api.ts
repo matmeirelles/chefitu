@@ -7,6 +7,7 @@ import type {
   GenerateRecipeRequest,
   GenerateRecipeResponse,
   GetRecipeResponse,
+  ImportListItem,
   ListImportsResponse,
   ListRecipesResponse,
   RecipeRecord,
@@ -71,13 +72,15 @@ const request = async <T>(path: string): Promise<T> => {
 export const fetchImports = async (): Promise<ListImportsResponse> =>
   request<ListImportsResponse>("/imports");
 
-export const createImport = async (sourceUrl: string): Promise<void> => {
+export const createImport = async (sourceUrl: string): Promise<ImportListItem> => {
   const response = await fetch(`${getBaseUrl()}/imports`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sourceUrl }),
   });
   if (!response.ok) throw new ApiError("Failed to create import.", response.status);
+  const body = (await response.json()) as { item: ImportListItem };
+  return body.item;
 };
 
 export const deleteImport = async (importId: string): Promise<void> => {
