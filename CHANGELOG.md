@@ -7,7 +7,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- New recipe import flow on the library screen (CHE-17): FAB opens a unified bottom sheet (paste link → loading with progress → success or error), problem pill for failed imports, and polling until the recipe appears in the library
+
 ### Fixed
+- Import flow sheet (CHE-19–21): sheet titles use `h2` line height; keyboard area matches Creme background like Criar receita (dim overlay only above sheet); library FAB positioned in content area above bottom nav
+
 - `DSMetricCard`: added `minHeight: 72` to card style so Dificuldade and Avaliação cards render at the same height as the Tempo card (CHE-14)
 - `RecipeDetailScreen`: strengthened `aiBar` floating shadow (higher opacity, tighter blur, higher elevation) so it clearly separates from scrollable content (CHE-14)
 

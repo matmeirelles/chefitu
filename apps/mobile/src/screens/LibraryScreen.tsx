@@ -2,12 +2,19 @@ import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "rea
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import type { RecipeRecord } from "@chefitu/shared";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { COLORS } from "../design-system/tokens";
+import { COLORS, SPACING } from "../design-system/tokens";
 import { fetchRecipes } from "../services/api";
 import { LibraryHeader } from "../components/LibraryHeader";
 import { RecipeCard } from "../components/RecipeCard";
 import { StateCard } from "../components/StateCard";
 import { buildFilterList, filterRecipes } from "../utils/filter";
+import { AddRecipeFab } from "../components/import/AddRecipeFab";
+import { ImportProblemPill } from "../components/import/ImportProblemPill";
+import { ImportRecipeFlowSheet } from "../components/import/ImportRecipeFlowSheet";
+import { useImportFlow } from "../hooks/use-import-flow";
+import { useImportQueue } from "../hooks/use-import-queue";
+
+const FAB_SIZE = 56;
 
 export const LibraryScreen = ({
   onOpenRecipe,
@@ -48,6 +55,26 @@ export const LibraryScreen = ({
     void loadRecipes();
   }, [loadRecipes]);
 
+  const importFlow = useImportFlow(() => void loadRecipes(true));
+
+  const { items: problemImports, load: reloadProblems } = useImportQueue(() =>
+    void loadRecipes(true),
+  );
+
+  const problemItems = useMemo(
+    () =>
+      problemImports.filter(
+        (i) => i.status === "failed" || i.status === "no_recipe_in_description",
+      ),
+    [problemImports],
+  );
+
+  useEffect(() => {
+    if (!importFlow.visible) {
+      void reloadProblems();
+    }
+  }, [importFlow.visible, reloadProblems]);
+
   const filters = useMemo(() => buildFilterList(recipes), [recipes]);
 
   const filteredRecipes = useMemo(
@@ -56,9 +83,22 @@ export const LibraryScreen = ({
   );
 
   const gridData = useMemo(
-    () => filteredRecipes.length % 2 !== 0 ? [...filteredRecipes, null] : filteredRecipes,
+    () => (filteredRecipes.length % 2 !== 0 ? [...filteredRecipes, null] : filteredRecipes),
     [filteredRecipes],
   );
+
+  const fabBottom = SPACING[4];
+  const pillBottom = fabBottom + FAB_SIZE + SPACING[3];
+
+  const handleProblemPress = () => {
+    const first = problemItems[0];
+    if (first) importFlow.openFromProblem(first);
+  };
+
+  const handleViewRecipe = (recipe: RecipeRecord) => {
+    importFlow.close();
+    onOpenRecipe(recipe);
+  };
 
   return (
     <View style={[styles.root, { backgroundColor: COLORS.creme }]}>
@@ -105,7 +145,7 @@ export const LibraryScreen = ({
           )
         }
         ItemSeparatorComponent={() => <View style={styles.rowSeparator} />}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: fabBottom + FAB_SIZE + SPACING[4] }]}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
@@ -113,6 +153,32 @@ export const LibraryScreen = ({
             tintColor={COLORS.laranja}
           />
         }
+      />
+
+      {!importFlow.visible && (
+        <ImportProblemPill
+          count={problemItems.length}
+          bottomOffset={pillBottom}
+          onPress={handleProblemPress}
+        />
+      )}
+
+      <AddRecipeFab onPress={() => importFlow.open()} bottomOffset={fabBottom} />
+
+      <ImportRecipeFlowSheet
+        visible={importFlow.visible}
+        phase={importFlow.phase}
+        sourceUrl={importFlow.sourceUrl}
+        recipe={importFlow.recipe}
+        loadingStep={importFlow.loadingStep}
+        loadingPercent={importFlow.loadingPercent}
+        isSubmitting={importFlow.isSubmitting}
+        isActionLoading={importFlow.isActionLoading}
+        onClose={importFlow.close}
+        onSubmitUrl={(url) => void importFlow.startImport(url)}
+        onDiscard={() => void importFlow.discardImport()}
+        onRetry={() => void importFlow.retryImportFlow()}
+        onViewRecipe={handleViewRecipe}
       />
     </View>
   );

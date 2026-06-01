@@ -137,8 +137,9 @@ test("createImport sends a POST request and succeeds on a 201 response", async (
     });
   };
 
-  await createImport("https://instagram.com/p/1");
+  const result = await createImport("https://instagram.com/p/1");
 
+  assert.deepEqual(result, { id: "imp_1" });
   assert.equal(input, "http://127.0.0.1:3333/imports");
   assert.equal(init?.method, "POST");
   assert.equal(init?.headers && (init.headers as Record<string, string>)["Content-Type"], "application/json");
