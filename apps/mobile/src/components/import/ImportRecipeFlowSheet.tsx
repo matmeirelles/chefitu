@@ -4,6 +4,7 @@ import {
   Image,
   Keyboard,
   KeyboardAvoidingView,
+  Linking,
   Modal,
   Platform,
   Pressable,
@@ -20,6 +21,9 @@ import { resolveImageUrl } from "../../services/api";
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../../design-system/tokens";
 import { DSText } from "../../design-system/Text";
 import { DSIcon } from "../../design-system/Icon";
+import { ImportSourceIcon } from "./ImportSourceIcon";
+import { ImportResultLayout } from "./ImportResultLayout";
+import { IMPORT_FLOW_STICKER_BY_KIND } from "../../design-system/illustrations";
 import { FALLBACK_COVER_IMAGE } from "../../constants";
 
 const OUTLINE = "rgba(74, 44, 26, 0.14)";
@@ -34,6 +38,7 @@ type Props = {
   isSubmitting: boolean;
   isActionLoading: boolean;
   onClose: () => void;
+  onDismiss: () => void;
   onSubmitUrl: (url: string) => void;
   onDiscard: () => void;
   onRetry: () => void;
@@ -50,6 +55,7 @@ export const ImportRecipeFlowSheet = ({
   isSubmitting,
   isActionLoading,
   onClose,
+  onDismiss,
   onSubmitUrl,
   onDiscard,
   onRetry,
@@ -98,6 +104,14 @@ export const ImportRecipeFlowSheet = ({
   const canClose = !busy || phase === "success" || phase === "no_recipe" || phase === "failed";
 
   const handleClose = () => {
+    if (phase === "loading" && !isSubmitting) {
+      onDismiss();
+      return;
+    }
+    if (phase === "success" || phase === "failed" || phase === "no_recipe") {
+      if (canClose) onDismiss();
+      return;
+    }
     if (canClose) onClose();
   };
 
@@ -156,7 +170,12 @@ export const ImportRecipeFlowSheet = ({
             )}
 
             {phase === "loading" && (
-              <LoadingView source={source} stepIndex={loadingStep} percent={loadingPercent} />
+              <LoadingView
+                source={source}
+                sourceUrl={sourceUrl}
+                stepIndex={loadingStep}
+                percent={loadingPercent}
+              />
             )}
 
             {phase === "success" && recipe && (
@@ -171,6 +190,7 @@ export const ImportRecipeFlowSheet = ({
               <ErrorView
                 variant="no_recipe"
                 source={source}
+                sourceUrl={sourceUrl}
                 busy={isActionLoading}
                 onDiscard={onDiscard}
                 onRetry={onRetry}
@@ -181,6 +201,7 @@ export const ImportRecipeFlowSheet = ({
               <ErrorView
                 variant="failed"
                 source={source}
+                sourceUrl={sourceUrl}
                 busy={isActionLoading}
                 onDiscard={onDiscard}
                 onRetry={onRetry}
@@ -244,15 +265,16 @@ const PasteView = ({
 
 const LoadingView = ({
   source,
+  sourceUrl,
   stepIndex,
   percent,
 }: {
   source: ImportSourceInfo;
+  sourceUrl: string;
   stepIndex: number;
   percent: number;
 }) => {
   const step = LOADING_STEPS[Math.min(stepIndex, LOADING_STEPS.length - 1)];
-  const stepNumber = Math.min(stepIndex + 1, LOADING_STEPS.length);
 
   return (
     <View style={styles.content}>
@@ -266,9 +288,6 @@ const LoadingView = ({
         </View>
         <View style={styles.loadingTextCol}>
           <DSText style={styles.loadingStep}>{step}…</DSText>
-          <DSText style={styles.loadingMeta}>
-            Etapa {stepNumber} de {LOADING_STEPS.length}
-          </DSText>
         </View>
         <DSText style={styles.percent}>{Math.round(percent)}%</DSText>
       </View>
@@ -277,7 +296,7 @@ const LoadingView = ({
         <View style={[styles.progressFill, { width: `${Math.min(percent, 100)}%` }]} />
       </View>
 
-      <SourceCard source={source} />
+      <SourceCard source={source} url={sourceUrl} />
     </View>
   );
 };
@@ -291,53 +310,36 @@ const SuccessView = ({
   source: ImportSourceInfo;
   onViewRecipe: () => void;
 }) => (
-  <View style={styles.content}>
-    <Image
-      source={require("../../../assets/mascot-symbol.png")}
-      style={styles.mascot}
-      resizeMode="contain"
-    />
-    <DSText variant="h2" style={styles.sheetTitle}>
-      Receita pronta! 🎉
-    </DSText>
-    <DSText style={styles.successBody}>
-      Transformei o link em <DSText style={styles.bold}>{recipe.title}</DSText> e já guardei nas suas
-      receitas.
-    </DSText>
-
-    <View style={styles.recipePreview}>
-      <Image
-        source={{
-          uri: resolveImageUrl(recipe.coverImageUrl) ?? FALLBACK_COVER_IMAGE,
-        }}
-        style={styles.previewImage}
-      />
-      <View style={styles.previewText}>
-        <DSText style={styles.previewTitle} numberOfLines={2}>
-          {recipe.title}
-        </DSText>
-        <DSText style={styles.previewMeta}>
-          {source.label}
-          {recipe.totalTimeMinutes ? ` · ${recipe.totalTimeMinutes} min` : ""}
-        </DSText>
-      </View>
-    </View>
-
-    <Pressable onPress={onViewRecipe} style={styles.ctaOrange}>
-      <DSText style={styles.ctaOrangeText}>Ver receita →</DSText>
-    </Pressable>
-  </View>
+  <ImportResultLayout
+    stickerId={IMPORT_FLOW_STICKER_BY_KIND.success}
+    title="Receita pronta! 🎉"
+    description={
+      <DSText style={styles.resultDescription}>
+        Transformei o link em <DSText style={styles.resultRecipeName}>{recipe.title}</DSText> e já
+        guardei nas suas receitas.
+      </DSText>
+    }
+    footer={
+      <Pressable onPress={onViewRecipe} style={[styles.ctaOrange, styles.ctaFull]}>
+        <DSText style={styles.ctaOrangeText}>Ver receita →</DSText>
+      </Pressable>
+    }
+  >
+    <RecipePreviewCard recipe={recipe} source={source} />
+  </ImportResultLayout>
 );
 
 const ErrorView = ({
   variant,
   source,
+  sourceUrl,
   busy,
   onDiscard,
   onRetry,
 }: {
   variant: "no_recipe" | "failed";
   source: ImportSourceInfo;
+  sourceUrl: string;
   busy: boolean;
   onDiscard: () => void;
   onRetry: () => void;
@@ -345,64 +347,115 @@ const ErrorView = ({
   const isNoRecipe = variant === "no_recipe";
 
   return (
-    <View style={styles.content}>
-      <Image
-        source={require("../../../assets/mascot-symbol.png")}
-        style={styles.mascot}
-        resizeMode="contain"
-      />
-      <DSText variant="h2" style={styles.sheetTitle}>
-        {isNoRecipe ? "Não achei receita nesse link" : "Algo deu errado"}
-      </DSText>
-      <DSText style={styles.subtitle}>
-        {isNoRecipe
+    <ImportResultLayout
+      stickerId={
+        IMPORT_FLOW_STICKER_BY_KIND[isNoRecipe ? "no_recipe" : "failed"]
+      }
+      title={isNoRecipe ? "Não achei receita nesse link" : "Algo deu errado"}
+      description={
+        isNoRecipe
           ? "Dei uma boa olhada, mas esse link não parece ter uma receita pra eu montar. Confira o endereço ou tente outro."
-          : "Tive um probleminha ao importar essa receita. Pode ser a conexão ou o site. Quer tentar de novo?"}
-      </DSText>
-
-      <SourceCard source={source} />
-
-      <View style={styles.errorActions}>
-        <Pressable
-          onPress={onDiscard}
-          disabled={busy}
-          style={[styles.outlineBtn, busy && styles.disabled]}
-        >
-          <DSIcon name="Trash2" size={16} color={COLORS.marrom} strokeWidth={1.75} />
-          <DSText style={styles.outlineBtnText}>Excluir</DSText>
-        </Pressable>
-        <Pressable
-          onPress={onRetry}
-          disabled={busy}
-          style={[styles.ctaOrange, styles.errorRetry, busy && styles.disabled]}
-        >
-          <DSIcon name="RotateCw" size={16} color={COLORS.white} strokeWidth={2} />
-          <DSText style={styles.ctaOrangeText}>Tentar de novo</DSText>
-        </Pressable>
-      </View>
-    </View>
+          : "Tive um probleminha ao importar essa receita. Pode ser a conexão ou o site. Quer tentar de novo?"
+      }
+      footer={
+        <View style={styles.errorActions}>
+          <Pressable
+            onPress={onDiscard}
+            disabled={busy}
+            style={[styles.outlineBtn, busy && styles.disabled]}
+          >
+            <DSIcon name="Trash2" size={16} color={COLORS.marrom} strokeWidth={1.75} />
+            <DSText style={styles.outlineBtnText}>Excluir</DSText>
+          </Pressable>
+          <Pressable
+            onPress={onRetry}
+            disabled={busy}
+            style={[styles.ctaOrange, styles.errorRetry, busy && styles.disabled]}
+          >
+            <DSIcon name="RotateCw" size={16} color={COLORS.white} strokeWidth={2} />
+            <DSText style={styles.ctaOrangeText}>Tentar de novo</DSText>
+          </Pressable>
+        </View>
+      }
+    >
+      <SourceCard source={source} url={sourceUrl} compact />
+    </ImportResultLayout>
   );
 };
 
-const SourceCard = ({ source }: { source: ImportSourceInfo }) => (
-  <View style={styles.sourceCard}>
-    <View style={styles.sourceIcon}>
-      <DSIcon name="Globe" size={18} color={COLORS.white} strokeWidth={2} />
-    </View>
-    <View style={styles.sourceText}>
-      <DSText style={styles.sourceLabel}>{source.label}</DSText>
-      <DSText style={styles.sourceUrl} numberOfLines={1}>
-        {source.displayUrl}
+const RecipePreviewCard = ({
+  recipe,
+  source,
+}: {
+  recipe: RecipeRecord;
+  source: ImportSourceInfo;
+}) => (
+  <View style={styles.recipePreview}>
+    <Image
+      source={{
+        uri: resolveImageUrl(recipe.coverImageUrl) ?? FALLBACK_COVER_IMAGE,
+      }}
+      style={styles.previewImage}
+    />
+    <View style={styles.previewText}>
+      <DSText style={styles.previewTitle} numberOfLines={2}>
+        {recipe.title}
       </DSText>
+      <View style={styles.previewMetaRow}>
+        <View style={[styles.previewSourceIcon, { backgroundColor: source.iconBackground }]}>
+          <ImportSourceIcon kind={source.kind} size={12} color={source.iconColor} />
+        </View>
+        <DSText style={styles.previewMeta}>
+          {source.label}
+          {recipe.totalTimeMinutes ? ` · ${recipe.totalTimeMinutes} min` : ""}
+        </DSText>
+      </View>
     </View>
   </View>
 );
+
+const SourceCard = ({
+  source,
+  url,
+  compact = false,
+}: {
+  source: ImportSourceInfo;
+  url: string;
+  compact?: boolean;
+}) => {
+  const canOpen = url.trim().length > 0;
+
+  const openLink = () => {
+    if (canOpen) void Linking.openURL(url.trim());
+  };
+
+  return (
+    <Pressable
+      onPress={openLink}
+      disabled={!canOpen}
+      style={[styles.sourceCard, compact && styles.sourceCardCompact]}
+      accessibilityRole="link"
+      accessibilityLabel={`Abrir link: ${source.displayUrl}`}
+    >
+      <View style={[styles.sourceIcon, { backgroundColor: source.iconBackground }]}>
+        <ImportSourceIcon kind={source.kind} size={18} color={source.iconColor} />
+      </View>
+      <View style={styles.sourceText}>
+        <DSText style={[styles.sourceLabel, compact && styles.sourceLabelCompact]}>{source.label}</DSText>
+        <DSText style={styles.sourceUrl} numberOfLines={1}>
+          {source.displayUrl}
+        </DSText>
+      </View>
+      {canOpen && <DSIcon name="ExternalLink" size={16} color={COLORS.marromSoft} strokeWidth={2} />}
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: COLORS.creme,
+    backgroundColor: "transparent",
   },
   backdropSlot: {
     flex: 1,
@@ -538,10 +591,6 @@ const styles = StyleSheet.create({
     fontSize: TYPE_SCALE.body,
     color: COLORS.marrom,
   },
-  loadingMeta: {
-    fontSize: TYPE_SCALE.caption,
-    color: COLORS.marromSoft,
-  },
   percent: {
     fontFamily: FONTS.uiBold,
     fontWeight: "700",
@@ -559,33 +608,32 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.laranja,
     borderRadius: RADIUS.pill,
   },
-  mascot: {
-    width: 88,
-    height: 88,
-    alignSelf: "center",
-  },
-  successBody: {
-    fontSize: TYPE_SCALE.bodySm,
-    lineHeight: TYPE_SCALE.bodySm * 1.55,
+  resultDescription: {
+    fontSize: TYPE_SCALE.body,
+    lineHeight: TYPE_SCALE.body * 1.5,
     color: COLORS.marromSoft,
     textAlign: "center",
   },
-  bold: {
+  resultRecipeName: {
+    fontFamily: FONTS.displayBold,
     fontWeight: "700",
+    fontSize: TYPE_SCALE.body,
     color: COLORS.marrom,
   },
   recipePreview: {
+    alignSelf: "stretch",
     flexDirection: "row",
     alignItems: "center",
     gap: SPACING[3],
     backgroundColor: COLORS.white,
-    borderRadius: RADIUS.card,
+    borderRadius: RADIUS.input,
     padding: SPACING[3],
-    ...SHADOWS.sm,
+    borderWidth: 1,
+    borderColor: OUTLINE,
   },
   previewImage: {
-    width: 56,
-    height: 56,
+    width: 64,
+    height: 64,
     borderRadius: RADIUS.sm,
     backgroundColor: COLORS.bege,
   },
@@ -596,13 +644,29 @@ const styles = StyleSheet.create({
   previewTitle: {
     fontFamily: FONTS.displayBold,
     fontWeight: "700",
-    fontSize: TYPE_SCALE.bodySm,
+    fontSize: TYPE_SCALE.body,
     color: COLORS.marrom,
   },
+  previewMetaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  previewSourceIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   previewMeta: {
-    fontSize: 12,
+    fontSize: TYPE_SCALE.caption,
     color: COLORS.marromSoft,
     fontWeight: "600",
+  },
+  ctaFull: {
+    alignSelf: "stretch",
+    width: "100%",
   },
   ctaOrange: {
     backgroundColor: COLORS.laranja,
@@ -621,20 +685,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   sourceCard: {
+    alignSelf: "stretch",
     flexDirection: "row",
     alignItems: "center",
     gap: SPACING[3],
     backgroundColor: COLORS.white,
-    borderRadius: RADIUS.card,
+    borderRadius: RADIUS.input,
     padding: SPACING[3],
     borderWidth: 1,
     borderColor: OUTLINE,
+  },
+  sourceCardCompact: {
+    width: "100%",
   },
   sourceIcon: {
     width: 40,
     height: 40,
     borderRadius: RADIUS.sm,
-    backgroundColor: COLORS.marrom,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -648,13 +715,21 @@ const styles = StyleSheet.create({
     fontSize: TYPE_SCALE.bodySm,
     color: COLORS.marrom,
   },
-  sourceUrl: {
-    fontSize: 12,
+  sourceLabelCompact: {
+    fontFamily: FONTS.uiSemiBold,
+    fontWeight: "600",
     color: COLORS.marromSoft,
   },
+  sourceUrl: {
+    fontSize: TYPE_SCALE.caption,
+    color: COLORS.laranja,
+    textDecorationLine: "underline",
+  },
   errorActions: {
+    alignSelf: "stretch",
     flexDirection: "row",
     gap: SPACING[3],
+    width: "100%",
   },
   outlineBtn: {
     flex: 1,

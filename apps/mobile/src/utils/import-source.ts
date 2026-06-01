@@ -1,7 +1,12 @@
+export type ImportSourceKind = "instagram" | "youtube" | "generic";
+
 export type ImportSourceInfo = {
+  kind: ImportSourceKind;
   label: string;
   host: string;
   displayUrl: string;
+  iconColor: string;
+  iconBackground: string;
 };
 
 export const parseImportSource = (sourceUrl: string): ImportSourceInfo => {
@@ -9,11 +14,42 @@ export const parseImportSource = (sourceUrl: string): ImportSourceInfo => {
     const parsed = new URL(sourceUrl);
     const host = parsed.hostname.replace(/^www\./, "");
     if (host.includes("instagram")) {
-      return { label: "Instagram", host, displayUrl: truncateUrl(sourceUrl) };
+      return {
+        kind: "instagram",
+        label: "Instagram",
+        host,
+        displayUrl: truncateUrl(sourceUrl),
+        iconColor: "#FFFFFF",
+        iconBackground: "#E4405F",
+      };
     }
-    return { label: "Link", host, displayUrl: truncateUrl(sourceUrl) };
+    if (host.includes("youtube") || host.includes("youtu.be")) {
+      return {
+        kind: "youtube",
+        label: "YouTube",
+        host,
+        displayUrl: truncateUrl(sourceUrl),
+        iconColor: "#FFFFFF",
+        iconBackground: "#FF0000",
+      };
+    }
+    return {
+      kind: "generic",
+      label: "Link",
+      host,
+      displayUrl: truncateUrl(sourceUrl),
+      iconColor: "#FFFFFF",
+      iconBackground: "#4A2C1A",
+    };
   } catch {
-    return { label: "Link", host: "link", displayUrl: truncateUrl(sourceUrl) };
+    return {
+      kind: "generic",
+      label: "Link",
+      host: "link",
+      displayUrl: truncateUrl(sourceUrl),
+      iconColor: "#FFFFFF",
+      iconBackground: "#4A2C1A",
+    };
   }
 };
 

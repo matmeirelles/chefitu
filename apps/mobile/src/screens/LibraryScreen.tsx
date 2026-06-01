@@ -9,17 +9,19 @@ import { RecipeCard } from "../components/RecipeCard";
 import { StateCard } from "../components/StateCard";
 import { buildFilterList, filterRecipes } from "../utils/filter";
 import { AddRecipeFab } from "../components/import/AddRecipeFab";
-import { ImportProblemPill } from "../components/import/ImportProblemPill";
 import { ImportRecipeFlowSheet } from "../components/import/ImportRecipeFlowSheet";
+import { ImportProgressBanner } from "../components/import/ImportProgressBanner";
 import { useImportFlow } from "../hooks/use-import-flow";
-import { useImportQueue } from "../hooks/use-import-queue";
 
 const FAB_SIZE = 56;
 
 export const LibraryScreen = ({
   onOpenRecipe,
+  returnKey = 0,
 }: {
   onOpenRecipe: (recipe: RecipeRecord) => void;
+  /** Bumped when user returns from recipe detail — refreshes the library list. */
+  returnKey?: number;
 }) => {
   const insets = useSafeAreaInsets();
   const [recipes, setRecipes] = useState<RecipeRecord[]>([]);
@@ -55,25 +57,11 @@ export const LibraryScreen = ({
     void loadRecipes();
   }, [loadRecipes]);
 
-  const importFlow = useImportFlow(() => void loadRecipes(true));
-
-  const { items: problemImports, load: reloadProblems } = useImportQueue(() =>
-    void loadRecipes(true),
-  );
-
-  const problemItems = useMemo(
-    () =>
-      problemImports.filter(
-        (i) => i.status === "failed" || i.status === "no_recipe_in_description",
-      ),
-    [problemImports],
-  );
-
   useEffect(() => {
-    if (!importFlow.visible) {
-      void reloadProblems();
-    }
-  }, [importFlow.visible, reloadProblems]);
+    void loadRecipes(true);
+  }, [returnKey, loadRecipes]);
+
+  const importFlow = useImportFlow(() => void loadRecipes(true));
 
   const filters = useMemo(() => buildFilterList(recipes), [recipes]);
 
@@ -88,17 +76,35 @@ export const LibraryScreen = ({
   );
 
   const fabBottom = SPACING[4];
-  const pillBottom = fabBottom + FAB_SIZE + SPACING[3];
-
-  const handleProblemPress = () => {
-    const first = problemItems[0];
-    if (first) importFlow.openFromProblem(first);
-  };
 
   const handleViewRecipe = (recipe: RecipeRecord) => {
-    importFlow.close();
+    importFlow.resetFlow();
     onOpenRecipe(recipe);
   };
+
+  const showImportBanner = importFlow.banner && !importFlow.visible;
+
+  const listHeader = (
+    <LibraryHeader
+      topInset={insets.top}
+      searchQuery={searchQuery}
+      onChangeSearch={setSearchQuery}
+      filters={filters}
+      selectedFilter={selectedFilter}
+      onSelectFilter={setSelectedFilter}
+      recipeCount={filteredRecipes.length}
+      afterTitle={
+        showImportBanner && importFlow.banner ? (
+          <ImportProgressBanner
+            banner={importFlow.banner}
+            loadingStep={importFlow.loadingStep}
+            loadingPercent={importFlow.loadingPercent}
+            onPress={importFlow.openFromBanner}
+          />
+        ) : undefined
+      }
+    />
+  );
 
   return (
     <View style={[styles.root, { backgroundColor: COLORS.creme }]}>
@@ -112,17 +118,7 @@ export const LibraryScreen = ({
           </View>
         )}
         columnWrapperStyle={styles.columnWrapper}
-        ListHeaderComponent={
-          <LibraryHeader
-            topInset={insets.top}
-            searchQuery={searchQuery}
-            onChangeSearch={setSearchQuery}
-            filters={filters}
-            selectedFilter={selectedFilter}
-            onSelectFilter={setSelectedFilter}
-            recipeCount={filteredRecipes.length}
-          />
-        }
+        ListHeaderComponent={listHeader}
         ListEmptyComponent={
           isLoading ? (
             <StateCard
@@ -155,14 +151,6 @@ export const LibraryScreen = ({
         }
       />
 
-      {!importFlow.visible && (
-        <ImportProblemPill
-          count={problemItems.length}
-          bottomOffset={pillBottom}
-          onPress={handleProblemPress}
-        />
-      )}
-
       <AddRecipeFab onPress={() => importFlow.open()} bottomOffset={fabBottom} />
 
       <ImportRecipeFlowSheet
@@ -174,7 +162,8 @@ export const LibraryScreen = ({
         loadingPercent={importFlow.loadingPercent}
         isSubmitting={importFlow.isSubmitting}
         isActionLoading={importFlow.isActionLoading}
-        onClose={importFlow.close}
+        onClose={importFlow.resetFlow}
+        onDismiss={importFlow.dismissSheet}
         onSubmitUrl={(url) => void importFlow.startImport(url)}
         onDiscard={() => void importFlow.discardImport()}
         onRetry={() => void importFlow.retryImportFlow()}
