@@ -6,6 +6,8 @@ import { setRecipeFavorite } from "../services/api";
 type Options = {
   onFavorite?: (recipe: RecipeRecord) => void;
   onUnfavorite?: (recipeId: string) => void;
+  /** Sync favorite state to other screens (e.g. library while on Favoritos tab). */
+  onRecipeChange?: (recipe: RecipeRecord) => void;
 };
 
 export const useRecipeFavorites = (
@@ -26,6 +28,7 @@ export const useRecipeFavorites = (
         try {
           const updated = await setRecipeFavorite(recipe.id, true);
           updateRecipeInList(updated);
+          options?.onRecipeChange?.(updated);
           options?.onFavorite?.(updated);
         } catch (error) {
           const message =
@@ -48,8 +51,9 @@ export const useRecipeFavorites = (
       setSubmitting(true);
       try {
         const updated = await setRecipeFavorite(pendingUnfavorite.id, false);
-        options?.onUnfavorite?.(updated.id);
         updateRecipeInList(updated);
+        options?.onRecipeChange?.(updated);
+        options?.onUnfavorite?.(updated.id);
         setPendingUnfavorite(null);
       } catch (error) {
         const message =

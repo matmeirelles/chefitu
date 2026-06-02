@@ -13,6 +13,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Favorites (CHE-31): filled heart uses `fill` so the icon shows `COLORS.coracao` instead of appearing white
 - Favorites (CHE-32): Favoritos list refreshes when opening the tab or returning from recipe detail after favoriting elsewhere
+- Favorites: home grid heart state stays in sync when favoriting or unfavoriting from Favoritos or recipe detail
 
 ## [0.8.0] — 2026-06-02
 

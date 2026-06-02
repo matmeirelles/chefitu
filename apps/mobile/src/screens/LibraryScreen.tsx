@@ -20,13 +20,20 @@ import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
 
 const FAB_SIZE = 56;
 
+type FavoritePatch = Pick<RecipeRecord, "isFavorite" | "favoritedAt">;
+
 export const LibraryScreen = ({
   onOpenRecipe,
   returnKey = 0,
+  favoritePatches = {},
+  onRecipeFavoriteChange,
 }: {
   onOpenRecipe: (recipe: RecipeRecord) => void;
   /** Bumped when user returns from recipe detail — refreshes the library list. */
   returnKey?: number;
+  /** Favorite updates from other tabs/screens applied to the grid without a full refetch. */
+  favoritePatches?: Record<string, FavoritePatch>;
+  onRecipeFavoriteChange?: (recipe: RecipeRecord) => void;
 }) => {
   const insets = useSafeAreaInsets();
   const { profile } = useProfile();
@@ -51,7 +58,7 @@ export const LibraryScreen = ({
     handleFavoritePress,
     confirmUnfavorite,
     cancelUnfavorite,
-  } = useRecipeFavorites(updateRecipeInList);
+  } = useRecipeFavorites(updateRecipeInList, { onRecipeChange: onRecipeFavoriteChange });
 
   const loadRecipes = useCallback(async (refreshing = false) => {
     if (refreshing) {
@@ -85,9 +92,18 @@ export const LibraryScreen = ({
 
   const filters = useMemo(() => buildFilterList(recipes), [recipes]);
 
+  const recipesWithPatches = useMemo(
+    () =>
+      recipes.map((recipe) => {
+        const patch = favoritePatches[recipe.id];
+        return patch ? { ...recipe, ...patch } : recipe;
+      }),
+    [recipes, favoritePatches],
+  );
+
   const filteredRecipes = useMemo(
-    () => filterRecipes(recipes, selectedFilter, deferredSearchQuery),
-    [recipes, selectedFilter, deferredSearchQuery],
+    () => filterRecipes(recipesWithPatches, selectedFilter, deferredSearchQuery),
+    [recipesWithPatches, selectedFilter, deferredSearchQuery],
   );
 
   const gridData = useMemo(

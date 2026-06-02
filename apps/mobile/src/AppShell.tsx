@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ChatMessage, RecipeRecord } from "@chefitu/shared";
@@ -16,6 +16,8 @@ import { buildSessionId } from "./utils/generate-chat";
 
 type ScreenState = { kind: "library" } | { kind: "detail"; recipe: RecipeRecord };
 
+type FavoritePatch = Pick<RecipeRecord, "isFavorite" | "favoritedAt">;
+
 export const AppShell = () => {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
@@ -31,6 +33,22 @@ export const AppShell = () => {
   const [librarySeed, setLibrarySeed] = useState(0);
   const [libraryReturnKey, setLibraryReturnKey] = useState(0);
   const [favoritesRefreshKey, setFavoritesRefreshKey] = useState(0);
+  const [favoritePatches, setFavoritePatches] = useState<Record<string, FavoritePatch>>({});
+
+  const onRecipeFavoriteChange = useCallback((updated: RecipeRecord) => {
+    setFavoritePatches((prev) => ({
+      ...prev,
+      [updated.id]: {
+        isFavorite: updated.isFavorite,
+        favoritedAt: updated.favoritedAt ?? null,
+      },
+    }));
+    setScreenState((prev) =>
+      prev.kind === "detail" && prev.recipe.id === updated.id
+        ? { kind: "detail", recipe: { ...prev.recipe, ...updated } }
+        : prev,
+    );
+  }, []);
 
   const [generateApiHistory, setGenerateApiHistory] = useState<ChatMessage[]>([]);
   const [generateUiMessages, setGenerateUiMessages] = useState<UIMessage[]>([]);
@@ -73,6 +91,8 @@ export const AppShell = () => {
             key={librarySeed}
             onOpenRecipe={onDetailOpen}
             returnKey={libraryReturnKey}
+            favoritePatches={favoritePatches}
+            onRecipeFavoriteChange={onRecipeFavoriteChange}
           />
         </View>
 
@@ -83,6 +103,7 @@ export const AppShell = () => {
               recipe={screenState.recipe}
               onBack={onDetailClose}
               onDelete={onDetailClose}
+              onRecipeFavoriteChange={onRecipeFavoriteChange}
             />
           </View>
         )}
@@ -114,6 +135,7 @@ export const AppShell = () => {
             refreshKey={favoritesRefreshKey}
             onOpenRecipe={onDetailOpen}
             onGoToLibrary={() => setActiveTab("library")}
+            onRecipeFavoriteChange={onRecipeFavoriteChange}
           />
         </View>
       </View>

@@ -18,11 +18,13 @@ export const FavoritesScreen = ({
   refreshKey = 0,
   onOpenRecipe,
   onGoToLibrary,
+  onRecipeFavoriteChange,
 }: {
   /** Bumped when the Favoritos tab is opened or when returning from recipe detail. */
   refreshKey?: number;
   onOpenRecipe: (recipe: RecipeRecord) => void;
   onGoToLibrary: () => void;
+  onRecipeFavoriteChange?: (recipe: RecipeRecord) => void;
 }) => {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
@@ -52,6 +54,7 @@ export const FavoritesScreen = ({
     confirmUnfavorite,
     cancelUnfavorite,
   } = useRecipeFavorites(updateRecipeInList, {
+    onRecipeChange: onRecipeFavoriteChange,
     onUnfavorite: (recipeId) => {
       setRecipes((prev) => prev.filter((recipe) => recipe.id !== recipeId));
     },

@@ -33,10 +33,12 @@ export const RecipeDetailScreen = ({
   recipe,
   onBack,
   onDelete,
+  onRecipeFavoriteChange,
 }: {
   recipe: RecipeRecord;
   onBack: () => void;
   onDelete: () => void;
+  onRecipeFavoriteChange?: (recipe: RecipeRecord) => void;
 }) => {
   const insets = useSafeAreaInsets();
 
@@ -87,7 +89,7 @@ export const RecipeDetailScreen = ({
     handleFavoritePress,
     confirmUnfavorite,
     cancelUnfavorite,
-  } = useRecipeFavorites(updateRecipeInList);
+  } = useRecipeFavorites(updateRecipeInList, { onRecipeChange: onRecipeFavoriteChange });
 
   const openMenu = () => {
     setMenuOpen(true);
