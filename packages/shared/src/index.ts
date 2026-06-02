@@ -100,8 +100,18 @@ export type RecipeRecord = {
   totalTimeMinutes?: number | null;
   servings?: string | null;
   tags: string[];
+  isFavorite: boolean;
+  favoritedAt?: string | null;
   createdAt: string;
   updatedAt: string;
+};
+
+export type SetRecipeFavoriteRequest = {
+  isFavorite: boolean;
+};
+
+export type SetRecipeFavoriteResponse = {
+  item: RecipeRecord;
 };
 
 export type ImportRecord = {

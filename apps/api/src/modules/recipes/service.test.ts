@@ -1,7 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { db } from "../../lib/db.js";
-import { createGeneratedRecipe, deleteRecipe, getRecipeById, listRecipes } from "./service.js";
+import {
+  createGeneratedRecipe,
+  deleteRecipe,
+  getRecipeById,
+  listRecipes,
+  setRecipeFavorite,
+} from "./service.js";
 import { stubMethod } from "../../test/helpers.js";
 
 test("listRecipes maps rows into recipe records", async (t) => {
@@ -20,6 +26,9 @@ test("listRecipes maps rows into recipe records", async (t) => {
       totalTimeMinutes: 15,
       servings: "2 servings",
       tags: ["Quick"],
+      instructionsGeneratedByAi: false,
+      isFavorite: false,
+      favoritedAt: null,
       createdAt: new Date("2026-04-30T10:00:00.000Z"),
       updatedAt: new Date("2026-04-30T10:00:00.000Z"),
     },
@@ -48,6 +57,9 @@ test("getRecipeById returns the mapped recipe when it exists", async (t) => {
     totalTimeMinutes: 15,
     servings: "2 servings",
     tags: ["Quick"],
+    instructionsGeneratedByAi: false,
+    isFavorite: true,
+    favoritedAt: new Date("2026-05-01T12:00:00.000Z"),
     createdAt: new Date("2026-04-30T10:00:00.000Z"),
     updatedAt: new Date("2026-04-30T10:00:00.000Z"),
   }) as never);
@@ -57,6 +69,96 @@ test("getRecipeById returns the mapped recipe when it exists", async (t) => {
   assert.ok(item);
   assert.equal(item.id, "rec_1");
   assert.equal(item.title, "Banana Oat Pancakes");
+  assert.equal(item.isFavorite, true);
+  assert.equal(item.favoritedAt, "2026-05-01T12:00:00.000Z");
+});
+
+test("listRecipes with favoritesOnly filters and orders favorites", async (t) => {
+  let findManyArgs: Record<string, unknown> | undefined;
+
+  stubMethod(t, db.recipe, "findMany", async (args: Record<string, unknown>) => {
+    findManyArgs = args;
+    return [] as never;
+  });
+
+  await listRecipes({ favoritesOnly: true });
+
+  assert.deepEqual(findManyArgs, {
+    where: { isFavorite: true },
+    orderBy: [{ favoritedAt: "desc" }, { createdAt: "desc" }],
+  });
+});
+
+test("setRecipeFavorite returns null when recipe does not exist", async (t) => {
+  stubMethod(t, db.recipe, "findUnique", async () => null as never);
+
+  const item = await setRecipeFavorite("missing", true);
+
+  assert.equal(item, null);
+});
+
+test("setRecipeFavorite updates favorite state", async (t) => {
+  stubMethod(t, db.recipe, "findUnique", async () => ({ id: "rec_1" }) as never);
+  stubMethod(t, db.recipe, "update", async ({ data }: { data: Record<string, unknown> }) => {
+    assert.equal(data.isFavorite, true);
+    assert.ok(data.favoritedAt instanceof Date);
+    return {
+      id: "rec_1",
+      importId: "imp_1",
+      title: "Banana Oat Pancakes",
+      coverImageUrl: null,
+      category: "Breakfast",
+      cuisine: "Healthy",
+      ingredients: [],
+      steps: [],
+      instructionsGeneratedByAi: false,
+      totalTimeMinutes: 15,
+      servings: "2 servings",
+      tags: [],
+      isFavorite: data.isFavorite,
+      favoritedAt: data.favoritedAt,
+      createdAt: new Date("2026-04-30T10:00:00.000Z"),
+      updatedAt: new Date("2026-04-30T10:00:00.000Z"),
+    } as never;
+  });
+
+  const item = await setRecipeFavorite("rec_1", true);
+
+  assert.ok(item);
+  assert.equal(item.isFavorite, true);
+  assert.ok(item.favoritedAt);
+});
+
+test("setRecipeFavorite clears favoritedAt when unfavoriting", async (t) => {
+  stubMethod(t, db.recipe, "findUnique", async () => ({ id: "rec_1" }) as never);
+  stubMethod(t, db.recipe, "update", async ({ data }: { data: Record<string, unknown> }) => {
+    assert.equal(data.isFavorite, false);
+    assert.equal(data.favoritedAt, null);
+    return {
+      id: "rec_1",
+      importId: "imp_1",
+      title: "Banana Oat Pancakes",
+      coverImageUrl: null,
+      category: null,
+      cuisine: null,
+      ingredients: [],
+      steps: [],
+      instructionsGeneratedByAi: false,
+      totalTimeMinutes: null,
+      servings: null,
+      tags: [],
+      isFavorite: false,
+      favoritedAt: null,
+      createdAt: new Date("2026-04-30T10:00:00.000Z"),
+      updatedAt: new Date("2026-04-30T10:00:00.000Z"),
+    } as never;
+  });
+
+  const item = await setRecipeFavorite("rec_1", false);
+
+  assert.ok(item);
+  assert.equal(item.isFavorite, false);
+  assert.equal(item.favoritedAt, null);
 });
 
 test("getRecipeById returns undefined when the recipe does not exist", async (t) => {

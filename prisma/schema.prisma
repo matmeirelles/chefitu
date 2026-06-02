@@ -45,6 +45,8 @@ model Recipe {
   totalTimeMinutes Int?
   servings         String?
   tags             String[]
+  isFavorite       Boolean  @default(false)
+  favoritedAt      DateTime?
   aiAdjustmentLogs AIAdjustmentLog[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

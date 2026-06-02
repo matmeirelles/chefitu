@@ -15,16 +15,25 @@ import { useImportFlow } from "../hooks/use-import-flow";
 import { useProfile } from "../context/ProfileContext";
 import { useLocale } from "../i18n/LocaleContext";
 import { DEFAULT_PROFILE } from "../storage/profile";
+import { ConfirmUnfavoriteBottomSheet } from "../components/ConfirmUnfavoriteBottomSheet";
+import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
 
 const FAB_SIZE = 56;
+
+type FavoritePatch = Pick<RecipeRecord, "isFavorite" | "favoritedAt">;
 
 export const LibraryScreen = ({
   onOpenRecipe,
   returnKey = 0,
+  favoritePatches = {},
+  onRecipeFavoriteChange,
 }: {
   onOpenRecipe: (recipe: RecipeRecord) => void;
   /** Bumped when user returns from recipe detail — refreshes the library list. */
   returnKey?: number;
+  /** Favorite updates from other tabs/screens applied to the grid without a full refetch. */
+  favoritePatches?: Record<string, FavoritePatch>;
+  onRecipeFavoriteChange?: (recipe: RecipeRecord) => void;
 }) => {
   const insets = useSafeAreaInsets();
   const { profile } = useProfile();
@@ -38,6 +47,18 @@ export const LibraryScreen = ({
   const [selectedFilter, setSelectedFilter] = useState("All");
 
   const deferredSearchQuery = useDeferredValue(searchQuery);
+
+  const updateRecipeInList = useCallback((updated: RecipeRecord) => {
+    setRecipes((prev) => prev.map((recipe) => (recipe.id === updated.id ? updated : recipe)));
+  }, []);
+
+  const {
+    pendingUnfavorite,
+    unfavoriteSubmitting,
+    handleFavoritePress,
+    confirmUnfavorite,
+    cancelUnfavorite,
+  } = useRecipeFavorites(updateRecipeInList, { onRecipeChange: onRecipeFavoriteChange });
 
   const loadRecipes = useCallback(async (refreshing = false) => {
     if (refreshing) {
@@ -71,9 +92,18 @@ export const LibraryScreen = ({
 
   const filters = useMemo(() => buildFilterList(recipes), [recipes]);
 
+  const recipesWithPatches = useMemo(
+    () =>
+      recipes.map((recipe) => {
+        const patch = favoritePatches[recipe.id];
+        return patch ? { ...recipe, ...patch } : recipe;
+      }),
+    [recipes, favoritePatches],
+  );
+
   const filteredRecipes = useMemo(
-    () => filterRecipes(recipes, selectedFilter, deferredSearchQuery),
-    [recipes, selectedFilter, deferredSearchQuery],
+    () => filterRecipes(recipesWithPatches, selectedFilter, deferredSearchQuery),
+    [recipesWithPatches, selectedFilter, deferredSearchQuery],
   );
 
   const gridData = useMemo(
@@ -124,7 +154,13 @@ export const LibraryScreen = ({
         numColumns={2}
         renderItem={({ item }) => (
           <View style={styles.cardWrapper}>
-            {item && <RecipeCard recipe={item} onPress={() => onOpenRecipe(item)} />}
+            {item && (
+              <RecipeCard
+                recipe={item}
+                onPress={() => onOpenRecipe(item)}
+                onFavoritePress={() => handleFavoritePress(item)}
+              />
+            )}
           </View>
         )}
         columnWrapperStyle={styles.columnWrapper}
@@ -162,6 +198,14 @@ export const LibraryScreen = ({
       />
 
       <AddRecipeFab onPress={() => importFlow.open()} bottomOffset={fabBottom} />
+
+      <ConfirmUnfavoriteBottomSheet
+        visible={pendingUnfavorite !== null}
+        recipeTitle={pendingUnfavorite?.title ?? ""}
+        submitting={unfavoriteSubmitting}
+        onConfirm={confirmUnfavorite}
+        onCancel={cancelUnfavorite}
+      />
 
       <ImportRecipeFlowSheet
         visible={importFlow.visible}

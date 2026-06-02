@@ -34,6 +34,23 @@ export const strings = {
       body: "O Chefitu está sendo preparado. Volte em breve!",
       dismiss: "Entendi",
     },
+    favorites: {
+      title: "Favoritos",
+      recipeCount: (n: number) => `${n} ${n === 1 ? "receita" : "receitas"}`,
+      emptyTitle: "Nenhum coração por aqui… ainda",
+      emptyBody:
+        "Quando uma receita fizer seu olho brilhar no Início, toque no coração — ela vem parar bem aqui, quentinha.",
+      emptyCta: "Explorar receitas",
+      unfavoriteTitle: "Tirar dos favoritos?",
+      unfavoriteBody: (title: string) =>
+        `Tem certeza que deseja tirar "${title}" dos favoritos?`,
+      unfavoriteConfirm: "Tirar dos favoritos",
+      unfavoriteSubmitting: "Tirando dos favoritos…",
+      unfavoriteCancel: "Cancelar",
+      loadError: "Não foi possível carregar seus favoritos.",
+      loadingTitle: "Carregando favoritos",
+      loadingBody: "Buscando suas receitas preferidas.",
+    },
   },
   en: {
     nav: {
@@ -67,6 +84,23 @@ export const strings = {
       title: "Still in the oven",
       body: "Chefitu is getting ready. Check back soon!",
       dismiss: "Got it",
+    },
+    favorites: {
+      title: "Favorites",
+      recipeCount: (n: number) => `${n} ${n === 1 ? "recipe" : "recipes"}`,
+      emptyTitle: "No hearts here… yet",
+      emptyBody:
+        "When a recipe makes your eyes light up on Home, tap the heart — it lands right here, warm and cozy.",
+      emptyCta: "Browse recipes",
+      unfavoriteTitle: "Remove from favorites?",
+      unfavoriteBody: (title: string) =>
+        `Are you sure you want to remove "${title}" from favorites?`,
+      unfavoriteConfirm: "Remove from favorites",
+      unfavoriteSubmitting: "Removing…",
+      unfavoriteCancel: "Cancel",
+      loadError: "Could not load your favorites.",
+      loadingTitle: "Loading favorites",
+      loadingBody: "Fetching your saved recipes.",
     },
   },
 } as const;

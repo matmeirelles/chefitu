@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
@@ -13,12 +13,15 @@ import type { ChatMessage, RecipeIngredient, RecipeRecord, RecipeStep } from "@c
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AdjustRecipePanel, type UIMessage } from "../components/AdjustRecipePanel";
 import { ConfirmDeleteBottomSheet } from "../components/ConfirmDeleteBottomSheet";
+import { ConfirmUnfavoriteBottomSheet } from "../components/ConfirmUnfavoriteBottomSheet";
+import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
 import { MetricCard } from "../components/MetricCard";
 import { FALLBACK_COVER_IMAGE } from "../constants";
 import { deleteRecipe, resolveImageUrl, saveNewRecipe, updateRecipe } from "../services/api";
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../design-system/tokens";
 import { DSText } from "../design-system/Text";
 import { DSIcon } from "../design-system/Icon";
+import { DSFavoriteHeartIcon } from "../design-system/FavoriteHeartIcon";
 import { DSButton } from "../design-system/Button";
 
 const MASCOT = require("../../assets/mascot-symbol.png") as number;
@@ -30,10 +33,12 @@ export const RecipeDetailScreen = ({
   recipe,
   onBack,
   onDelete,
+  onRecipeFavoriteChange,
 }: {
   recipe: RecipeRecord;
   onBack: () => void;
   onDelete: () => void;
+  onRecipeFavoriteChange?: (recipe: RecipeRecord) => void;
 }) => {
   const insets = useSafeAreaInsets();
 
@@ -72,6 +77,19 @@ export const RecipeDetailScreen = ({
   const hasHistory = uiMessages.some((m) => m.kind === "user");
 
   useEffect(() => { setCurrentRecipe(recipe); }, [recipe]);
+
+  const updateRecipeInList = useCallback((updated: RecipeRecord) => {
+    setCurrentRecipe(updated);
+    setAppliedRecipe((prev) => (prev?.id === updated.id ? updated : prev));
+  }, []);
+
+  const {
+    pendingUnfavorite,
+    unfavoriteSubmitting,
+    handleFavoritePress,
+    confirmUnfavorite,
+    cancelUnfavorite,
+  } = useRecipeFavorites(updateRecipeInList, { onRecipeChange: onRecipeFavoriteChange });
 
   const openMenu = () => {
     setMenuOpen(true);
@@ -188,8 +206,15 @@ export const RecipeDetailScreen = ({
                 <DSIcon name="ArrowLeft" size={20} color={COLORS.marrom} strokeWidth={2} />
               </Pressable>
               <View style={styles.heroNavRight}>
-                <Pressable style={styles.navBtn}>
-                  <DSIcon name="Heart" size={19} color={COLORS.marrom} strokeWidth={1.75} />
+                <Pressable
+                  style={styles.navBtn}
+                  onPress={() => handleFavoritePress(currentRecipe)}
+                >
+                  <DSFavoriteHeartIcon
+                    isFavorite={currentRecipe.isFavorite}
+                    size={19}
+                    strokeWidth={1.75}
+                  />
                 </Pressable>
                 <View>
                   <Pressable style={styles.navBtn} onPress={menuOpen ? closeMenu : openMenu}>
@@ -380,6 +405,14 @@ export const RecipeDetailScreen = ({
         deleting={deleting}
         onConfirm={() => void handleConfirmDelete()}
         onCancel={() => setConfirmDelete(false)}
+      />
+
+      <ConfirmUnfavoriteBottomSheet
+        visible={pendingUnfavorite !== null}
+        recipeTitle={pendingUnfavorite?.title ?? ""}
+        submitting={unfavoriteSubmitting}
+        onConfirm={confirmUnfavorite}
+        onCancel={cancelUnfavorite}
       />
 
       {snackbar && (

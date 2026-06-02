@@ -98,6 +98,23 @@ export const retryImport = async (importId: string): Promise<void> => {
 export const fetchRecipes = async (): Promise<ListRecipesResponse> =>
   request<ListRecipesResponse>("/recipes");
 
+export const fetchFavoriteRecipes = async (): Promise<ListRecipesResponse> =>
+  request<ListRecipesResponse>("/recipes?favorites=true");
+
+export const setRecipeFavorite = async (
+  recipeId: string,
+  isFavorite: boolean,
+): Promise<RecipeRecord> => {
+  const response = await fetch(`${getBaseUrl()}/recipes/${recipeId}/favorite`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isFavorite }),
+  });
+  if (!response.ok) throw new ApiError("Failed to update favorite.", response.status);
+  const json = (await response.json()) as { item: RecipeRecord };
+  return json.item;
+};
+
 export const fetchRecipeById = async (
   recipeId: string,
 ): Promise<GetRecipeResponse> => request<GetRecipeResponse>(`/recipes/${recipeId}`);

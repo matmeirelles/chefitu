@@ -16,6 +16,8 @@ const makeRecipe = (overrides: Partial<RecipeRecord> = {}): RecipeRecord => ({
   totalTimeMinutes: 15,
   servings: "2 servings",
   tags: ["Quick"],
+  isFavorite: false,
+  favoritedAt: null,
   createdAt: "2026-04-30T10:00:00.000Z",
   updatedAt: "2026-04-30T10:00:00.000Z",
   ...overrides,
