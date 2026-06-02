@@ -16,12 +16,14 @@ import {
   deleteRecipe,
   getRecipeById,
   listRecipes,
+  setRecipeFavorite,
   updateRecipe,
 } from "./service.js";
 
 export const registerRecipeRoutes = async (app: FastifyInstance) => {
-  app.get("/", async () => {
-    const items = await listRecipes();
+  app.get<{ Querystring: { favorites?: string } }>("/", async (request) => {
+    const favoritesOnly = request.query.favorites === "true";
+    const items = await listRecipes({ favoritesOnly });
     return { items };
   });
 
@@ -67,6 +69,20 @@ export const registerRecipeRoutes = async (app: FastifyInstance) => {
   app.post<{ Body: SaveGeneratedRecipeRequest }>("/generated", async (request, reply) => {
     const item = await createGeneratedRecipe(request.body);
     return reply.code(201).send({ item });
+  });
+
+  app.patch<{
+    Params: { recipeId: string };
+    Body: { isFavorite: boolean };
+  }>("/:recipeId/favorite", async (request, reply) => {
+    const { isFavorite } = request.body;
+    if (typeof isFavorite !== "boolean") {
+      return reply.code(400).send({ message: "isFavorite must be a boolean." });
+    }
+
+    const item = await setRecipeFavorite(request.params.recipeId, isFavorite);
+    if (!item) return reply.code(404).send({ message: "Recipe not found." });
+    return { item };
   });
 
   app.get<{ Params: { recipeId: string } }>("/:recipeId", async (request, reply) => {
