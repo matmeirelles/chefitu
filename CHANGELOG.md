@@ -10,6 +10,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Favorites feature (CHE-10): `isFavorite` / `favoritedAt` on recipes, `GET /recipes?favorites=true`, `PATCH /recipes/:id/favorite`, Favoritos tab with category filters and empty state, heart on library cards and recipe detail, and confirm sheet when removing from favorites
 
+### Fixed
+- Favorites (CHE-31): filled heart uses `fill` so the icon shows `COLORS.coracao` instead of appearing white
+- Favorites (CHE-32): Favoritos list refreshes when opening the tab or returning from recipe detail after favoriting elsewhere
+
 ## [0.8.0] — 2026-06-02
 
 ### Added

@@ -4,6 +4,7 @@ import { COLORS, FONTS, MOTION, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "./t
 import { DSText } from "./Text";
 import { DSTag } from "./Tag";
 import { DSIcon } from "./Icon";
+import { DSFavoriteHeartIcon } from "./FavoriteHeartIcon";
 import type { TagVariant } from "./tag-styles";
 
 export type TagData = { label: string; variant?: TagVariant };
@@ -56,12 +57,7 @@ export const DSRecipeCard = ({
             style={styles.favBtn}
             hitSlop={8}
           >
-            <DSIcon
-              name="Heart"
-              size={16}
-              color={isFavorite ? COLORS.coracao : COLORS.marrom}
-              strokeWidth={isFavorite ? 0 : 2}
-            />
+            <DSFavoriteHeartIcon isFavorite={isFavorite} size={16} />
           </Pressable>
         </View>
 
@@ -131,7 +127,7 @@ export const DSCompactRecipeCard = ({
       )}
       {tag && <DSTag label={tag.label} variant={tag.variant ?? "orange"} />}
     </View>
-    <DSIcon name="Heart" size={18} color={isFavorite ? COLORS.coracao : COLORS.marrom} strokeWidth={isFavorite ? 0 : 2} />
+    <DSFavoriteHeartIcon isFavorite={isFavorite} size={18} />
   </Pressable>
 );
 

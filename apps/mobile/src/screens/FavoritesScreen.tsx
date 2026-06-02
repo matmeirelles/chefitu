@@ -15,9 +15,12 @@ import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
 import { useLocale } from "../i18n/LocaleContext";
 
 export const FavoritesScreen = ({
+  refreshKey = 0,
   onOpenRecipe,
   onGoToLibrary,
 }: {
+  /** Bumped when the Favoritos tab is opened or when returning from recipe detail. */
+  refreshKey?: number;
   onOpenRecipe: (recipe: RecipeRecord) => void;
   onGoToLibrary: () => void;
 }) => {
@@ -71,8 +74,8 @@ export const FavoritesScreen = ({
   }, [t.favorites.loadError]);
 
   useEffect(() => {
-    void loadRecipes();
-  }, [loadRecipes]);
+    void loadRecipes(refreshKey > 0);
+  }, [loadRecipes, refreshKey]);
 
   const filters = useMemo(() => buildFilterList(recipes), [recipes]);
 

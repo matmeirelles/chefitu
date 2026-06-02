@@ -30,6 +30,7 @@ export const AppShell = () => {
   const [screenState, setScreenState] = useState<ScreenState>({ kind: "library" });
   const [librarySeed, setLibrarySeed] = useState(0);
   const [libraryReturnKey, setLibraryReturnKey] = useState(0);
+  const [favoritesRefreshKey, setFavoritesRefreshKey] = useState(0);
 
   const [generateApiHistory, setGenerateApiHistory] = useState<ChatMessage[]>([]);
   const [generateUiMessages, setGenerateUiMessages] = useState<UIMessage[]>([]);
@@ -40,6 +41,16 @@ export const AppShell = () => {
     setScreenState({ kind: "library" });
     if (activeTab === "library") {
       setLibraryReturnKey((k) => k + 1);
+    }
+    if (activeTab === "favorites") {
+      setFavoritesRefreshKey((k) => k + 1);
+    }
+  };
+
+  const handleTabPress = (tab: BottomNavTab) => {
+    setActiveTab(tab);
+    if (tab === "favorites") {
+      setFavoritesRefreshKey((k) => k + 1);
     }
   };
 
@@ -100,6 +111,7 @@ export const AppShell = () => {
 
         <View style={[styles.screen, (activeTab !== "favorites" || isDetail) && styles.hidden]}>
           <FavoritesScreen
+            refreshKey={favoritesRefreshKey}
             onOpenRecipe={onDetailOpen}
             onGoToLibrary={() => setActiveTab("library")}
           />
@@ -109,7 +121,7 @@ export const AppShell = () => {
       {!isDetail && (
         <DSBottomNav
           activeTab={activeTab}
-          onTabPress={setActiveTab}
+          onTabPress={handleTabPress}
           bottomInset={insets.bottom}
           labels={navLabels}
         />

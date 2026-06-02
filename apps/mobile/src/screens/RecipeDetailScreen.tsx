@@ -21,6 +21,7 @@ import { deleteRecipe, resolveImageUrl, saveNewRecipe, updateRecipe } from "../s
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../design-system/tokens";
 import { DSText } from "../design-system/Text";
 import { DSIcon } from "../design-system/Icon";
+import { DSFavoriteHeartIcon } from "../design-system/FavoriteHeartIcon";
 import { DSButton } from "../design-system/Button";
 
 const MASCOT = require("../../assets/mascot-symbol.png") as number;
@@ -207,11 +208,10 @@ export const RecipeDetailScreen = ({
                   style={styles.navBtn}
                   onPress={() => handleFavoritePress(currentRecipe)}
                 >
-                  <DSIcon
-                    name="Heart"
+                  <DSFavoriteHeartIcon
+                    isFavorite={currentRecipe.isFavorite}
                     size={19}
-                    color={currentRecipe.isFavorite ? COLORS.coracao : COLORS.marrom}
-                    strokeWidth={currentRecipe.isFavorite ? 0 : 1.75}
+                    strokeWidth={1.75}
                   />
                 </Pressable>
                 <View>
