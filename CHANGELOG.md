@@ -7,6 +7,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- Favorites feature (CHE-10): `isFavorite` / `favoritedAt` on recipes, `GET /recipes?favorites=true`, `PATCH /recipes/:id/favorite`, Favoritos tab with category filters and empty state, heart on library cards and recipe detail, and confirm sheet when removing from favorites
+
 ## [0.8.0] — 2026-06-02
 
 ### Added

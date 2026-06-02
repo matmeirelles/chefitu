@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   Animated,
@@ -13,6 +13,8 @@ import type { ChatMessage, RecipeIngredient, RecipeRecord, RecipeStep } from "@c
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AdjustRecipePanel, type UIMessage } from "../components/AdjustRecipePanel";
 import { ConfirmDeleteBottomSheet } from "../components/ConfirmDeleteBottomSheet";
+import { ConfirmUnfavoriteBottomSheet } from "../components/ConfirmUnfavoriteBottomSheet";
+import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
 import { MetricCard } from "../components/MetricCard";
 import { FALLBACK_COVER_IMAGE } from "../constants";
 import { deleteRecipe, resolveImageUrl, saveNewRecipe, updateRecipe } from "../services/api";
@@ -72,6 +74,19 @@ export const RecipeDetailScreen = ({
   const hasHistory = uiMessages.some((m) => m.kind === "user");
 
   useEffect(() => { setCurrentRecipe(recipe); }, [recipe]);
+
+  const updateRecipeInList = useCallback((updated: RecipeRecord) => {
+    setCurrentRecipe(updated);
+    setAppliedRecipe((prev) => (prev?.id === updated.id ? updated : prev));
+  }, []);
+
+  const {
+    pendingUnfavorite,
+    unfavoriteSubmitting,
+    handleFavoritePress,
+    confirmUnfavorite,
+    cancelUnfavorite,
+  } = useRecipeFavorites(updateRecipeInList);
 
   const openMenu = () => {
     setMenuOpen(true);
@@ -188,8 +203,16 @@ export const RecipeDetailScreen = ({
                 <DSIcon name="ArrowLeft" size={20} color={COLORS.marrom} strokeWidth={2} />
               </Pressable>
               <View style={styles.heroNavRight}>
-                <Pressable style={styles.navBtn}>
-                  <DSIcon name="Heart" size={19} color={COLORS.marrom} strokeWidth={1.75} />
+                <Pressable
+                  style={styles.navBtn}
+                  onPress={() => handleFavoritePress(currentRecipe)}
+                >
+                  <DSIcon
+                    name="Heart"
+                    size={19}
+                    color={currentRecipe.isFavorite ? COLORS.coracao : COLORS.marrom}
+                    strokeWidth={currentRecipe.isFavorite ? 0 : 1.75}
+                  />
                 </Pressable>
                 <View>
                   <Pressable style={styles.navBtn} onPress={menuOpen ? closeMenu : openMenu}>
@@ -380,6 +403,14 @@ export const RecipeDetailScreen = ({
         deleting={deleting}
         onConfirm={() => void handleConfirmDelete()}
         onCancel={() => setConfirmDelete(false)}
+      />
+
+      <ConfirmUnfavoriteBottomSheet
+        visible={pendingUnfavorite !== null}
+        recipeTitle={pendingUnfavorite?.title ?? ""}
+        submitting={unfavoriteSubmitting}
+        onConfirm={confirmUnfavorite}
+        onCancel={cancelUnfavorite}
       />
 
       {snackbar && (

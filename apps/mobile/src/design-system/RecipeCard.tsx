@@ -48,7 +48,14 @@ export const DSRecipeCard = ({
             <View style={[StyleSheet.absoluteFill, styles.photoFallback]} />
           )}
           {/* Favorite button */}
-          <Pressable onPress={onFavoritePress} style={styles.favBtn}>
+          <Pressable
+            onPress={(event) => {
+              event.stopPropagation();
+              onFavoritePress?.();
+            }}
+            style={styles.favBtn}
+            hitSlop={8}
+          >
             <DSIcon
               name="Heart"
               size={16}

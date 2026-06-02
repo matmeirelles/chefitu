@@ -15,6 +15,8 @@ import { useImportFlow } from "../hooks/use-import-flow";
 import { useProfile } from "../context/ProfileContext";
 import { useLocale } from "../i18n/LocaleContext";
 import { DEFAULT_PROFILE } from "../storage/profile";
+import { ConfirmUnfavoriteBottomSheet } from "../components/ConfirmUnfavoriteBottomSheet";
+import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
 
 const FAB_SIZE = 56;
 
@@ -38,6 +40,18 @@ export const LibraryScreen = ({
   const [selectedFilter, setSelectedFilter] = useState("All");
 
   const deferredSearchQuery = useDeferredValue(searchQuery);
+
+  const updateRecipeInList = useCallback((updated: RecipeRecord) => {
+    setRecipes((prev) => prev.map((recipe) => (recipe.id === updated.id ? updated : recipe)));
+  }, []);
+
+  const {
+    pendingUnfavorite,
+    unfavoriteSubmitting,
+    handleFavoritePress,
+    confirmUnfavorite,
+    cancelUnfavorite,
+  } = useRecipeFavorites(updateRecipeInList);
 
   const loadRecipes = useCallback(async (refreshing = false) => {
     if (refreshing) {
@@ -124,7 +138,13 @@ export const LibraryScreen = ({
         numColumns={2}
         renderItem={({ item }) => (
           <View style={styles.cardWrapper}>
-            {item && <RecipeCard recipe={item} onPress={() => onOpenRecipe(item)} />}
+            {item && (
+              <RecipeCard
+                recipe={item}
+                onPress={() => onOpenRecipe(item)}
+                onFavoritePress={() => handleFavoritePress(item)}
+              />
+            )}
           </View>
         )}
         columnWrapperStyle={styles.columnWrapper}
@@ -162,6 +182,14 @@ export const LibraryScreen = ({
       />
 
       <AddRecipeFab onPress={() => importFlow.open()} bottomOffset={fabBottom} />
+
+      <ConfirmUnfavoriteBottomSheet
+        visible={pendingUnfavorite !== null}
+        recipeTitle={pendingUnfavorite?.title ?? ""}
+        submitting={unfavoriteSubmitting}
+        onConfirm={confirmUnfavorite}
+        onCancel={cancelUnfavorite}
+      />
 
       <ImportRecipeFlowSheet
         visible={importFlow.visible}

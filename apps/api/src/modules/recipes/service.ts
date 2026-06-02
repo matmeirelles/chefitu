@@ -19,6 +19,8 @@ const toRecipeRecord = (row: {
   totalTimeMinutes: number | null;
   servings: string | null;
   tags: string[];
+  isFavorite: boolean;
+  favoritedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }): RecipeRecord => ({
@@ -34,13 +36,40 @@ const toRecipeRecord = (row: {
   totalTimeMinutes: row.totalTimeMinutes,
   servings: row.servings,
   tags: row.tags,
+  isFavorite: row.isFavorite,
+  favoritedAt: row.favoritedAt?.toISOString() ?? null,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
 });
 
-export const listRecipes = async (): Promise<RecipeRecord[]> => {
-  const rows = await db.recipe.findMany({ orderBy: { createdAt: "asc" } });
+export const listRecipes = async (options?: {
+  favoritesOnly?: boolean;
+}): Promise<RecipeRecord[]> => {
+  const rows = options?.favoritesOnly
+    ? await db.recipe.findMany({
+        where: { isFavorite: true },
+        orderBy: [{ favoritedAt: "desc" }, { createdAt: "desc" }],
+      })
+    : await db.recipe.findMany({ orderBy: { createdAt: "asc" } });
   return rows.map(toRecipeRecord);
+};
+
+export const setRecipeFavorite = async (
+  recipeId: string,
+  isFavorite: boolean,
+): Promise<RecipeRecord | null> => {
+  const existing = await db.recipe.findUnique({ where: { id: recipeId } });
+  if (!existing) return null;
+
+  const updated = await db.recipe.update({
+    where: { id: recipeId },
+    data: {
+      isFavorite,
+      favoritedAt: isFavorite ? new Date() : null,
+    },
+  });
+
+  return toRecipeRecord(updated);
 };
 
 export const getRecipeById = async (

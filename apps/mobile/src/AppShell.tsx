@@ -8,6 +8,7 @@ import { LibraryScreen } from "./screens/LibraryScreen";
 import { RecipeDetailScreen } from "./screens/RecipeDetailScreen";
 import { QueueScreen } from "./screens/QueueScreen";
 import { ProfileScreen } from "./screens/ProfileScreen";
+import { FavoritesScreen } from "./screens/FavoritesScreen";
 import { GenerateRecipeScreen } from "./screens/GenerateRecipeScreen";
 import { useLocale } from "./i18n/LocaleContext";
 import type { UIMessage } from "./screens/GenerateRecipeScreen";
@@ -37,7 +38,9 @@ export const AppShell = () => {
   const onDetailOpen = (recipe: RecipeRecord) => setScreenState({ kind: "detail", recipe });
   const onDetailClose = () => {
     setScreenState({ kind: "library" });
-    setLibraryReturnKey((k) => k + 1);
+    if (activeTab === "library") {
+      setLibraryReturnKey((k) => k + 1);
+    }
   };
 
   const onRecipeSaved = () => {
@@ -47,7 +50,8 @@ export const AppShell = () => {
 
   const onSessionReset = () => setGenerateSessionId(buildSessionId());
 
-  const isDetail = activeTab === "library" && screenState.kind === "detail";
+  const isDetail =
+    (activeTab === "library" || activeTab === "favorites") && screenState.kind === "detail";
 
   return (
     <View style={[styles.root, { backgroundColor: COLORS.creme }]}>
@@ -92,6 +96,13 @@ export const AppShell = () => {
 
         <View style={[styles.screen, activeTab !== "profile" && styles.hidden]}>
           <ProfileScreen />
+        </View>
+
+        <View style={[styles.screen, (activeTab !== "favorites" || isDetail) && styles.hidden]}>
+          <FavoritesScreen
+            onOpenRecipe={onDetailOpen}
+            onGoToLibrary={() => setActiveTab("library")}
+          />
         </View>
       </View>
 
