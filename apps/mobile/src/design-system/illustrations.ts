@@ -3,6 +3,7 @@ import type { ImageSourcePropType } from "react-native";
 /** Full-body mascot stickers (Chefitu grandinho) — `assets/stickers/`. */
 export type MascotStickerId =
   | "angry"
+  | "baking"
   | "cheering"
   | "confused"
   | "firedUp"
@@ -12,6 +13,7 @@ export type MascotStickerId =
   | "pointing"
   | "reading"
   | "ready"
+  | "reveal"
   | "sad"
   | "serving"
   | "sleeping"
@@ -26,6 +28,7 @@ export type MascotStickerId =
 
 export const MASCOT_STICKERS: Record<MascotStickerId, ImageSourcePropType> = {
   angry: require("./assets/stickers/mascot-angry.png"),
+  baking: require("./assets/stickers/mascot-baking.png"),
   cheering: require("./assets/stickers/mascot-cheering.png"),
   confused: require("./assets/stickers/mascot-confused.png"),
   firedUp: require("./assets/stickers/mascot-fired-up.png"),
@@ -35,6 +38,7 @@ export const MASCOT_STICKERS: Record<MascotStickerId, ImageSourcePropType> = {
   pointing: require("./assets/stickers/mascot-pointing.png"),
   reading: require("./assets/stickers/mascot-reading.png"),
   ready: require("./assets/stickers/mascot-ready.png"),
+  reveal: require("./assets/stickers/mascot-reveal.png"),
   sad: require("./assets/stickers/mascot-sad.png"),
   serving: require("./assets/stickers/mascot-serving.png"),
   sleeping: require("./assets/stickers/mascot-sleeping.png"),

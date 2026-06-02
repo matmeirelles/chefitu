@@ -7,21 +7,29 @@ import { DSChip } from "../design-system/Chip";
 
 export const LibraryHeader = ({
   topInset,
+  greeting,
+  subtitle,
+  searchPlaceholder,
+  yourRecipesTitle,
+  recipeCountLabel,
   searchQuery,
   onChangeSearch,
   filters,
   selectedFilter,
   onSelectFilter,
-  recipeCount,
   afterTitle,
 }: {
   topInset: number;
+  greeting: string;
+  subtitle: string;
+  searchPlaceholder: string;
+  yourRecipesTitle: string;
+  recipeCountLabel: string;
   searchQuery: string;
   onChangeSearch: (value: string) => void;
   filters: string[];
   selectedFilter: string;
   onSelectFilter: (value: string) => void;
-  recipeCount: number;
   afterTitle?: ReactNode;
 }) => (
   <View style={[styles.header, { paddingTop: topInset + 28 }]}>
@@ -35,8 +43,8 @@ export const LibraryHeader = ({
         />
       </View>
       <View style={styles.greetingText}>
-        <DSText style={styles.greetingTitle}>Olá, Chefitu! 👋</DSText>
-        <DSText style={styles.greetingSubtitle}>O que vamos cozinhar hoje?</DSText>
+        <DSText style={styles.greetingTitle}>{greeting}</DSText>
+        <DSText style={styles.greetingSubtitle}>{subtitle}</DSText>
       </View>
     </View>
 
@@ -44,15 +52,13 @@ export const LibraryHeader = ({
     <DSSearchBar
       value={searchQuery}
       onChangeText={onChangeSearch}
-      placeholder="Buscar receitas, ingredientes…"
+      placeholder={searchPlaceholder}
     />
 
     {/* Section title */}
     <View style={styles.titleBlock}>
-      <DSText style={styles.title}>Suas receitas</DSText>
-      <DSText style={styles.subtitle}>
-        {recipeCount} {recipeCount === 1 ? "receita" : "receitas"}
-      </DSText>
+      <DSText style={styles.title}>{yourRecipesTitle}</DSText>
+      <DSText style={styles.subtitle}>{recipeCountLabel}</DSText>
     </View>
 
     {afterTitle}

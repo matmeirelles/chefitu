@@ -7,7 +7,9 @@ import { DSBottomNav, type BottomNavTab } from "./design-system/BottomNav";
 import { LibraryScreen } from "./screens/LibraryScreen";
 import { RecipeDetailScreen } from "./screens/RecipeDetailScreen";
 import { QueueScreen } from "./screens/QueueScreen";
+import { ProfileScreen } from "./screens/ProfileScreen";
 import { GenerateRecipeScreen } from "./screens/GenerateRecipeScreen";
+import { useLocale } from "./i18n/LocaleContext";
 import type { UIMessage } from "./screens/GenerateRecipeScreen";
 import { buildSessionId } from "./utils/generate-chat";
 
@@ -15,6 +17,14 @@ type ScreenState = { kind: "library" } | { kind: "detail"; recipe: RecipeRecord 
 
 export const AppShell = () => {
   const insets = useSafeAreaInsets();
+  const { t } = useLocale();
+  const navLabels = {
+    library: t.nav.library,
+    favorites: t.nav.favorites,
+    create: t.nav.create,
+    list: t.nav.list,
+    profile: t.nav.profile,
+  };
   const [activeTab, setActiveTab] = useState<BottomNavTab>("library");
   const [screenState, setScreenState] = useState<ScreenState>({ kind: "library" });
   const [librarySeed, setLibrarySeed] = useState(0);
@@ -43,7 +53,7 @@ export const AppShell = () => {
     <View style={[styles.root, { backgroundColor: COLORS.creme }]}>
       <View style={styles.content}>
         {/* LibraryScreen: always mounted, hidden only when showing detail */}
-        <View style={[styles.screen, isDetail && styles.hidden]}>
+        <View style={[styles.screen, (activeTab !== "library" || isDetail) && styles.hidden]}>
           <LibraryScreen
             key={librarySeed}
             onOpenRecipe={onDetailOpen}
@@ -79,6 +89,10 @@ export const AppShell = () => {
         <View style={[styles.screen, activeTab !== "list" && styles.hidden]}>
           <QueueScreen />
         </View>
+
+        <View style={[styles.screen, activeTab !== "profile" && styles.hidden]}>
+          <ProfileScreen />
+        </View>
       </View>
 
       {!isDetail && (
@@ -86,6 +100,7 @@ export const AppShell = () => {
           activeTab={activeTab}
           onTabPress={setActiveTab}
           bottomInset={insets.bottom}
+          labels={navLabels}
         />
       )}
     </View>

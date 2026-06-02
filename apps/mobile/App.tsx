@@ -12,6 +12,8 @@ import {
   Nunito_800ExtraBold,
 } from "@expo-google-fonts/nunito";
 import { AppShell } from "./src/AppShell";
+import { LocaleProvider } from "./src/i18n/LocaleContext";
+import { ProfileProvider } from "./src/context/ProfileContext";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -28,7 +30,11 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />
-      <AppShell />
+      <LocaleProvider>
+        <ProfileProvider>
+          <AppShell />
+        </ProfileProvider>
+      </LocaleProvider>
     </SafeAreaProvider>
   );
 }
