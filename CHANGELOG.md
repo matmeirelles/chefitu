@@ -7,6 +7,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-06-02
+
 ### Added
 - Favorites feature (CHE-10): `isFavorite` / `favoritedAt` on recipes, `GET /recipes?favorites=true`, `PATCH /recipes/:id/favorite`, Favoritos tab with category filters and empty state, heart on library cards and recipe detail, and confirm sheet when removing from favorites
 
@@ -130,7 +132,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-[Unreleased]: https://github.com/matmeirelles/chefitu/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/matmeirelles/chefitu/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/matmeirelles/chefitu/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/matmeirelles/chefitu/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/matmeirelles/chefitu/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/matmeirelles/chefitu/compare/v0.5.0...v0.6.0
