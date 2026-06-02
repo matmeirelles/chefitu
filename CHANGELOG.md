@@ -7,6 +7,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- Profile screen (CHE-18): editable avatar, name, and email (defaults Mateus / you@example.com), PT/EN interface language, help row, log-out stub via reusable `InConstructionBottomSheet`, and static app version under “Sobre o Chefitu”
+- Mobile UI kit reference at `docs/design-system/ui_kits/mobile/`
+- Mascot stickers `baking` and `reveal` in `apps/mobile/src/design-system/assets/stickers/`
+
+### Fixed
+- Profile (CHE-18): screen title and construction sheet headline no longer clip; avatar camera badge visible with full avatar tap target; add-recipe FAB hidden off library tab; construction sheet uses baking mascot, title “Ainda no forno”, and updated copy
+
 ## [0.7.0] — 2026-06-01
 
 ### Added

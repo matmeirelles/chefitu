@@ -6,26 +6,38 @@ import { DSText } from "./Text";
 export type BottomNavTab = "library" | "favorites" | "create" | "list" | "profile";
 
 type TabConfig =
-  | { id: BottomNavTab; label: string; icon: IconName; isMascot?: false }
-  | { id: BottomNavTab; label: string; isMascot: true };
+  | { id: BottomNavTab; icon: IconName; isMascot?: false }
+  | { id: BottomNavTab; isMascot: true };
 
-const TABS: TabConfig[] = [
-  { id: "library",   label: "Início",    icon: "Home" },
-  { id: "favorites", label: "Favoritos", icon: "Heart" },
-  { id: "create",    label: "Chefitu",   isMascot: true },
-  { id: "list",      label: "Lista",     icon: "ShoppingBag" },
-  { id: "profile",   label: "Perfil",    icon: "User" },
+const TAB_ORDER: TabConfig[] = [
+  { id: "library", icon: "Home" },
+  { id: "favorites", icon: "Heart" },
+  { id: "create", isMascot: true },
+  { id: "list", icon: "ShoppingBag" },
+  { id: "profile", icon: "User" },
 ];
+
+export type BottomNavLabels = Record<BottomNavTab, string>;
+
+const DEFAULT_LABELS: BottomNavLabels = {
+  library: "Início",
+  favorites: "Favoritos",
+  create: "Chefitu",
+  list: "Lista",
+  profile: "Perfil",
+};
 
 type Props = {
   activeTab: BottomNavTab;
   onTabPress: (tab: BottomNavTab) => void;
   bottomInset?: number;
+  labels?: BottomNavLabels;
 };
 
-export const DSBottomNav = ({ activeTab, onTabPress, bottomInset = 0 }: Props) => (
+export const DSBottomNav = ({ activeTab, onTabPress, bottomInset = 0, labels = DEFAULT_LABELS }: Props) => (
   <View style={[styles.container, { paddingBottom: bottomInset + SPACING[2] }]}>
-    {TABS.map((tab) => {
+    {TAB_ORDER.map((tab) => {
+      const label = labels[tab.id];
       if (tab.isMascot) {
         const isActive = activeTab === tab.id;
         return (
@@ -37,7 +49,7 @@ export const DSBottomNav = ({ activeTab, onTabPress, bottomInset = 0 }: Props) =
               />
             </View>
             <DSText style={[styles.tabLabel, { color: isActive ? COLORS.laranja : COLORS.marromSoft }]}>
-              {tab.label}
+              {label}
             </DSText>
           </Pressable>
         );
@@ -53,7 +65,7 @@ export const DSBottomNav = ({ activeTab, onTabPress, bottomInset = 0 }: Props) =
             strokeWidth={isActive ? 2.2 : 1.75}
           />
           <DSText style={[styles.tabLabel, { color: isActive ? COLORS.laranja : COLORS.marromSoft }]}>
-            {tab.label}
+            {label}
           </DSText>
         </Pressable>
       );
