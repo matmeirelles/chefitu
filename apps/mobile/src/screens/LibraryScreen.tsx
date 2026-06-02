@@ -12,6 +12,9 @@ import { AddRecipeFab } from "../components/import/AddRecipeFab";
 import { ImportRecipeFlowSheet } from "../components/import/ImportRecipeFlowSheet";
 import { ImportProgressBanner } from "../components/import/ImportProgressBanner";
 import { useImportFlow } from "../hooks/use-import-flow";
+import { useProfile } from "../context/ProfileContext";
+import { useLocale } from "../i18n/LocaleContext";
+import { DEFAULT_PROFILE } from "../storage/profile";
 
 const FAB_SIZE = 56;
 
@@ -24,6 +27,9 @@ export const LibraryScreen = ({
   returnKey?: number;
 }) => {
   const insets = useSafeAreaInsets();
+  const { profile } = useProfile();
+  const { t } = useLocale();
+  const displayName = profile.displayName.trim() || DEFAULT_PROFILE.displayName;
   const [recipes, setRecipes] = useState<RecipeRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -87,12 +93,16 @@ export const LibraryScreen = ({
   const listHeader = (
     <LibraryHeader
       topInset={insets.top}
+      greeting={t.home.greeting(displayName)}
+      subtitle={t.home.subtitle}
+      searchPlaceholder={t.home.searchPlaceholder}
+      yourRecipesTitle={t.home.yourRecipes}
+      recipeCountLabel={t.home.recipeCount(filteredRecipes.length)}
       searchQuery={searchQuery}
       onChangeSearch={setSearchQuery}
       filters={filters}
       selectedFilter={selectedFilter}
       onSelectFilter={setSelectedFilter}
-      recipeCount={filteredRecipes.length}
       afterTitle={
         showImportBanner && importFlow.banner ? (
           <ImportProgressBanner

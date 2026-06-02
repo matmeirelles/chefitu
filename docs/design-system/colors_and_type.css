@@ -1,0 +1,201 @@
+/* ============================================================
+   Chefitu — Design Tokens
+   Cores, tipografia, espaçamentos, raios, sombras.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap");
+
+:root {
+  /* ---------- Brand color palette ---------- */
+  --marrom:        #4A2C1A;  /* Chocolate Brown — text, outlines */
+  --marrom-soft:   #6B4530;  /* Slightly lighter brown — secondary text */
+  --marrom-faint:  rgba(74, 44, 26, 0.10);  /* Hairline / divider */
+  --creme:         #FFF6E9;  /* Cream — page background */
+  --creme-deep:    #FBEFDC;  /* Slightly deeper cream — alt surface */
+  --laranja:       #FF8A2B;  /* Warm Orange — primary CTA */
+  --laranja-dark:  #E5751A;  /* Pressed/hover state */
+  --laranja-soft:  #FFE3C7;  /* Soft orange — tags, soft bg */
+  --verde-folha:   #7DBA4D;  /* Leaf Green — fresh, ingredients */
+  --verde-dark:    #5E9633;
+  --salvia:        #CFE2CF;  /* Soft Sage — pantry chips, healthy bg */
+  --salvia-deep:   #B8D1B8;
+  --bege:          #F6EAD7;  /* Warm Beige — cards, secondary panels */
+  --bege-deep:     #EDDCBF;
+  --coracao:       #FF6B2C;  /* Heart Orange/Red — favorites, love */
+
+  /* ---------- Semantic colors ---------- */
+  --bg:            var(--creme);
+  --surface:       #FFFFFF;
+  --surface-warm:  var(--bege);
+  --fg:            var(--marrom);
+  --fg-soft:       var(--marrom-soft);
+  --fg-muted:      rgba(74, 44, 26, 0.55);
+
+  --primary:       var(--laranja);
+  --primary-fg:    #FFFFFF;
+  --primary-press: var(--laranja-dark);
+
+  --success:       #2F5A1A;  /* Deep forest — readable on sage */
+  --success-accent: var(--verde-folha);  /* Original leaf green for dots/icons */
+  --success-bg:    var(--salvia);
+  --warning:       #F2A93B;
+  --warning-bg:    #FFE9C7;
+  --danger:        #D9534F;
+  --danger-bg:     #F8DAD9;
+
+  --border:        rgba(74, 44, 26, 0.14);
+  --border-strong: var(--marrom);
+
+  /* ---------- Typography ---------- */
+  --font-display: "Baloo 2", "Comic Sans MS", system-ui, sans-serif;
+  --font-ui:      "Nunito", "Helvetica Neue", system-ui, -apple-system, sans-serif;
+
+  /* Type scale (mobile-first) */
+  --t-display:    36px;   /* Hero / brand moments */
+  --t-h1:         28px;   /* Screen titles */
+  --t-h2:         22px;   /* Section titles */
+  --t-h3:         18px;   /* Card titles, list group titles */
+  --t-body:       16px;   /* Body text */
+  --t-body-sm:    14px;   /* Chip labels, helper */
+  --t-caption:    12px;   /* Timestamps, meta */
+
+  --lh-tight:     1.15;
+  --lh-snug:      1.30;
+  --lh-base:      1.45;
+  --lh-loose:     1.55;
+
+  /* ---------- Spacing (4px base) ---------- */
+  --s-1:   4px;
+  --s-2:   8px;
+  --s-3:   12px;
+  --s-4:   16px;
+  --s-5:   20px;
+  --s-6:   24px;
+  --s-8:   32px;
+  --s-10:  40px;
+  --s-12:  48px;
+  --s-16:  64px;
+
+  /* ---------- Border radius ---------- */
+  --r-xs:    8px;
+  --r-sm:    12px;
+  --r-md:    16px;   /* Cards */
+  --r-lg:    20px;   /* Inputs, larger cards */
+  --r-xl:    24px;   /* Sheets, modals */
+  --r-2xl:   32px;
+  --r-pill:  999px;  /* Buttons, chips */
+
+  /* ---------- Shadows ---------- */
+  --shadow-sm: 0 2px 6px rgba(74, 44, 26, 0.06);
+  --shadow-md: 0 8px 24px rgba(74, 44, 26, 0.08);
+  --shadow-lg: 0 16px 40px rgba(74, 44, 26, 0.12);
+  --shadow-cta:0 6px 16px rgba(255, 138, 43, 0.32);
+
+  /* ---------- Motion ---------- */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:    cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast:    150ms;
+  --dur-base:    220ms;
+  --dur-slow:    320ms;
+}
+
+/* ============================================================
+   Semantic typography
+   ============================================================ */
+
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  font-size: var(--t-body);
+  line-height: var(--lh-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.display, h1.display, .brand-wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--t-display);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+
+h1, .h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--t-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.005em;
+  color: var(--fg);
+  margin: 0;
+}
+
+h2, .h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--t-h2);
+  line-height: var(--lh-snug);
+  color: var(--fg);
+  margin: 0;
+}
+
+h3, .h3 {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--t-h3);
+  line-height: var(--lh-snug);
+  color: var(--fg);
+  margin: 0;
+}
+
+p, .body {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: var(--t-body);
+  line-height: var(--lh-base);
+  color: var(--fg);
+  margin: 0;
+}
+
+.body-sm, small {
+  font-size: var(--t-body-sm);
+  line-height: var(--lh-base);
+  color: var(--fg-soft);
+}
+
+.caption {
+  font-size: var(--t-caption);
+  line-height: var(--lh-snug);
+  color: var(--fg-muted);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--t-caption);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+
+.label {
+  font-weight: 600;
+  font-size: var(--t-body-sm);
+  color: var(--fg);
+}
+
+/* Responsive bumps — web/desktop */
+@media (min-width: 900px) {
+  :root {
+    --t-display: 64px;
+    --t-h1:      40px;
+    --t-h2:      28px;
+    --t-h3:      20px;
+    --t-body:    17px;
+  }
+}

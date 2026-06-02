@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Chefitu — Mobile UI kit</title>
+  <link rel="stylesheet" href="../../colors_and_type.css">
+  <style>
+    body { margin: 0; min-height: 100vh; background: var(--bege-deep); padding: 0; font-family: var(--font-ui); color: var(--marrom); }
+    .stage { min-height: 100vh; display: flex; gap: 40px; padding: 40px 56px; align-items: flex-start; }
+    .sidebar { width: 240px; flex-shrink: 0; position: sticky; top: 40px; }
+    .sb-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+    .sb-logo img { height: 40px; }
+    .sb-logo h1 { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--marrom); margin: 0; }
+    .sb-logo .sub { display: block; font-size: 12px; color: var(--marrom-soft); font-weight: 700; letter-spacing: 0.05em; margin-top: 2px; }
+    .nav-list { display: flex; flex-direction: column; gap: 4px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 14px; font-size: 14px; font-weight: 700; color: var(--marrom-soft); cursor: pointer; background: transparent; border: none; text-align: left; font-family: var(--font-ui); }
+    .nav-item.active { background: var(--creme); color: var(--marrom); box-shadow: var(--shadow-sm); }
+    .nav-item:hover:not(.active) { background: rgba(255, 255, 255, 0.5); }
+    .nav-item .num { display: inline-flex; width: 22px; height: 22px; border-radius: 6px; background: var(--bege); color: var(--marrom); font-size: 11px; font-weight: 800; align-items: center; justify-content: center; }
+    .nav-item.active .num { background: var(--laranja); color: white; }
+    .phones { flex: 1; display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
+    .phone-tile { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .phone-label { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: var(--marrom); text-transform: uppercase; letter-spacing: 0.08em; }
+    /* hide scrollbars inside phone */
+    * { scrollbar-width: none; }
+    *::-webkit-scrollbar { display: none; }
+    .footer-note { margin: 30px 0 20px; font-size: 12px; color: var(--marrom-soft); text-align: center; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel" src="screens.jsx"></script>
+
+  <script type="text/babel">
+    function App() {
+      const [screen, setScreen] = React.useState('home-atual');
+      const [navTab, setNavTab] = React.useState('home');
+
+      // map screen -> active bottom nav tab
+      const screenToTab = {
+        'home-atual': 'home', 'home-futura': 'home', 'recipe': 'home',
+        'saved': 'favs',
+        'chefitu': 'chefitu',
+        'list': 'list',
+        'pantry': 'list',
+        'profile': 'profile',
+      };
+      // map bottom-nav tap -> screen
+      const tabToScreen = {
+        home: 'home-atual',
+        favs: 'saved',
+        chefitu: 'chefitu',
+        list: 'list',
+        profile: 'profile',
+      };
+
+      const go = (s) => {
+        setScreen(s);
+        if (screenToTab[s]) setNavTab(screenToTab[s]);
+      };
+      const onTabChange = (t) => {
+        setNavTab(t);
+        if (tabToScreen[t]) setScreen(tabToScreen[t]);
+      };
+
+      const screens = [
+        { id: 'splash',      label: '1. Splash',              comp: ScreenSplash },
+        { id: 'onboarding',  label: '2. Onboarding',          comp: ScreenOnboarding },
+        { id: 'home-atual',  label: '3. Home feed (atual)',   comp: ScreenHomeAtual },
+        { id: 'home-futura', label: '4. Home feed (futura)',  comp: ScreenHome },
+        { id: 'chefitu',     label: '5. Chat com Chefitu',    comp: ScreenChefituChat },
+        { id: 'recipe',      label: '6. Receita',             comp: ScreenRecipe },
+        { id: 'pantry',      label: '7. Despensa',            comp: ScreenPantry },
+        { id: 'list',        label: '8. Lista de compras',    comp: ScreenList },
+        { id: 'saved',       label: '9. Favoritos',           comp: ScreenSaved },
+        { id: 'profile',     label: '10. Perfil',             comp: ScreenProfile },
+      ];
+      const Active = screens.find(s => s.id === screen).comp;
+
+      return (
+        <div className="stage">
+          <div className="sidebar">
+            <div className="sb-logo">
+              <img src="../../assets/illustrations/mascot-symbol.png" />
+              <div>
+                <h1>Chefitu</h1>
+                <span className="sub">Mobile UI kit</span>
+              </div>
+            </div>
+            <div className="nav-list">
+              {screens.map((s, i) => (
+                <button key={s.id} className={`nav-item ${screen === s.id ? 'active' : ''}`} onClick={() => go(s.id)}>
+                  <span className="num">{i + 1}</span>
+                  <span>{s.label.split('. ')[1]}</span>
+                </button>
+              ))}
+            </div>
+            <div className="footer-note" style={{ textAlign: 'left', marginTop: 32 }}>
+              Tap a screen to focus it. Bottom nav, search, hearts and shopping items are interactive.
+            </div>
+          </div>
+
+          <div className="phones">
+            <div className="phone-tile" data-screen-label={screens.find(s=>s.id===screen).label}>
+              <IOSDevice width={402} height={874}>
+                <Active go={go} navTab={navTab} setNavTab={onTabChange} />
+              </IOSDevice>
+              <div className="phone-label">{screens.find(s => s.id === screen).label}</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
