@@ -7,6 +7,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-06-02
+
 ### Added
 - Profile screen (CHE-18): editable avatar, name, and email (defaults Mateus / you@example.com), PT/EN interface language, help row, log-out stub via reusable `InConstructionBottomSheet`, and static app version under “Sobre o Chefitu”
 - Mobile UI kit reference at `docs/design-system/ui_kits/mobile/`
@@ -120,7 +122,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-[Unreleased]: https://github.com/matmeirelles/chefitu/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/matmeirelles/chefitu/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/matmeirelles/chefitu/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/matmeirelles/chefitu/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/matmeirelles/chefitu/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/matmeirelles/chefitu/compare/v0.4.0...v0.5.0
