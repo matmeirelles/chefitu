@@ -14,6 +14,7 @@ import {
 import { AppShell } from "./src/AppShell";
 import { LocaleProvider } from "./src/i18n/LocaleContext";
 import { ProfileProvider } from "./src/context/ProfileContext";
+import { ShoppingListProvider } from "./src/context/ShoppingListContext";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -32,7 +33,9 @@ export default function App() {
       <StatusBar style="dark" />
       <LocaleProvider>
         <ProfileProvider>
-          <AppShell />
+          <ShoppingListProvider>
+            <AppShell />
+          </ShoppingListProvider>
         </ProfileProvider>
       </LocaleProvider>
     </SafeAreaProvider>

@@ -15,6 +15,9 @@ import { AdjustRecipePanel, type UIMessage } from "../components/AdjustRecipePan
 import { ConfirmDeleteBottomSheet } from "../components/ConfirmDeleteBottomSheet";
 import { ConfirmUnfavoriteBottomSheet } from "../components/ConfirmUnfavoriteBottomSheet";
 import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
+import { useShoppingList } from "../context/ShoppingListContext";
+import { useLocale } from "../i18n/LocaleContext";
+import { emojiForIngredient } from "../utils/ingredient-emoji";
 import { MetricCard } from "../components/MetricCard";
 import { FALLBACK_COVER_IMAGE } from "../constants";
 import { deleteRecipe, resolveImageUrl, saveNewRecipe, updateRecipe } from "../services/api";
@@ -29,21 +32,30 @@ const MASCOT = require("../../assets/mascot-symbol.png") as number;
 const createAdjustmentSessionId = (recipeId: string) =>
   `adj_${recipeId}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 
+type SnackbarState = {
+  message: string;
+  kind: "success" | "error";
+  action?: { label: string; onPress: () => void };
+};
+
 export const RecipeDetailScreen = ({
   recipe,
   onBack,
   onDelete,
+  onGoToShoppingList,
   onRecipeFavoriteChange,
 }: {
   recipe: RecipeRecord;
   onBack: () => void;
   onDelete: () => void;
+  onGoToShoppingList?: () => void;
   onRecipeFavoriteChange?: (recipe: RecipeRecord) => void;
 }) => {
   const insets = useSafeAreaInsets();
+  const { t } = useLocale();
+  const { addIngredientItem } = useShoppingList();
 
   const [currentRecipe, setCurrentRecipe] = useState(recipe);
-  const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -60,14 +72,18 @@ export const RecipeDetailScreen = ({
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const [snackbar, setSnackbar] = useState<{ message: string; kind: "success" | "error" } | null>(null);
+  const [snackbar, setSnackbar] = useState<SnackbarState | null>(null);
   const snackbarAnim = useRef(new Animated.Value(0)).current;
 
-  const showSnackbar = (message: string, kind: "success" | "error") => {
-    setSnackbar({ message, kind });
+  const showSnackbar = (
+    message: string,
+    kind: "success" | "error",
+    action?: SnackbarState["action"],
+  ) => {
+    setSnackbar({ message, kind, action });
     Animated.sequence([
       Animated.timing(snackbarAnim, { toValue: 1, duration: 220, useNativeDriver: true }),
-      Animated.delay(2400),
+      Animated.delay(action ? 5000 : 2400),
       Animated.timing(snackbarAnim, { toValue: 0, duration: 220, useNativeDriver: true }),
     ]).start(() => setSnackbar(null));
   };
@@ -117,12 +133,15 @@ export const RecipeDetailScreen = ({
     }
   };
 
-  const toggleIngredient = (index: number) => {
-    setCheckedIngredients((prev) => {
-      const next = new Set(prev);
-      next.has(index) ? next.delete(index) : next.add(index);
-      return next;
-    });
+  const handleAddToShoppingList = (ingredient: RecipeIngredient) => {
+    addIngredientItem(ingredient);
+    showSnackbar(
+      t.shoppingList.addedFromRecipe,
+      "success",
+      onGoToShoppingList
+        ? { label: t.shoppingList.viewList, onPress: onGoToShoppingList }
+        : undefined,
+    );
   };
 
   const handleBack = () => {
@@ -132,7 +151,6 @@ export const RecipeDetailScreen = ({
   const handleApply = (adjusted: RecipeRecord) => {
     setAppliedRecipe(adjusted);
     setViewingOriginal(false);
-    setCheckedIngredients(new Set());
   };
 
   const handleSaveOverwrite = async () => {
@@ -283,8 +301,7 @@ export const RecipeDetailScreen = ({
                 key={`${displayedRecipe.id}-ing-${index}`}
                 ingredient={ingredient}
                 isLast={index === displayedRecipe.ingredients.length - 1}
-                checked={checkedIngredients.has(index)}
-                onToggle={() => toggleIngredient(index)}
+                onAdd={() => handleAddToShoppingList(ingredient)}
               />
             ))}
           </View>
@@ -323,7 +340,7 @@ export const RecipeDetailScreen = ({
         <View style={[styles.adjustedBar, { bottom: insets.bottom + 8 }]}>
           <View style={styles.versionToggle}>
             <Pressable
-              onPress={() => { setViewingOriginal(true); setCheckedIngredients(new Set()); }}
+              onPress={() => setViewingOriginal(true)}
               style={[styles.toggleOption, viewingOriginal && styles.toggleOptionActive]}
             >
               <DSText style={[styles.toggleLabel, { color: viewingOriginal ? COLORS.marrom : COLORS.marromSoft }]}>
@@ -331,7 +348,7 @@ export const RecipeDetailScreen = ({
               </DSText>
             </Pressable>
             <Pressable
-              onPress={() => { setViewingOriginal(false); setCheckedIngredients(new Set()); }}
+              onPress={() => setViewingOriginal(false)}
               style={[styles.toggleOption, !viewingOriginal && styles.toggleOptionActive]}
             >
               <DSText style={[styles.toggleLabel, { color: !viewingOriginal ? COLORS.marrom : COLORS.marromSoft }]}>
@@ -422,7 +439,7 @@ export const RecipeDetailScreen = ({
             snackbar.kind === "error" && styles.snackbarError,
             { bottom: insets.bottom + 24, opacity: snackbarAnim },
           ]}
-          pointerEvents="none"
+          pointerEvents={snackbar.action ? "box-none" : "none"}
         >
           <DSIcon
             name={snackbar.kind === "success" ? "CheckCircle" : "AlertCircle"}
@@ -431,6 +448,19 @@ export const RecipeDetailScreen = ({
             strokeWidth={2}
           />
           <DSText style={styles.snackbarText}>{snackbar.message}</DSText>
+          {snackbar.action && (
+            <Pressable
+              onPress={() => {
+                snackbar.action?.onPress();
+                setSnackbar(null);
+                snackbarAnim.setValue(0);
+              }}
+              hitSlop={8}
+              style={({ pressed }) => [styles.snackbarAction, pressed && styles.snackbarActionPressed]}
+            >
+              <DSText style={styles.snackbarActionText}>{snackbar.action.label}</DSText>
+            </Pressable>
+          )}
         </Animated.View>
       )}
 
@@ -498,43 +528,30 @@ export const RecipeDetailScreen = ({
 const IngredientRow = ({
   ingredient,
   isLast,
-  checked,
-  onToggle,
+  onAdd,
 }: {
   ingredient: RecipeIngredient;
   isLast: boolean;
-  checked: boolean;
-  onToggle: () => void;
+  onAdd: () => void;
 }) => {
   const qty = [ingredient.amount, ingredient.unit].filter(Boolean).join(" ");
   return (
-    <Pressable onPress={onToggle}>
-      <View style={[styles.ingredientRow, !isLast && styles.ingredientRowBorder]}>
-        <DSText
-          style={[
-            styles.ingredientName,
-            {
-              color: checked ? COLORS.marromSoft : COLORS.marrom,
-              textDecorationLine: checked ? "line-through" : "none",
-            },
-          ]}
-        >
-          {ingredient.item}
-        </DSText>
-        {qty ? <DSText style={styles.ingredientQty}>{qty}</DSText> : null}
-        <View
-          style={[
-            styles.checkbox,
-            {
-              borderColor: checked ? COLORS.verdeFolha : "rgba(74,44,26,0.18)",
-              backgroundColor: checked ? COLORS.verdeFolha : "transparent",
-            },
-          ]}
-        >
-          {checked && <DSIcon name="Check" size={11} color={COLORS.white} strokeWidth={2.5} />}
-        </View>
+    <View style={[styles.ingredientRow, !isLast && styles.ingredientRowBorder]}>
+      <View style={styles.ingredientIconWrap}>
+        <DSText style={styles.ingredientEmoji}>{emojiForIngredient(ingredient.item)}</DSText>
       </View>
-    </Pressable>
+      <DSText style={styles.ingredientName}>{ingredient.item}</DSText>
+      {qty ? <DSText style={styles.ingredientQty}>{qty}</DSText> : null}
+      <Pressable
+        onPress={onAdd}
+        style={({ pressed }) => [styles.addToListBtn, pressed && styles.addToListBtnPressed]}
+        hitSlop={8}
+        accessibilityRole="button"
+        accessibilityLabel="Adicionar à lista de compras"
+      >
+        <DSIcon name="Plus" size={18} color={COLORS.laranja} strokeWidth={2.4} />
+      </Pressable>
+    </View>
   );
 };
 
@@ -652,22 +669,41 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   ingredientRowBorder: { borderBottomWidth: 1, borderBottomColor: "rgba(74,44,26,0.08)" },
-  ingredientName: { flex: 1, fontSize: TYPE_SCALE.body },
-  ingredientQty: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: COLORS.marromSoft,
-    fontVariant: ["tabular-nums"],
-    flexShrink: 0,
-  },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 1.5,
+  ingredientIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: COLORS.bege,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
+  },
+  ingredientEmoji: { fontSize: 16 },
+  ingredientName: {
+    flex: 1,
+    fontSize: TYPE_SCALE.body,
+    fontWeight: "600",
+    color: COLORS.marrom,
+  },
+  ingredientQty: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.marromSoft,
+    fontVariant: ["tabular-nums"],
+    flexShrink: 0,
+    marginRight: SPACING[1],
+  },
+  addToListBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    backgroundColor: COLORS.laranjaSoft,
+  },
+  addToListBtnPressed: {
+    opacity: 0.85,
   },
 
   // Steps
@@ -886,5 +922,16 @@ const styles = StyleSheet.create({
     fontSize: TYPE_SCALE.bodySm,
     fontWeight: "500",
     color: COLORS.white,
+  },
+  snackbarAction: {
+    paddingHorizontal: SPACING[2],
+    paddingVertical: 4,
+  },
+  snackbarActionPressed: { opacity: 0.75 },
+  snackbarActionText: {
+    fontSize: TYPE_SCALE.bodySm,
+    fontWeight: "700",
+    color: COLORS.laranjaSoft,
+    textDecorationLine: "underline",
   },
 });
