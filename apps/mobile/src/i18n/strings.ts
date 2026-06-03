@@ -57,14 +57,8 @@ export const strings = {
       purchased: "Comprados",
       pendingEmpty: "Nada pendente por aqui.",
       addItem: "Adicionar item",
-      emptyTitle: "Sua lista está vazia",
-      emptyBody:
-        "Toque em + numa receita ou adicione itens manualmente — tudo que você precisa comprar fica aqui.",
       addedFromRecipe: "Adicionado à lista de compra",
-      addSheetTitle: "Adicionar item",
-      addSheetBody: "Escreva o ingrediente que você precisa comprar.",
-      addNamePlaceholder: "Ex.: Tomate",
-      addSubmit: "Adicionar",
+      addNamePlaceholder: "Adicionar ingrediente…",
     },
     favorites: {
       title: "Favoritos",
@@ -140,14 +134,8 @@ export const strings = {
       purchased: "Purchased",
       pendingEmpty: "Nothing pending here.",
       addItem: "Add item",
-      emptyTitle: "Your list is empty",
-      emptyBody:
-        "Tap + on a recipe or add items manually — everything you need to buy lives here.",
       addedFromRecipe: "Added to shopping list",
-      addSheetTitle: "Add item",
-      addSheetBody: "Type the ingredient you need to buy.",
-      addNamePlaceholder: "e.g. Tomato",
-      addSubmit: "Add",
+      addNamePlaceholder: "Add ingredient…",
     },
     favorites: {
       title: "Favorites",
