@@ -7,6 +7,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- Shopping list tab (CHE-36): `ShoppingListScreen` with Pendentes/Comprados, local persistence, manual add sheet, and recipe ingredient **+** button with confirmation snackbar
+
+### Removed
+- Import queue screen (`QueueScreen`) from Lista tab — import flow remains on Início
+
 ## [0.10.0] — 2026-06-03
 
 ### Changed

@@ -15,6 +15,8 @@ import { AdjustRecipePanel, type UIMessage } from "../components/AdjustRecipePan
 import { ConfirmDeleteBottomSheet } from "../components/ConfirmDeleteBottomSheet";
 import { ConfirmUnfavoriteBottomSheet } from "../components/ConfirmUnfavoriteBottomSheet";
 import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
+import { useShoppingList } from "../context/ShoppingListContext";
+import { useLocale } from "../i18n/LocaleContext";
 import { MetricCard } from "../components/MetricCard";
 import { FALLBACK_COVER_IMAGE } from "../constants";
 import { deleteRecipe, resolveImageUrl, saveNewRecipe, updateRecipe } from "../services/api";
@@ -41,9 +43,10 @@ export const RecipeDetailScreen = ({
   onRecipeFavoriteChange?: (recipe: RecipeRecord) => void;
 }) => {
   const insets = useSafeAreaInsets();
+  const { t } = useLocale();
+  const { addIngredientItem } = useShoppingList();
 
   const [currentRecipe, setCurrentRecipe] = useState(recipe);
-  const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -117,12 +120,9 @@ export const RecipeDetailScreen = ({
     }
   };
 
-  const toggleIngredient = (index: number) => {
-    setCheckedIngredients((prev) => {
-      const next = new Set(prev);
-      next.has(index) ? next.delete(index) : next.add(index);
-      return next;
-    });
+  const handleAddToShoppingList = (ingredient: RecipeIngredient) => {
+    addIngredientItem(ingredient);
+    showSnackbar(t.shoppingList.addedFromRecipe, "success");
   };
 
   const handleBack = () => {
@@ -132,7 +132,6 @@ export const RecipeDetailScreen = ({
   const handleApply = (adjusted: RecipeRecord) => {
     setAppliedRecipe(adjusted);
     setViewingOriginal(false);
-    setCheckedIngredients(new Set());
   };
 
   const handleSaveOverwrite = async () => {
@@ -283,8 +282,7 @@ export const RecipeDetailScreen = ({
                 key={`${displayedRecipe.id}-ing-${index}`}
                 ingredient={ingredient}
                 isLast={index === displayedRecipe.ingredients.length - 1}
-                checked={checkedIngredients.has(index)}
-                onToggle={() => toggleIngredient(index)}
+                onAdd={() => handleAddToShoppingList(ingredient)}
               />
             ))}
           </View>
@@ -323,7 +321,7 @@ export const RecipeDetailScreen = ({
         <View style={[styles.adjustedBar, { bottom: insets.bottom + 8 }]}>
           <View style={styles.versionToggle}>
             <Pressable
-              onPress={() => { setViewingOriginal(true); setCheckedIngredients(new Set()); }}
+              onPress={() => setViewingOriginal(true)}
               style={[styles.toggleOption, viewingOriginal && styles.toggleOptionActive]}
             >
               <DSText style={[styles.toggleLabel, { color: viewingOriginal ? COLORS.marrom : COLORS.marromSoft }]}>
@@ -331,7 +329,7 @@ export const RecipeDetailScreen = ({
               </DSText>
             </Pressable>
             <Pressable
-              onPress={() => { setViewingOriginal(false); setCheckedIngredients(new Set()); }}
+              onPress={() => setViewingOriginal(false)}
               style={[styles.toggleOption, !viewingOriginal && styles.toggleOptionActive]}
             >
               <DSText style={[styles.toggleLabel, { color: !viewingOriginal ? COLORS.marrom : COLORS.marromSoft }]}>
@@ -498,43 +496,27 @@ export const RecipeDetailScreen = ({
 const IngredientRow = ({
   ingredient,
   isLast,
-  checked,
-  onToggle,
+  onAdd,
 }: {
   ingredient: RecipeIngredient;
   isLast: boolean;
-  checked: boolean;
-  onToggle: () => void;
+  onAdd: () => void;
 }) => {
   const qty = [ingredient.amount, ingredient.unit].filter(Boolean).join(" ");
   return (
-    <Pressable onPress={onToggle}>
-      <View style={[styles.ingredientRow, !isLast && styles.ingredientRowBorder]}>
-        <DSText
-          style={[
-            styles.ingredientName,
-            {
-              color: checked ? COLORS.marromSoft : COLORS.marrom,
-              textDecorationLine: checked ? "line-through" : "none",
-            },
-          ]}
-        >
-          {ingredient.item}
-        </DSText>
-        {qty ? <DSText style={styles.ingredientQty}>{qty}</DSText> : null}
-        <View
-          style={[
-            styles.checkbox,
-            {
-              borderColor: checked ? COLORS.verdeFolha : "rgba(74,44,26,0.18)",
-              backgroundColor: checked ? COLORS.verdeFolha : "transparent",
-            },
-          ]}
-        >
-          {checked && <DSIcon name="Check" size={11} color={COLORS.white} strokeWidth={2.5} />}
-        </View>
-      </View>
-    </Pressable>
+    <View style={[styles.ingredientRow, !isLast && styles.ingredientRowBorder]}>
+      <DSText style={styles.ingredientName}>{ingredient.item}</DSText>
+      {qty ? <DSText style={styles.ingredientQty}>{qty}</DSText> : null}
+      <Pressable
+        onPress={onAdd}
+        style={({ pressed }) => [styles.addToListBtn, pressed && styles.addToListBtnPressed]}
+        hitSlop={8}
+        accessibilityRole="button"
+        accessibilityLabel="Adicionar à lista de compras"
+      >
+        <DSIcon name="Plus" size={16} color={COLORS.marrom} strokeWidth={2.5} />
+      </Pressable>
+    </View>
   );
 };
 
@@ -660,14 +642,19 @@ const styles = StyleSheet.create({
     fontVariant: ["tabular-nums"],
     flexShrink: 0,
   },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 1.5,
+  addToListBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: COLORS.marrom,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
+    backgroundColor: COLORS.white,
+  },
+  addToListBtnPressed: {
+    backgroundColor: COLORS.bege,
   },
 
   // Steps

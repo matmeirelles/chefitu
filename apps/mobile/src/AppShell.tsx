@@ -6,7 +6,7 @@ import { COLORS } from "./design-system/index";
 import { DSBottomNav, type BottomNavTab } from "./design-system/BottomNav";
 import { LibraryScreen } from "./screens/LibraryScreen";
 import { RecipeDetailScreen } from "./screens/RecipeDetailScreen";
-import { QueueScreen } from "./screens/QueueScreen";
+import { ShoppingListScreen } from "./screens/ShoppingListScreen";
 import { ProfileScreen } from "./screens/ProfileScreen";
 import { FavoritesScreen } from "./screens/FavoritesScreen";
 import { GenerateRecipeScreen } from "./screens/GenerateRecipeScreen";
@@ -121,9 +121,8 @@ export const AppShell = () => {
           />
         </View>
 
-        {/* QueueScreen: always mounted */}
         <View style={[styles.screen, activeTab !== "list" && styles.hidden]}>
-          <QueueScreen />
+          <ShoppingListScreen />
         </View>
 
         <View style={[styles.screen, activeTab !== "profile" && styles.hidden]}>
