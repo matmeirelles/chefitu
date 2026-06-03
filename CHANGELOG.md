@@ -7,6 +7,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [0.10.0] — 2026-06-03
+
 ### Changed
 - Fale com o Chefitu tab (CHE-30): chat header with mascot and online status, welcome bubble and icon suggestion chips, white bot bubbles with avatar, white floating composer with camera stub, and inline recipe cards aligned to the handoff
 
@@ -139,7 +141,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-[Unreleased]: https://github.com/matmeirelles/chefitu/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/matmeirelles/chefitu/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/matmeirelles/chefitu/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/matmeirelles/chefitu/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/matmeirelles/chefitu/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/matmeirelles/chefitu/compare/v0.6.0...v0.7.0
