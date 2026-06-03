@@ -53,12 +53,14 @@ export const strings = {
     },
     shoppingList: {
       title: "Lista de compras",
-      pending: "Pendentes",
-      purchased: "Comprados",
-      pendingEmpty: "Nada pendente por aqui.",
-      addItem: "Adicionar item",
+      cardTitle: "Lista de compras",
+      addPlaceholder: "Adicionar item à lista…",
+      emptyTitle: "Lista vazia",
+      emptyBody:
+        "Adicione um item acima, ou toque no + ao lado de um ingrediente em qualquer receita.",
+      removeHint: "Marque um item para removê-lo da lista.",
+      haveIt: "Tenho",
       addedFromRecipe: "Adicionado à lista de compra",
-      addNamePlaceholder: "Adicionar ingrediente…",
     },
     favorites: {
       title: "Favoritos",
@@ -130,12 +132,14 @@ export const strings = {
     },
     shoppingList: {
       title: "Shopping list",
-      pending: "Pending",
-      purchased: "Purchased",
-      pendingEmpty: "Nothing pending here.",
-      addItem: "Add item",
+      cardTitle: "Shopping list",
+      addPlaceholder: "Add item to the list…",
+      emptyTitle: "List is empty",
+      emptyBody:
+        "Add an item above, or tap + next to an ingredient on any recipe.",
+      removeHint: "Check an item to remove it from the list.",
+      haveIt: "Have it",
       addedFromRecipe: "Added to shopping list",
-      addNamePlaceholder: "Add ingredient…",
     },
     favorites: {
       title: "Favorites",

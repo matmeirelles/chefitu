@@ -11,7 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Shopping list tab (CHE-36): `ShoppingListScreen` with Pendentes/Comprados, local persistence, inline add field, and recipe ingredient **+** button with confirmation snackbar
 
 ### Changed
-- Shopping list (CHE-36): items show ingredient name only (no quantity on list); manual add uses inline field + **+** button below the title (no bottom sheet)
+- Shopping list (CHE-36): aligned to lista handoff — add bar with **+** and **→**, card with counter and emoji rows, check-to-remove (no Comprados section), empty state in card, recipe rows with icon/**+**/**Tenho**
 
 ### Removed
 - Import queue screen (`QueueScreen`) from Lista tab — import flow remains on Início

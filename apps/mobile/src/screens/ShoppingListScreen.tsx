@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
-import { Keyboard, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { useRef, useState } from "react";
+import { Animated, Keyboard, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ShoppingListAddField } from "../components/ShoppingListAddField";
 import { useShoppingList } from "../context/ShoppingListContext";
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../design-system/tokens";
 import { DSText } from "../design-system/Text";
@@ -8,16 +9,14 @@ import { DSIcon } from "../design-system/Icon";
 import { useLocale } from "../i18n/LocaleContext";
 import type { ShoppingListItem } from "../storage/shopping-list";
 
-const OUTLINE = "rgba(74, 44, 26, 0.14)";
+const REMOVE_MS = 240;
+const OUTLINE = "rgba(74, 44, 26, 0.10)";
 
 export const ShoppingListScreen = () => {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
-  const { items, addManualItem, togglePurchased } = useShoppingList();
+  const { items, addManualItem, removeItem } = useShoppingList();
   const [draft, setDraft] = useState("");
-
-  const pending = useMemo(() => items.filter((i) => !i.purchased), [items]);
-  const purchased = useMemo(() => items.filter((i) => i.purchased), [items]);
   const canAdd = draft.trim().length > 0;
 
   const handleAdd = () => {
@@ -40,100 +39,97 @@ export const ShoppingListScreen = () => {
       >
         <DSText style={styles.screenTitle}>{t.shoppingList.title}</DSText>
 
-        <View style={styles.addRow}>
-          <View style={styles.addInputWrap}>
-            <TextInput
-              value={draft}
-              onChangeText={setDraft}
-              placeholder={t.shoppingList.addNamePlaceholder}
-              placeholderTextColor={COLORS.marromSoft}
-              returnKeyType="done"
-              onSubmitEditing={handleAdd}
-              style={styles.addInput}
-            />
-          </View>
-          <Pressable
-            onPress={handleAdd}
-            disabled={!canAdd}
-            style={({ pressed }) => [
-              styles.addBtn,
-              !canAdd && styles.addBtnDisabled,
-              pressed && canAdd && styles.addBtnPressed,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={t.shoppingList.addItem}
-          >
-            <DSIcon name="Plus" size={20} color={COLORS.white} strokeWidth={2.5} />
-          </Pressable>
-        </View>
+        <ShoppingListAddField
+          value={draft}
+          onChangeText={setDraft}
+          placeholder={t.shoppingList.addPlaceholder}
+          onSubmit={handleAdd}
+          canSubmit={canAdd}
+        />
 
         <View style={styles.card}>
-          <SectionHeader title={t.shoppingList.pending} count={pending.length} />
-          {pending.length === 0 ? (
-            <DSText style={styles.sectionEmpty}>{t.shoppingList.pendingEmpty}</DSText>
+          <View style={styles.cardHeader}>
+            <DSText style={styles.cardTitle}>{t.shoppingList.cardTitle}</DSText>
+            {items.length > 0 && (
+              <View style={styles.countBadge}>
+                <DSText style={styles.countText}>{items.length}</DSText>
+              </View>
+            )}
+          </View>
+
+          {items.length === 0 ? (
+            <View style={styles.emptyWrap}>
+              <DSText style={styles.emptyEmoji}>🎉</DSText>
+              <DSText style={styles.emptyTitle}>{t.shoppingList.emptyTitle}</DSText>
+              <DSText style={styles.emptyBody}>{t.shoppingList.emptyBody}</DSText>
+            </View>
           ) : (
-            pending.map((item, index) => (
+            items.map((item, index) => (
               <ShoppingRow
                 key={item.id}
                 item={item}
-                purchased={false}
-                isLast={index === pending.length - 1 && purchased.length === 0}
-                onToggle={() => togglePurchased(item.id)}
+                isLast={index === items.length - 1}
+                onRemove={() => removeItem(item.id)}
               />
             ))
           )}
-
-          {purchased.length > 0 && (
-            <>
-              <View style={styles.purchasedHeader}>
-                <SectionHeader title={t.shoppingList.purchased} count={purchased.length} />
-              </View>
-              {purchased.map((item, index) => (
-                <ShoppingRow
-                  key={item.id}
-                  item={item}
-                  purchased
-                  isLast={index === purchased.length - 1}
-                  onToggle={() => togglePurchased(item.id)}
-                />
-              ))}
-            </>
-          )}
         </View>
+
+        {items.length > 0 && (
+          <View style={styles.hintRow}>
+            <DSIcon name="Check" size={14} color={COLORS.marromSoft} strokeWidth={2.2} />
+            <DSText style={styles.hintText}>{t.shoppingList.removeHint}</DSText>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
 };
 
-const SectionHeader = ({ title, count }: { title: string; count: number }) => (
-  <View style={styles.sectionHeader}>
-    <DSText style={styles.sectionTitle}>{title}</DSText>
-    <DSText style={styles.sectionCount}>{count}</DSText>
-  </View>
-);
-
 const ShoppingRow = ({
   item,
-  purchased,
   isLast,
-  onToggle,
+  onRemove,
 }: {
   item: ShoppingListItem;
-  purchased: boolean;
   isLast: boolean;
-  onToggle: () => void;
-}) => (
-  <Pressable onPress={onToggle}>
-    <View style={[styles.row, !isLast && styles.rowBorder]}>
-      <View style={[styles.checkbox, purchased && styles.checkboxChecked]}>
-        {purchased && <DSIcon name="Check" size={14} color={COLORS.white} strokeWidth={3} />}
-      </View>
-      <DSText style={[styles.itemName, purchased && styles.itemNamePurchased]}>
-        {item.name}
-      </DSText>
-    </View>
-  </Pressable>
-);
+  onRemove: () => void;
+}) => {
+  const opacity = useRef(new Animated.Value(1)).current;
+  const [checked, setChecked] = useState(false);
+
+  const handlePress = () => {
+    if (checked) return;
+    setChecked(true);
+    Animated.timing(opacity, {
+      toValue: 0,
+      duration: REMOVE_MS,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished) onRemove();
+    });
+  };
+
+  return (
+    <Pressable onPress={handlePress}>
+      <Animated.View
+        style={[
+          styles.row,
+          !isLast && styles.rowBorder,
+          { opacity },
+        ]}
+      >
+        <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
+          {checked && <DSIcon name="Check" size={14} color={COLORS.white} strokeWidth={3} />}
+        </View>
+        <DSText style={styles.rowEmoji}>{item.emoji}</DSText>
+        <DSText style={[styles.itemName, checked && styles.itemNameChecked]}>
+          {item.name}
+        </DSText>
+      </Animated.View>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
@@ -148,86 +144,71 @@ const styles = StyleSheet.create({
     lineHeight: TYPE_SCALE.h1 * 1.45,
     color: COLORS.marrom,
   },
-  addRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING[2],
-  },
-  addInputWrap: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.input,
-    paddingHorizontal: SPACING[4],
-    minHeight: 50,
-    borderWidth: 1,
-    borderColor: OUTLINE,
-    ...SHADOWS.sm,
-  },
-  addInput: {
-    flex: 1,
-    fontFamily: FONTS.ui,
-    fontSize: TYPE_SCALE.bodySm,
-    color: COLORS.marrom,
-    paddingVertical: 12,
-  },
-  addBtn: {
-    width: 50,
-    height: 50,
-    borderRadius: RADIUS.input,
-    backgroundColor: COLORS.laranja,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: COLORS.laranja,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.28,
-    shadowRadius: 10,
-    elevation: 4,
-  },
-  addBtnDisabled: { opacity: 0.45 },
-  addBtnPressed: { opacity: 0.92 },
   card: {
     backgroundColor: COLORS.white,
     borderRadius: 18,
     paddingHorizontal: SPACING[4],
-    paddingVertical: SPACING[3] + 2,
+    paddingVertical: SPACING[4],
     ...SHADOWS.sm,
   },
-  sectionHeader: {
+  cardHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: SPACING[2],
+    marginBottom: SPACING[3],
   },
-  sectionTitle: {
-    fontFamily: FONTS.uiBold,
+  cardTitle: {
+    fontFamily: FONTS.displayBold,
     fontWeight: "700",
-    fontSize: TYPE_SCALE.body,
+    fontSize: 19,
+    lineHeight: 24,
     color: COLORS.marrom,
   },
-  sectionCount: {
-    fontSize: TYPE_SCALE.bodySm,
+  countBadge: {
+    minWidth: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: COLORS.laranjaSoft,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 8,
+  },
+  countText: {
+    fontFamily: FONTS.uiBold,
     fontWeight: "700",
-    color: COLORS.marromSoft,
-  },
-  sectionEmpty: {
     fontSize: TYPE_SCALE.bodySm,
-    color: COLORS.marromSoft,
-    paddingVertical: SPACING[2],
+    color: COLORS.laranja,
   },
-  purchasedHeader: {
-    marginTop: SPACING[3] + 2,
+  emptyWrap: {
+    alignItems: "center",
+    paddingVertical: SPACING[6],
+    paddingHorizontal: SPACING[3],
+    gap: SPACING[2],
+  },
+  emptyEmoji: { fontSize: 40, lineHeight: 48 },
+  emptyTitle: {
+    fontFamily: FONTS.displayBold,
+    fontWeight: "700",
+    fontSize: TYPE_SCALE.h2,
+    lineHeight: TYPE_SCALE.h2 * 1.35,
+    color: COLORS.marrom,
+    textAlign: "center",
+  },
+  emptyBody: {
+    fontSize: TYPE_SCALE.bodySm,
+    lineHeight: TYPE_SCALE.bodySm * 1.55,
+    color: COLORS.marromSoft,
+    textAlign: "center",
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     gap: SPACING[3],
-    paddingVertical: SPACING[2],
+    paddingVertical: SPACING[2] + 2,
   },
   rowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(74, 44, 26, 0.10)",
+    borderBottomColor: OUTLINE,
   },
   checkbox: {
     width: 22,
@@ -242,14 +223,28 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     backgroundColor: COLORS.verdeFolha,
   },
+  rowEmoji: { fontSize: 18, width: 24, textAlign: "center" },
   itemName: {
     flex: 1,
-    fontSize: TYPE_SCALE.body,
+    fontSize: 14,
     fontWeight: "600",
     color: COLORS.marrom,
   },
-  itemNamePurchased: {
+  itemNameChecked: {
     color: COLORS.marromSoft,
     textDecorationLine: "line-through",
+  },
+  hintRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING[2],
+    paddingHorizontal: SPACING[1],
+  },
+  hintText: {
+    flex: 1,
+    fontSize: TYPE_SCALE.caption,
+    lineHeight: TYPE_SCALE.caption * 1.45,
+    color: COLORS.marromSoft,
+    fontWeight: "600",
   },
 });

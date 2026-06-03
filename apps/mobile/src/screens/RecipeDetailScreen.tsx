@@ -17,6 +17,7 @@ import { ConfirmUnfavoriteBottomSheet } from "../components/ConfirmUnfavoriteBot
 import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
 import { useShoppingList } from "../context/ShoppingListContext";
 import { useLocale } from "../i18n/LocaleContext";
+import { emojiForIngredient } from "../utils/ingredient-emoji";
 import { MetricCard } from "../components/MetricCard";
 import { FALLBACK_COVER_IMAGE } from "../constants";
 import { deleteRecipe, resolveImageUrl, saveNewRecipe, updateRecipe } from "../services/api";
@@ -44,7 +45,7 @@ export const RecipeDetailScreen = ({
 }) => {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
-  const { addIngredientItem } = useShoppingList();
+  const { addIngredientItem, isOnList } = useShoppingList();
 
   const [currentRecipe, setCurrentRecipe] = useState(recipe);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -282,6 +283,8 @@ export const RecipeDetailScreen = ({
                 key={`${displayedRecipe.id}-ing-${index}`}
                 ingredient={ingredient}
                 isLast={index === displayedRecipe.ingredients.length - 1}
+                onList={isOnList(ingredient.item)}
+                haveItLabel={t.shoppingList.haveIt}
                 onAdd={() => handleAddToShoppingList(ingredient)}
               />
             ))}
@@ -496,26 +499,40 @@ export const RecipeDetailScreen = ({
 const IngredientRow = ({
   ingredient,
   isLast,
+  onList,
+  haveItLabel,
   onAdd,
 }: {
   ingredient: RecipeIngredient;
   isLast: boolean;
+  onList: boolean;
+  haveItLabel: string;
   onAdd: () => void;
 }) => {
   const qty = [ingredient.amount, ingredient.unit].filter(Boolean).join(" ");
   return (
     <View style={[styles.ingredientRow, !isLast && styles.ingredientRowBorder]}>
+      <View style={styles.ingredientIconWrap}>
+        <DSText style={styles.ingredientEmoji}>{emojiForIngredient(ingredient.item)}</DSText>
+      </View>
       <DSText style={styles.ingredientName}>{ingredient.item}</DSText>
       {qty ? <DSText style={styles.ingredientQty}>{qty}</DSText> : null}
-      <Pressable
-        onPress={onAdd}
-        style={({ pressed }) => [styles.addToListBtn, pressed && styles.addToListBtnPressed]}
-        hitSlop={8}
-        accessibilityRole="button"
-        accessibilityLabel="Adicionar à lista de compras"
-      >
-        <DSIcon name="Plus" size={16} color={COLORS.marrom} strokeWidth={2.5} />
-      </Pressable>
+      {onList ? (
+        <View style={styles.haveItPill}>
+          <DSIcon name="Check" size={12} color={COLORS.verdeDark} strokeWidth={2.8} />
+          <DSText style={styles.haveItText}>{haveItLabel}</DSText>
+        </View>
+      ) : (
+        <Pressable
+          onPress={onAdd}
+          style={({ pressed }) => [styles.addToListBtn, pressed && styles.addToListBtnPressed]}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="Adicionar à lista de compras"
+        >
+          <DSIcon name="Plus" size={18} color={COLORS.laranja} strokeWidth={2.4} />
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -634,27 +651,56 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   ingredientRowBorder: { borderBottomWidth: 1, borderBottomColor: "rgba(74,44,26,0.08)" },
-  ingredientName: { flex: 1, fontSize: TYPE_SCALE.body },
-  ingredientQty: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: COLORS.marromSoft,
-    fontVariant: ["tabular-nums"],
-    flexShrink: 0,
-  },
-  addToListBtn: {
+  ingredientIconWrap: {
     width: 32,
     height: 32,
     borderRadius: 10,
-    borderWidth: 2,
-    borderColor: COLORS.marrom,
+    backgroundColor: COLORS.bege,
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-    backgroundColor: COLORS.white,
+  },
+  ingredientEmoji: { fontSize: 16 },
+  ingredientName: {
+    flex: 1,
+    fontSize: TYPE_SCALE.body,
+    fontWeight: "600",
+    color: COLORS.marrom,
+  },
+  ingredientQty: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.marromSoft,
+    fontVariant: ["tabular-nums"],
+    flexShrink: 0,
+    marginRight: SPACING[1],
+  },
+  addToListBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    backgroundColor: COLORS.laranjaSoft,
   },
   addToListBtnPressed: {
-    backgroundColor: COLORS.bege,
+    opacity: 0.85,
+  },
+  haveItPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: COLORS.salvia,
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexShrink: 0,
+  },
+  haveItText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: COLORS.verdeDark,
   },
 
   // Steps

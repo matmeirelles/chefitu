@@ -15,13 +15,15 @@ import {
   saveShoppingList,
   type ShoppingListItem,
 } from "../storage/shopping-list";
+import { emojiForIngredient, normalizeIngredientName } from "../utils/ingredient-emoji";
 
 type ShoppingListContextValue = {
   items: ShoppingListItem[];
   ready: boolean;
   addManualItem: (name: string) => void;
   addIngredientItem: (ingredient: RecipeIngredient) => void;
-  togglePurchased: (id: string) => void;
+  removeItem: (id: string) => void;
+  isOnList: (name: string) => boolean;
 };
 
 const ShoppingListContext = createContext<ShoppingListContextValue | null>(null);
@@ -50,7 +52,7 @@ export const ShoppingListProvider = ({ children }: { children: ReactNode }) => {
       const entry: ShoppingListItem = {
         id: createShoppingListId(),
         name: trimmed,
-        purchased: false,
+        emoji: emojiForIngredient(trimmed),
         createdAt: new Date().toISOString(),
       };
       persist([entry, ...items]);
@@ -65,20 +67,24 @@ export const ShoppingListProvider = ({ children }: { children: ReactNode }) => {
     [items, persist],
   );
 
-  const togglePurchased = useCallback(
+  const removeItem = useCallback(
     (id: string) => {
-      persist(
-        items.map((item) =>
-          item.id === id ? { ...item, purchased: !item.purchased } : item,
-        ),
-      );
+      persist(items.filter((item) => item.id !== id));
     },
     [items, persist],
   );
 
+  const isOnList = useCallback(
+    (name: string) => {
+      const key = normalizeIngredientName(name);
+      return items.some((item) => normalizeIngredientName(item.name) === key);
+    },
+    [items],
+  );
+
   const value = useMemo(
-    () => ({ items, ready, addManualItem, addIngredientItem, togglePurchased }),
-    [items, ready, addManualItem, addIngredientItem, togglePurchased],
+    () => ({ items, ready, addManualItem, addIngredientItem, removeItem, isOnList }),
+    [items, ready, addManualItem, addIngredientItem, removeItem, isOnList],
   );
 
   return (

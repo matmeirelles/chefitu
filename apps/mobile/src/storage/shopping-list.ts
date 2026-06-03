@@ -1,10 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { RecipeIngredient } from "@chefitu/shared";
+import { emojiForIngredient } from "../utils/ingredient-emoji";
 
 export type ShoppingListItem = {
   id: string;
   name: string;
-  purchased: boolean;
+  emoji: string;
   createdAt: string;
 };
 
@@ -19,7 +20,7 @@ export const loadShoppingList = async (): Promise<ShoppingListItem[]> => {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isShoppingListItem);
+    return parsed.map(normalizeLegacyItem).filter(isShoppingListItem);
   } catch {
     return [];
   }
@@ -29,21 +30,29 @@ export const saveShoppingList = async (items: ShoppingListItem[]): Promise<void>
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 };
 
-export const itemFromIngredient = (ingredient: RecipeIngredient): ShoppingListItem => ({
-  id: createShoppingListId(),
-  name: ingredient.item.trim(),
-  purchased: false,
-  createdAt: new Date().toISOString(),
-});
-
-const isShoppingListItem = (value: unknown): value is ShoppingListItem => {
-  if (!value || typeof value !== "object") return false;
-  const item = value as Record<string, unknown>;
-  return (
-    typeof item.id === "string" &&
-    typeof item.name === "string" &&
-    item.name.trim().length > 0 &&
-    typeof item.purchased === "boolean" &&
-    typeof item.createdAt === "string"
-  );
+export const itemFromIngredient = (ingredient: RecipeIngredient): ShoppingListItem => {
+  const name = ingredient.item.trim();
+  return {
+    id: createShoppingListId(),
+    name,
+    emoji: emojiForIngredient(name),
+    createdAt: new Date().toISOString(),
+  };
 };
+
+const normalizeLegacyItem = (value: unknown): ShoppingListItem | null => {
+  if (!value || typeof value !== "object") return null;
+  const row = value as Record<string, unknown>;
+  const name = typeof row.name === "string" ? row.name.trim() : "";
+  if (!name || row.purchased === true) return null;
+  const id = typeof row.id === "string" ? row.id : createShoppingListId();
+  const createdAt = typeof row.createdAt === "string" ? row.createdAt : new Date().toISOString();
+  const emoji =
+    typeof row.emoji === "string" && row.emoji
+      ? row.emoji
+      : emojiForIngredient(name);
+  return { id, name, emoji, createdAt };
+};
+
+const isShoppingListItem = (value: ShoppingListItem | null): value is ShoppingListItem =>
+  value !== null;
