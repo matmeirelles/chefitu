@@ -7,6 +7,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+- Fale com o Chefitu tab (CHE-30): chat header with mascot and online status, welcome bubble and icon suggestion chips, white bot bubbles with avatar, white floating composer with camera stub, and inline recipe cards aligned to the handoff
+
+### Fixed
+- Fale com o Chefitu (CHE-34): header title and recipe card emoji no longer clip vertically
+- Fale com o Chefitu (CHE-35): chat composer floats above the tab bar with the same stroke and shadow as the recipe detail AI bar (no beige strip behind it); composer anchored to the bottom of the tab content area (nav already sits below in `AppShell`)
+
 ## [0.9.0] — 2026-06-02
 
 ### Added
