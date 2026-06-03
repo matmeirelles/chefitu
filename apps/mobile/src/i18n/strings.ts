@@ -59,8 +59,14 @@ export const strings = {
       emptyBody:
         "Adicione um item acima, ou toque no + ao lado de um ingrediente em qualquer receita.",
       removeHint: "Marque um item para removê-lo da lista.",
-      haveIt: "Tenho",
       addedFromRecipe: "Adicionado à lista de compra",
+      viewList: "Ver lista",
+      clearList: "Limpar lista",
+      clearTitle: "Limpar lista?",
+      clearBody: "Todos os itens serão removidos. Essa ação não pode ser desfeita.",
+      clearConfirm: "Limpar lista",
+      clearSubmitting: "Limpando lista…",
+      clearCancel: "Cancelar",
     },
     favorites: {
       title: "Favoritos",
@@ -138,8 +144,14 @@ export const strings = {
       emptyBody:
         "Add an item above, or tap + next to an ingredient on any recipe.",
       removeHint: "Check an item to remove it from the list.",
-      haveIt: "Have it",
       addedFromRecipe: "Added to shopping list",
+      viewList: "View list",
+      clearList: "Clear list",
+      clearTitle: "Clear list?",
+      clearBody: "All items will be removed. This cannot be undone.",
+      clearConfirm: "Clear list",
+      clearSubmitting: "Clearing list…",
+      clearCancel: "Cancel",
     },
     favorites: {
       title: "Favorites",

@@ -79,6 +79,11 @@ export const AppShell = () => {
 
   const onSessionReset = () => setGenerateSessionId(buildSessionId());
 
+  const onGoToShoppingList = useCallback(() => {
+    setScreenState({ kind: "library" });
+    setActiveTab("list");
+  }, []);
+
   const isDetail =
     (activeTab === "library" || activeTab === "favorites") && screenState.kind === "detail";
 
@@ -103,6 +108,7 @@ export const AppShell = () => {
               recipe={screenState.recipe}
               onBack={onDetailClose}
               onDelete={onDetailClose}
+              onGoToShoppingList={onGoToShoppingList}
               onRecipeFavoriteChange={onRecipeFavoriteChange}
             />
           </View>

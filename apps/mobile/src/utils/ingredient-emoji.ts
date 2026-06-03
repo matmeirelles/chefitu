@@ -51,6 +51,3 @@ export const emojiForIngredient = (name: string): string => {
   }
   return "🛒";
 };
-
-export const normalizeIngredientName = (name: string): string =>
-  name.trim().toLowerCase();

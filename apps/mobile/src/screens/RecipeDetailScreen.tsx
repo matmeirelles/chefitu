@@ -32,20 +32,28 @@ const MASCOT = require("../../assets/mascot-symbol.png") as number;
 const createAdjustmentSessionId = (recipeId: string) =>
   `adj_${recipeId}_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 
+type SnackbarState = {
+  message: string;
+  kind: "success" | "error";
+  action?: { label: string; onPress: () => void };
+};
+
 export const RecipeDetailScreen = ({
   recipe,
   onBack,
   onDelete,
+  onGoToShoppingList,
   onRecipeFavoriteChange,
 }: {
   recipe: RecipeRecord;
   onBack: () => void;
   onDelete: () => void;
+  onGoToShoppingList?: () => void;
   onRecipeFavoriteChange?: (recipe: RecipeRecord) => void;
 }) => {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
-  const { addIngredientItem, isOnList } = useShoppingList();
+  const { addIngredientItem } = useShoppingList();
 
   const [currentRecipe, setCurrentRecipe] = useState(recipe);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -64,14 +72,18 @@ export const RecipeDetailScreen = ({
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const [snackbar, setSnackbar] = useState<{ message: string; kind: "success" | "error" } | null>(null);
+  const [snackbar, setSnackbar] = useState<SnackbarState | null>(null);
   const snackbarAnim = useRef(new Animated.Value(0)).current;
 
-  const showSnackbar = (message: string, kind: "success" | "error") => {
-    setSnackbar({ message, kind });
+  const showSnackbar = (
+    message: string,
+    kind: "success" | "error",
+    action?: SnackbarState["action"],
+  ) => {
+    setSnackbar({ message, kind, action });
     Animated.sequence([
       Animated.timing(snackbarAnim, { toValue: 1, duration: 220, useNativeDriver: true }),
-      Animated.delay(2400),
+      Animated.delay(action ? 5000 : 2400),
       Animated.timing(snackbarAnim, { toValue: 0, duration: 220, useNativeDriver: true }),
     ]).start(() => setSnackbar(null));
   };
@@ -123,7 +135,13 @@ export const RecipeDetailScreen = ({
 
   const handleAddToShoppingList = (ingredient: RecipeIngredient) => {
     addIngredientItem(ingredient);
-    showSnackbar(t.shoppingList.addedFromRecipe, "success");
+    showSnackbar(
+      t.shoppingList.addedFromRecipe,
+      "success",
+      onGoToShoppingList
+        ? { label: t.shoppingList.viewList, onPress: onGoToShoppingList }
+        : undefined,
+    );
   };
 
   const handleBack = () => {
@@ -283,8 +301,6 @@ export const RecipeDetailScreen = ({
                 key={`${displayedRecipe.id}-ing-${index}`}
                 ingredient={ingredient}
                 isLast={index === displayedRecipe.ingredients.length - 1}
-                onList={isOnList(ingredient.item)}
-                haveItLabel={t.shoppingList.haveIt}
                 onAdd={() => handleAddToShoppingList(ingredient)}
               />
             ))}
@@ -423,7 +439,7 @@ export const RecipeDetailScreen = ({
             snackbar.kind === "error" && styles.snackbarError,
             { bottom: insets.bottom + 24, opacity: snackbarAnim },
           ]}
-          pointerEvents="none"
+          pointerEvents={snackbar.action ? "box-none" : "none"}
         >
           <DSIcon
             name={snackbar.kind === "success" ? "CheckCircle" : "AlertCircle"}
@@ -432,6 +448,19 @@ export const RecipeDetailScreen = ({
             strokeWidth={2}
           />
           <DSText style={styles.snackbarText}>{snackbar.message}</DSText>
+          {snackbar.action && (
+            <Pressable
+              onPress={() => {
+                snackbar.action?.onPress();
+                setSnackbar(null);
+                snackbarAnim.setValue(0);
+              }}
+              hitSlop={8}
+              style={({ pressed }) => [styles.snackbarAction, pressed && styles.snackbarActionPressed]}
+            >
+              <DSText style={styles.snackbarActionText}>{snackbar.action.label}</DSText>
+            </Pressable>
+          )}
         </Animated.View>
       )}
 
@@ -499,14 +528,10 @@ export const RecipeDetailScreen = ({
 const IngredientRow = ({
   ingredient,
   isLast,
-  onList,
-  haveItLabel,
   onAdd,
 }: {
   ingredient: RecipeIngredient;
   isLast: boolean;
-  onList: boolean;
-  haveItLabel: string;
   onAdd: () => void;
 }) => {
   const qty = [ingredient.amount, ingredient.unit].filter(Boolean).join(" ");
@@ -517,22 +542,15 @@ const IngredientRow = ({
       </View>
       <DSText style={styles.ingredientName}>{ingredient.item}</DSText>
       {qty ? <DSText style={styles.ingredientQty}>{qty}</DSText> : null}
-      {onList ? (
-        <View style={styles.haveItPill}>
-          <DSIcon name="Check" size={12} color={COLORS.verdeDark} strokeWidth={2.8} />
-          <DSText style={styles.haveItText}>{haveItLabel}</DSText>
-        </View>
-      ) : (
-        <Pressable
-          onPress={onAdd}
-          style={({ pressed }) => [styles.addToListBtn, pressed && styles.addToListBtnPressed]}
-          hitSlop={8}
-          accessibilityRole="button"
-          accessibilityLabel="Adicionar à lista de compras"
-        >
-          <DSIcon name="Plus" size={18} color={COLORS.laranja} strokeWidth={2.4} />
-        </Pressable>
-      )}
+      <Pressable
+        onPress={onAdd}
+        style={({ pressed }) => [styles.addToListBtn, pressed && styles.addToListBtnPressed]}
+        hitSlop={8}
+        accessibilityRole="button"
+        accessibilityLabel="Adicionar à lista de compras"
+      >
+        <DSIcon name="Plus" size={18} color={COLORS.laranja} strokeWidth={2.4} />
+      </Pressable>
     </View>
   );
 };
@@ -686,21 +704,6 @@ const styles = StyleSheet.create({
   },
   addToListBtnPressed: {
     opacity: 0.85,
-  },
-  haveItPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    backgroundColor: COLORS.salvia,
-    borderRadius: RADIUS.pill,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    flexShrink: 0,
-  },
-  haveItText: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: COLORS.verdeDark,
   },
 
   // Steps
@@ -919,5 +922,16 @@ const styles = StyleSheet.create({
     fontSize: TYPE_SCALE.bodySm,
     fontWeight: "500",
     color: COLORS.white,
+  },
+  snackbarAction: {
+    paddingHorizontal: SPACING[2],
+    paddingVertical: 4,
+  },
+  snackbarActionPressed: { opacity: 0.75 },
+  snackbarActionText: {
+    fontSize: TYPE_SCALE.bodySm,
+    fontWeight: "700",
+    color: COLORS.laranjaSoft,
+    textDecorationLine: "underline",
   },
 });

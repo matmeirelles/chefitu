@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Animated, Keyboard, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ConfirmClearShoppingListBottomSheet } from "../components/ConfirmClearShoppingListBottomSheet";
 import { ShoppingListAddField } from "../components/ShoppingListAddField";
 import { useShoppingList } from "../context/ShoppingListContext";
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "../design-system/tokens";
@@ -15,8 +16,10 @@ const OUTLINE = "rgba(74, 44, 26, 0.10)";
 export const ShoppingListScreen = () => {
   const insets = useSafeAreaInsets();
   const { t } = useLocale();
-  const { items, addManualItem, removeItem } = useShoppingList();
+  const { items, addManualItem, removeItem, clearList } = useShoppingList();
   const [draft, setDraft] = useState("");
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const canAdd = draft.trim().length > 0;
 
   const handleAdd = () => {
@@ -25,6 +28,15 @@ export const ShoppingListScreen = () => {
     addManualItem(name);
     setDraft("");
     Keyboard.dismiss();
+  };
+
+  const handleClearList = () => setConfirmClear(true);
+
+  const handleConfirmClear = () => {
+    setClearing(true);
+    clearList();
+    setClearing(false);
+    setConfirmClear(false);
   };
 
   return (
@@ -51,9 +63,12 @@ export const ShoppingListScreen = () => {
           <View style={styles.cardHeader}>
             <DSText style={styles.cardTitle}>{t.shoppingList.cardTitle}</DSText>
             {items.length > 0 && (
-              <View style={styles.countBadge}>
-                <DSText style={styles.countText}>{items.length}</DSText>
-              </View>
+              <Pressable
+                onPress={handleClearList}
+                style={({ pressed }) => [styles.clearBtn, pressed && styles.clearBtnPressed]}
+              >
+                <DSText style={styles.clearBtnText}>{t.shoppingList.clearList}</DSText>
+              </Pressable>
             )}
           </View>
 
@@ -82,6 +97,13 @@ export const ShoppingListScreen = () => {
           </View>
         )}
       </ScrollView>
+
+      <ConfirmClearShoppingListBottomSheet
+        visible={confirmClear}
+        clearing={clearing}
+        onConfirm={handleConfirmClear}
+        onCancel={() => setConfirmClear(false)}
+      />
     </View>
   );
 };
@@ -164,19 +186,17 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: COLORS.marrom,
   },
-  countBadge: {
-    minWidth: 28,
-    height: 28,
-    borderRadius: 14,
+  clearBtn: {
     backgroundColor: COLORS.laranjaSoft,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 8,
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
-  countText: {
+  clearBtnPressed: { opacity: 0.85 },
+  clearBtnText: {
     fontFamily: FONTS.uiBold,
+    fontSize: 12,
     fontWeight: "700",
-    fontSize: TYPE_SCALE.bodySm,
     color: COLORS.laranja,
   },
   emptyWrap: {

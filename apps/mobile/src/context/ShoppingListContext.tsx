@@ -15,7 +15,7 @@ import {
   saveShoppingList,
   type ShoppingListItem,
 } from "../storage/shopping-list";
-import { emojiForIngredient, normalizeIngredientName } from "../utils/ingredient-emoji";
+import { emojiForIngredient } from "../utils/ingredient-emoji";
 
 type ShoppingListContextValue = {
   items: ShoppingListItem[];
@@ -23,7 +23,7 @@ type ShoppingListContextValue = {
   addManualItem: (name: string) => void;
   addIngredientItem: (ingredient: RecipeIngredient) => void;
   removeItem: (id: string) => void;
-  isOnList: (name: string) => boolean;
+  clearList: () => void;
 };
 
 const ShoppingListContext = createContext<ShoppingListContextValue | null>(null);
@@ -74,17 +74,13 @@ export const ShoppingListProvider = ({ children }: { children: ReactNode }) => {
     [items, persist],
   );
 
-  const isOnList = useCallback(
-    (name: string) => {
-      const key = normalizeIngredientName(name);
-      return items.some((item) => normalizeIngredientName(item.name) === key);
-    },
-    [items],
-  );
+  const clearList = useCallback(() => {
+    persist([]);
+  }, [persist]);
 
   const value = useMemo(
-    () => ({ items, ready, addManualItem, addIngredientItem, removeItem, isOnList }),
-    [items, ready, addManualItem, addIngredientItem, removeItem, isOnList],
+    () => ({ items, ready, addManualItem, addIngredientItem, removeItem, clearList }),
+    [items, ready, addManualItem, addIngredientItem, removeItem, clearList],
   );
 
   return (
