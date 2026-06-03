@@ -61,13 +61,10 @@ export const strings = {
       emptyBody:
         "Toque em + numa receita ou adicione itens manualmente — tudo que você precisa comprar fica aqui.",
       addedFromRecipe: "Adicionado à lista de compra",
-      addSheetTitle: "Novo item",
-      addNameLabel: "Ingrediente",
+      addSheetTitle: "Adicionar item",
+      addSheetBody: "Escreva o ingrediente que você precisa comprar.",
       addNamePlaceholder: "Ex.: Tomate",
-      addQtyLabel: "Quantidade (opcional)",
-      addQtyPlaceholder: "Ex.: 500 g",
       addSubmit: "Adicionar",
-      addCancel: "Cancelar",
     },
     favorites: {
       title: "Favoritos",
@@ -147,13 +144,10 @@ export const strings = {
       emptyBody:
         "Tap + on a recipe or add items manually — everything you need to buy lives here.",
       addedFromRecipe: "Added to shopping list",
-      addSheetTitle: "New item",
-      addNameLabel: "Ingredient",
+      addSheetTitle: "Add item",
+      addSheetBody: "Type the ingredient you need to buy.",
       addNamePlaceholder: "e.g. Tomato",
-      addQtyLabel: "Quantity (optional)",
-      addQtyPlaceholder: "e.g. 500 g",
       addSubmit: "Add",
-      addCancel: "Cancel",
     },
     favorites: {
       title: "Favorites",

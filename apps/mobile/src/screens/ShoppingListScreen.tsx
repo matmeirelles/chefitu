@@ -21,8 +21,8 @@ export const ShoppingListScreen = () => {
   const pending = useMemo(() => items.filter((i) => !i.purchased), [items]);
   const purchased = useMemo(() => items.filter((i) => i.purchased), [items]);
 
-  const handleAdd = (name: string, quantity: string) => {
-    addManualItem({ name, quantity: quantity || undefined });
+  const handleAdd = (name: string) => {
+    addManualItem(name);
   };
 
   return (
@@ -124,21 +124,11 @@ const ShoppingRow = ({
       >
         {purchased && <DSIcon name="Check" size={14} color={COLORS.white} strokeWidth={3} />}
       </View>
-      <View style={styles.rowText}>
-        <DSText
-          style={[
-            styles.itemName,
-            purchased && styles.itemNamePurchased,
-          ]}
-        >
-          {item.name}
-        </DSText>
-        {item.quantity ? (
-          <DSText style={[styles.itemQty, purchased && styles.itemQtyPurchased]}>
-            {item.quantity}
-          </DSText>
-        ) : null}
-      </View>
+      <DSText
+        style={[styles.itemName, purchased && styles.itemNamePurchased]}
+      >
+        {item.name}
+      </DSText>
     </View>
   </Pressable>
 );
@@ -211,8 +201,8 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     backgroundColor: COLORS.verdeFolha,
   },
-  rowText: { flex: 1, gap: 2 },
   itemName: {
+    flex: 1,
     fontSize: TYPE_SCALE.body,
     fontWeight: "600",
     color: COLORS.marrom,
@@ -220,14 +210,6 @@ const styles = StyleSheet.create({
   itemNamePurchased: {
     color: COLORS.marromSoft,
     textDecorationLine: "line-through",
-  },
-  itemQty: {
-    fontSize: TYPE_SCALE.bodySm,
-    fontWeight: "600",
-    color: COLORS.marromSoft,
-  },
-  itemQtyPurchased: {
-    opacity: 0.85,
   },
   emptyWrap: {
     alignItems: "center",

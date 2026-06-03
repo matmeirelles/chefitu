@@ -16,15 +16,10 @@ import {
   type ShoppingListItem,
 } from "../storage/shopping-list";
 
-type AddManualInput = {
-  name: string;
-  quantity?: string;
-};
-
 type ShoppingListContextValue = {
   items: ShoppingListItem[];
   ready: boolean;
-  addManualItem: (input: AddManualInput) => void;
+  addManualItem: (name: string) => void;
   addIngredientItem: (ingredient: RecipeIngredient) => void;
   togglePurchased: (id: string) => void;
 };
@@ -49,13 +44,12 @@ export const ShoppingListProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const addManualItem = useCallback(
-    (input: AddManualInput) => {
-      const name = input.name.trim();
-      if (!name) return;
+    (name: string) => {
+      const trimmed = name.trim();
+      if (!trimmed) return;
       const entry: ShoppingListItem = {
         id: createShoppingListId(),
-        name,
-        quantity: input.quantity?.trim() ?? "",
+        name: trimmed,
         purchased: false,
         createdAt: new Date().toISOString(),
       };

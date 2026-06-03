@@ -4,15 +4,11 @@ import type { RecipeIngredient } from "@chefitu/shared";
 export type ShoppingListItem = {
   id: string;
   name: string;
-  quantity: string;
   purchased: boolean;
   createdAt: string;
 };
 
 const STORAGE_KEY = "chefitu.shoppingList.v1";
-
-export const formatIngredientQuantity = (ingredient: RecipeIngredient): string =>
-  [ingredient.amount, ingredient.unit].filter(Boolean).join(" ").trim();
 
 export const createShoppingListId = (): string =>
   `shop_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
@@ -36,7 +32,6 @@ export const saveShoppingList = async (items: ShoppingListItem[]): Promise<void>
 export const itemFromIngredient = (ingredient: RecipeIngredient): ShoppingListItem => ({
   id: createShoppingListId(),
   name: ingredient.item.trim(),
-  quantity: formatIngredientQuantity(ingredient),
   purchased: false,
   createdAt: new Date().toISOString(),
 });
@@ -47,7 +42,7 @@ const isShoppingListItem = (value: unknown): value is ShoppingListItem => {
   return (
     typeof item.id === "string" &&
     typeof item.name === "string" &&
-    typeof item.quantity === "string" &&
+    item.name.trim().length > 0 &&
     typeof item.purchased === "boolean" &&
     typeof item.createdAt === "string"
   );

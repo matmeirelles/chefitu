@@ -8,7 +8,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- Shopping list tab (CHE-36): `ShoppingListScreen` with Pendentes/Comprados, local persistence, manual add sheet, and recipe ingredient **+** button with confirmation snackbar
+- Shopping list tab (CHE-36): `ShoppingListScreen` with Pendentes/Comprados, local persistence, manual add sheet (import-handoff pattern), and recipe ingredient **+** button with confirmation snackbar
+
+### Changed
+- Shopping list (CHE-36): items show ingredient name only (no quantity on list); add sheet matches import flow handoff UI
 
 ### Removed
 - Import queue screen (`QueueScreen`) from Lista tab — import flow remains on Início
