@@ -34,6 +34,23 @@ export const strings = {
       body: "O Chefitu está sendo preparado. Volte em breve!",
       dismiss: "Entendi",
     },
+    chat: {
+      status: "sempre pronto pra ajudar",
+      welcome:
+        "Oi! Sou o Chefitu 👋 Posso sugerir receitas com o que você tem em casa, adaptar pratos ao seu gosto, ou montar uma lista de compras. O que vamos cozinhar?",
+      placeholder: "Pergunte ao Chefitu…",
+      thinking: "Pensando…",
+      suggestions: {
+        pantry: "Sugira algo com o que tenho",
+        photo: "Tirar foto da despensa",
+        quick: "Algo rápido pro almoço",
+        dessert: "Sobremesa fofa em 20 min",
+      },
+      newChatTitle: "Nova conversa?",
+      newChatBody: "Isso apaga o histórico desta conversa.",
+      newChatConfirm: "Começar de novo",
+      newChatCancel: "Cancelar",
+    },
     favorites: {
       title: "Favoritos",
       recipeCount: (n: number) => `${n} ${n === 1 ? "receita" : "receitas"}`,
@@ -84,6 +101,23 @@ export const strings = {
       title: "Still in the oven",
       body: "Chefitu is getting ready. Check back soon!",
       dismiss: "Got it",
+    },
+    chat: {
+      status: "always ready to help",
+      welcome:
+        "Hi! I'm Chefitu 👋 I can suggest recipes from what you have at home, adapt dishes to your taste, or build a shopping list. What are we cooking?",
+      placeholder: "Ask Chefitu…",
+      thinking: "Thinking…",
+      suggestions: {
+        pantry: "Suggest something with what I have",
+        photo: "Take a pantry photo",
+        quick: "Something quick for lunch",
+        dessert: "A cozy dessert in 20 min",
+      },
+      newChatTitle: "New conversation?",
+      newChatBody: "This clears the current chat history.",
+      newChatConfirm: "Start over",
+      newChatCancel: "Cancel",
     },
     favorites: {
       title: "Favorites",
