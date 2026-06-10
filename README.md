@@ -1,7 +1,7 @@
 # Chefitu
 
 <p align="center">
-  <img src="apps/mobile/assets/logo-horizontal.png" alt="Chefitu" width="280" />
+  <img src="apps/mobile/assets/logo-full.png" alt="Chefitu" width="180" />
 </p>
 
 <p align="center">

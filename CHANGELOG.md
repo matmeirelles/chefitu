@@ -14,6 +14,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - README rewritten in English for public repository
+- README header logo uses `logo-full.png` instead of cropped horizontal asset
 - Splash screen in UI kit aligned to latest design handoff
 - Profile demo defaults use placeholder email instead of personal address
 - `eas.json` production URLs and Apple ID replaced with placeholders
