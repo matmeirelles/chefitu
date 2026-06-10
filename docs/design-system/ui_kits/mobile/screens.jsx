@@ -1,7 +1,7 @@
 // Chefitu mobile screens — each `<Screen*>` is a self-contained mobile screen body.
 // Lives inside an <IOSDevice> from ios-frame.jsx. Background color: brand cream.
 
-const IMG_BASE = '../../assets/illustrations/';
+const IMG_BASE = window.__ASSETS || '/assets/illustrations/';
 const PASTA_HERO = IMG_BASE + 'food-pasta-hero.png';
 const MACARRAO = IMG_BASE + 'food-macarrao.png';
 const MACARRAO_BIG = IMG_BASE + 'food-macarrao-big.png';
@@ -15,6 +15,12 @@ const SPAGHETTI = IMG_BASE + 'sticker-spaghetti.png';
 const TOMATO = IMG_BASE + 'sticker-tomato.png';
 const AVOCADO = IMG_BASE + 'sticker-avocado.png';
 const PANCAKES = IMG_BASE + 'sticker-pancakes.png';
+const STICKERS = '/assets/stickers/';
+const MASCOT_SERVING = STICKERS + 'mascot-serving.png';
+
+function SplashSticker({ src, style }) {
+  return <img src={src} alt="" style={{ position: 'absolute', pointerEvents: 'none', ...style }} />;
+}
 
 // Reusable scroll container fitting under top bar, above bottom nav
 function ScrollBody({ children, pad = 16, paddingBottom = 96 }) {
@@ -31,34 +37,47 @@ function ScrollBody({ children, pad = 16, paddingBottom = 96 }) {
 // ──────────────────────────────────────────────────────────────
 function ScreenSplash({ go }) {
   return (
-    <div style={{
-      flex: 1, background: C.creme, display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', padding: `${SAFE_TOP}px 32px 0`,
-      position: 'relative', overflow: 'hidden',
-    }}>
-      {/* decorative leaves */}
-      <svg style={{ position: 'absolute', top: 80, left: 30, opacity: 0.18 }} width="80" height="80" viewBox="0 0 24 24" fill={C.verdeFolha}>
-        <path d="M21 3c-9 0-14 5-14 12 0 2 .5 4 1.5 5.5C10 21 14 19 17 16s5-8 4-13z"/>
-      </svg>
-      <svg style={{ position: 'absolute', bottom: 200, right: 30, opacity: 0.18 }} width="60" height="60" viewBox="0 0 24 24" fill={C.coracao}>
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-      </svg>
-      <svg style={{ position: 'absolute', top: 140, right: 40, opacity: 0.18 }} width="42" height="42" viewBox="0 0 24 24" fill="none" stroke={C.marrom} strokeWidth="2" strokeLinecap="round">
-        <path d="M11 20A7 7 0 0 1 4 13c0-4 3-7 8-7s8 3 8 8a7 7 0 0 1-7 7z"/>
-        <path d="M11 20c0-7 4-12 9-12"/>
-      </svg>
+    <div
+      onClick={() => go('onboarding')}
+      style={{
+        flex: 1, minHeight: '100%', height: '100%',
+        background: C.creme, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        padding: `${SAFE_TOP + 8}px 24px 48px`,
+        position: 'relative', overflow: 'hidden', cursor: 'pointer',
+      }}
+    >
+      <SplashSticker src={SPAGHETTI} style={{ top: 68, left: 6, height: 58, transform: 'rotate(-14deg)' }} />
+      <SplashSticker src={PANCAKES} style={{ top: 58, left: '50%', marginLeft: -22, height: 46 }} />
+      <SplashSticker src={TOMATO} style={{ top: 82, right: 10, height: 50 }} />
+      <SplashSticker src={AVOCADO} style={{ top: 128, right: 22, height: 42, transform: 'rotate(8deg)' }} />
+      <SplashSticker src={AVOCADO} style={{ bottom: 118, left: 14, height: 44, transform: 'rotate(-10deg)' }} />
+      <SplashSticker src={SPAGHETTI} style={{ bottom: 78, left: 52, height: 52, transform: 'rotate(10deg)' }} />
+      <SplashSticker src={PANCAKES} style={{ bottom: 96, right: 18, height: 54 }} />
+      <SplashSticker src={TOMATO} style={{ bottom: 66, right: 50, height: 42 }} />
 
-      <img src={MASCOT} style={{ height: 200, marginBottom: 14 }} />
-      <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 800, fontSize: 56, color: C.marrom, lineHeight: 1, marginBottom: 18 }}>
-        Chefitu<span style={{ color: C.coracao, fontSize: 36 }}>♡</span>
+      <svg style={{ position: 'absolute', top: 96, left: 72, opacity: 0.35 }} width="28" height="28" viewBox="0 0 24 24" fill={C.verdeFolha}>
+        <path d="M11 20A7 7 0 0 1 4 13c0-4 3-7 8-7s8 3 8 8a7 7 0 0 1-7 7z"/>
+      </svg>
+      <svg style={{ position: 'absolute', bottom: 150, right: 88, opacity: 0.35 }} width="24" height="24" viewBox="0 0 24 24" fill={C.verdeFolha}>
+        <path d="M11 20A7 7 0 0 1 4 13c0-4 3-7 8-7s8 3 8 8a7 7 0 0 1-7 7z"/>
+      </svg>
+      {[
+        { top: 120, left: 48 }, { top: 148, right: 64 }, { bottom: 132, left: 96 },
+        { bottom: 108, right: 36 }, { top: 176, left: 28 },
+      ].map((pos, i) => (
+        <span key={i} style={{
+          position: 'absolute', width: 7, height: 7, borderRadius: 999,
+          background: C.laranja, opacity: 0.55, ...pos,
+        }} />
+      ))}
+
+      <img src={MASCOT_SERVING} alt="" style={{ height: 220, marginBottom: 8, position: 'relative', zIndex: 1 }} />
+      <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 800, fontSize: 48, color: C.marrom, lineHeight: 1, marginBottom: 14, position: 'relative', zIndex: 1 }}>
+        Chefitu<span style={{ color: C.coracao, fontSize: 32 }}>♥</span>
       </div>
-      <div style={{ textAlign: 'center', fontSize: 16, color: C.marrom, fontFamily: FONT_UI, lineHeight: 1.4, maxWidth: 280 }}>
-        Receitas que <span style={{ color: C.laranja, fontWeight: 700 }}>acolhem</span>,
-        <br />ingredientes que <span style={{ color: C.laranja, fontWeight: 700 }}>conectam</span>.
-      </div>
-      <div style={{ position: 'absolute', bottom: 70, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, width: '100%', padding: '0 32px' }}>
-        <Button kind="primary" full iconRight="arrowright" onClick={() => go('onboarding')}>Vamos começar</Button>
-        <div style={{ fontSize: 12, color: C.marromSoft }}>Feito com amor para deixar seu dia mais gostoso.</div>
+      <div style={{ textAlign: 'center', fontSize: 16, color: C.marrom, fontFamily: FONT_UI, lineHeight: 1.45, maxWidth: 280, position: 'relative', zIndex: 1 }}>
+        Um cantinho gostoso pra cozinhar com <span style={{ color: C.laranja, fontWeight: 700 }}>alegria</span>.
       </div>
     </div>
   );
@@ -533,6 +552,51 @@ function ScreenChefituChat({ go, navTab, setNavTab }) {
   );
 }
 
+// 9. PROFILE
+function ScreenProfile({ go, navTab, setNavTab }) {
+  const rows = [
+    { icon: 'user', label: 'Nome', value: 'Mateus' },
+    { icon: 'bell', label: 'Idioma', value: 'Português' },
+    { icon: 'sliders', label: 'Ajuda', value: '' },
+  ];
+  return (
+    <div style={{ flex: 1, background: C.creme, display: 'flex', flexDirection: 'column' }}>
+      <TitleBar title="Perfil" onBack={() => go('home-atual')} />
+      <ScrollBody pad={16}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
+          <div style={{
+            width: 96, height: 96, borderRadius: 999, background: 'linear-gradient(180deg, #FF9F4D 0%, #FF7C12 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 20px rgba(255,138,43,0.28)',
+          }}>
+            <img src={MASCOT} style={{ height: 72 }} />
+          </div>
+          <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 800, fontSize: 22, color: C.marrom, marginTop: 12 }}>Mateus</div>
+          <div style={{ fontSize: 13, color: C.marromSoft, fontWeight: 600, marginTop: 4 }}>you@example.com</div>
+        </div>
+        <div style={{ background: 'white', borderRadius: 20, overflow: 'hidden', boxShadow: '0 2px 8px rgba(74,44,26,0.06)' }}>
+          {rows.map((row, i) => (
+            <div key={row.label} style={{
+              display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px',
+              borderBottom: i < rows.length - 1 ? `1px solid ${C.bege}` : 'none',
+            }}>
+              <span style={{ width: 36, height: 36, borderRadius: 12, background: C.bege, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon name={row.icon} size={18} />
+              </span>
+              <span style={{ flex: 1, fontFamily: FONT_UI, fontWeight: 700, fontSize: 14, color: C.marrom }}>{row.label}</span>
+              {row.value && <span style={{ fontSize: 13, color: C.marromSoft, fontWeight: 600 }}>{row.value}</span>}
+              <Icon name="chevright" size={18} color={C.marromSoft} />
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 24, textAlign: 'center', fontSize: 12, color: C.marromSoft, fontWeight: 600 }}>
+          Sobre o Chefitu · v1.0.0
+        </div>
+      </ScrollBody>
+      <BottomNav active={navTab} onChange={setNavTab} />
+    </div>
+  );
+}
+
 function ChatBubble({ from, children }) {
   if (from === 'user') {
     return (
@@ -560,5 +624,5 @@ function ChatBubble({ from, children }) {
 }
 
 Object.assign(window, {
-  ScreenSplash, ScreenOnboarding, ScreenHomeAtual, ScreenHome, ScreenRecipe, ScreenPantry, ScreenList, ScreenSaved, ScreenChefituChat,
+  ScreenSplash, ScreenOnboarding, ScreenHomeAtual, ScreenHome, ScreenRecipe, ScreenPantry, ScreenList, ScreenSaved, ScreenChefituChat, ScreenProfile,
 });

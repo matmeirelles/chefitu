@@ -7,6 +7,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- Public portfolio README with screenshots, MIT license, and setup docs
+- Mobile UI kit screenshot export (`Export PNG`, `?screenshot=1` mode)
+- `docs/screenshots/` and `apps/mobile/.env.example`
+
+### Changed
+- README rewritten in English for public repository
+- Splash screen in UI kit aligned to latest design handoff
+- Profile demo defaults use placeholder email instead of personal address
+- `eas.json` production URLs and Apple ID replaced with placeholders
+
+### Removed
+- Eval run artifacts and `.claude/settings.json` from version control
+
 ---
 
 ## [0.11.0] — 2026-06-03
@@ -44,7 +58,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [0.8.0] — 2026-06-02
 
 ### Added
-- Profile screen (CHE-18): editable avatar, name, and email (defaults Mateus / you@example.com), PT/EN interface language, help row, log-out stub via reusable `InConstructionBottomSheet`, and static app version under “Sobre o Chefitu”
+- Profile screen (CHE-18): editable avatar, name, and email (demo defaults), PT/EN interface language, help row, log-out stub via reusable `InConstructionBottomSheet`, and static app version under “Sobre o Chefitu”
 - Mobile UI kit reference at `docs/design-system/ui_kits/mobile/`
 - Mascot stickers `baking` and `reveal` in `apps/mobile/src/design-system/assets/stickers/`
 

@@ -16,3 +16,13 @@ prisma/dev.db
 apps/api/uploads
 .venv
 repomix-output.xml
+
+# Local agent / IDE config (machine-specific paths)
+.claude/
+
+# Claude worktrees (local only)
+.claude/worktrees/
+
+# Eval run artifacts — datasets stay tracked; results are reproducible locally
+apps/api/evals/results/
+!apps/api/evals/results/.gitkeep

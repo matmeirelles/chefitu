@@ -24,6 +24,7 @@ const C = {
 
 const FONT_DISPLAY = '"Baloo 2", system-ui, sans-serif';
 const FONT_UI = '"Nunito", system-ui, -apple-system, sans-serif';
+const asset = (file) => (window.__ASSETS || '/assets/illustrations/') + file;
 
 // Top inset to clear iOS status bar + Dynamic Island
 const SAFE_TOP = 56;
@@ -105,7 +106,7 @@ function GreetingBar({ onBell, big = false }) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: `${SAFE_TOP + 4}px 20px 16px` }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: 1, minWidth: 0 }}>
-          <img src="../../assets/illustrations/mascot-symbol.png" style={{ height: 88, flexShrink: 0 }} />
+          <img src={asset('mascot-symbol.png')} alt="" style={{ height: 88, flexShrink: 0 }} />
           <div style={{ minWidth: 0 }}>
             <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 800, fontSize: 26, color: C.marrom, lineHeight: 1.1 }}>
               Olá, Chefitu! <span style={{ display: 'inline-block', transform: 'rotate(-12deg)' }}>👋</span>
@@ -123,7 +124,7 @@ function GreetingBar({ onBell, big = false }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: `${SAFE_TOP}px 20px 12px` }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <img src="../../assets/illustrations/mascot-symbol.png" style={{ height: 40 }} />
+        <img src={asset('mascot-symbol.png')} alt="" style={{ height: 40 }} />
         <div>
           <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: 19, color: C.marrom, lineHeight: 1.05 }}>
             Olá, Chefitu! <span style={{ display: 'inline-block', transform: 'rotate(-12deg)' }}>👋</span>
@@ -184,7 +185,7 @@ function BottomNav({ active = 'home', onChange }) {
                   : '0 6px 14px rgba(255, 138, 43, 0.42)',
                 marginTop: -22, cursor: 'pointer',
               }}>
-                <img src="../../assets/illustrations/mascot-symbol.png" style={{ height: 42, filter: 'drop-shadow(0 1px 2px rgba(74,44,26,0.18))' }} />
+                <img src={asset('mascot-symbol.png')} alt="" style={{ height: 42 }} />
               </button>
               <span style={{ fontSize: 10, fontWeight: 800, color: C.laranja, marginTop: 4, fontFamily: FONT_UI }}>{it.label}</span>
             </div>

@@ -17,6 +17,21 @@ Always update `CHANGELOG.md` before creating a commit. Add the change under `## 
 - `[Fixed]` — bug fixes
 - `[Optimized]` — performance or cost improvements
 
+## Changelog releases
+
+During feature work, only update `## [Unreleased]`. Do **not** cut a dated version (e.g. `## [0.8.0] — YYYY-MM-DD`) until the user says the PR was merged.
+
+**When opening a PR** (or when the user asks to create one), remind them explicitly:
+
+> Quando você fizer o merge deste PR, me avise para eu cortar a nova versão no `CHANGELOG.md` (mover `[Unreleased]` → `[X.Y.Z] — data`).
+
+**When the user confirms a PR was merged**, on `main`:
+
+1. Move everything from `## [Unreleased]` into a new section `## [X.Y.Z] — YYYY-MM-DD` (bump patch by default unless they specify otherwise).
+2. Leave `## [Unreleased]` empty.
+3. Update the compare links at the bottom of `CHANGELOG.md`.
+4. Commit with message `chore: update changelog for vX.Y.Z` and push to `main`.
+
 ## Design system
 
 The project uses a custom design system. When making UI changes:
