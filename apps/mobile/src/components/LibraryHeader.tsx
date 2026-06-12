@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { COLORS, FONTS, SPACING, TYPE_SCALE } from "../design-system/tokens";
 import { DSText } from "../design-system/Text";
 import { DSSearchBar } from "../design-system/SearchBar";
-import { DSChip } from "../design-system/Chip";
 
 export const LibraryHeader = ({
   topInset,
@@ -14,9 +13,8 @@ export const LibraryHeader = ({
   recipeCountLabel,
   searchQuery,
   onChangeSearch,
-  filters,
-  selectedFilter,
-  onSelectFilter,
+  onFilterPress,
+  hasActiveFilters,
   afterTitle,
 }: {
   topInset: number;
@@ -27,9 +25,8 @@ export const LibraryHeader = ({
   recipeCountLabel: string;
   searchQuery: string;
   onChangeSearch: (value: string) => void;
-  filters: string[];
-  selectedFilter: string;
-  onSelectFilter: (value: string) => void;
+  onFilterPress: () => void;
+  hasActiveFilters: boolean;
   afterTitle?: ReactNode;
 }) => (
   <View style={[styles.header, { paddingTop: topInset + 28 }]}>
@@ -53,6 +50,8 @@ export const LibraryHeader = ({
       value={searchQuery}
       onChangeText={onChangeSearch}
       placeholder={searchPlaceholder}
+      onFilterPress={onFilterPress}
+      hasActiveFilters={hasActiveFilters}
     />
 
     {/* Section title */}
@@ -62,22 +61,6 @@ export const LibraryHeader = ({
     </View>
 
     {afterTitle}
-
-    {/* Filter chips */}
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.chipsRow}
-    >
-      {filters.map((item) => (
-        <DSChip
-          key={item}
-          label={item}
-          active={item === selectedFilter}
-          onPress={() => onSelectFilter(item)}
-        />
-      ))}
-    </ScrollView>
   </View>
 );
 
@@ -133,9 +116,5 @@ const styles = StyleSheet.create({
     fontSize: TYPE_SCALE.bodySm,
     lineHeight: TYPE_SCALE.bodySm * 1.5,
     color: COLORS.marromSoft,
-  },
-  chipsRow: {
-    gap: 8,
-    paddingRight: 20,
   },
 });

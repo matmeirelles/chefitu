@@ -2,12 +2,17 @@ import { Pressable, TextInput, type TextInputProps, View, StyleSheet } from "rea
 import { COLORS, FONTS, RADIUS, SHADOWS, SPACING, TYPE_SCALE } from "./tokens";
 import { DSIcon } from "./Icon";
 
-type Props = Pick<TextInputProps, "value" | "onChangeText" | "placeholder">;
+type Props = Pick<TextInputProps, "value" | "onChangeText" | "placeholder"> & {
+  onFilterPress?: () => void;
+  hasActiveFilters?: boolean;
+};
 
 export const DSSearchBar = ({
   value,
   onChangeText,
   placeholder = "Buscar receitas, ingredientes…",
+  onFilterPress,
+  hasActiveFilters = false,
 }: Props) => (
   <View style={styles.container}>
     <DSIcon name="Search" size={20} color={COLORS.marromSoft} strokeWidth={2} />
@@ -18,8 +23,16 @@ export const DSSearchBar = ({
       placeholderTextColor={COLORS.marromSoft}
       style={styles.input}
     />
-    <Pressable style={styles.filterBtn}>
-      <DSIcon name="SlidersHorizontal" size={15} color={COLORS.marrom} strokeWidth={2} />
+    <Pressable
+      style={[styles.filterBtn, hasActiveFilters && styles.filterBtnActive]}
+      onPress={onFilterPress}
+    >
+      <DSIcon
+        name="SlidersHorizontal"
+        size={15}
+        color={hasActiveFilters ? COLORS.laranja : COLORS.marrom}
+        strokeWidth={2}
+      />
     </Pressable>
   </View>
 );
@@ -48,5 +61,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.bege,
     alignItems: "center",
     justifyContent: "center",
+  },
+  filterBtnActive: {
+    backgroundColor: COLORS.laranjaSoft,
+    borderWidth: 1.5,
+    borderColor: COLORS.laranja,
   },
 });

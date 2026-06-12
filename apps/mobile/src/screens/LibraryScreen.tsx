@@ -7,7 +7,8 @@ import { fetchRecipes } from "../services/api";
 import { LibraryHeader } from "../components/LibraryHeader";
 import { RecipeCard } from "../components/RecipeCard";
 import { StateCard } from "../components/StateCard";
-import { buildFilterList, filterRecipes } from "../utils/filter";
+import { buildCategoryList, filterRecipes, DEFAULT_FILTERS, hasActiveFilters } from "../utils/filter";
+import type { HomeFilters } from "../utils/filter";
 import { AddRecipeFab } from "../components/import/AddRecipeFab";
 import { ImportRecipeFlowSheet } from "../components/import/ImportRecipeFlowSheet";
 import { ImportProgressBanner } from "../components/import/ImportProgressBanner";
@@ -17,6 +18,7 @@ import { useLocale } from "../i18n/LocaleContext";
 import { DEFAULT_PROFILE } from "../storage/profile";
 import { ConfirmUnfavoriteBottomSheet } from "../components/ConfirmUnfavoriteBottomSheet";
 import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
+import { HomeFilterSheet } from "../components/HomeFilterSheet";
 
 const FAB_SIZE = 56;
 
@@ -44,7 +46,9 @@ export const LibraryScreen = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [appliedFilters, setAppliedFilters] = useState<HomeFilters>(DEFAULT_FILTERS);
+  const [stagedFilters, setStagedFilters] = useState<HomeFilters>(DEFAULT_FILTERS);
+  const [filterSheetVisible, setFilterSheetVisible] = useState(false);
 
   const deferredSearchQuery = useDeferredValue(searchQuery);
 
@@ -90,7 +94,7 @@ export const LibraryScreen = ({
 
   const importFlow = useImportFlow(() => void loadRecipes(true));
 
-  const filters = useMemo(() => buildFilterList(recipes), [recipes]);
+  const availableCategories = useMemo(() => buildCategoryList(recipes), [recipes]);
 
   const recipesWithPatches = useMemo(
     () =>
@@ -102,8 +106,8 @@ export const LibraryScreen = ({
   );
 
   const filteredRecipes = useMemo(
-    () => filterRecipes(recipesWithPatches, selectedFilter, deferredSearchQuery),
-    [recipesWithPatches, selectedFilter, deferredSearchQuery],
+    () => filterRecipes(recipesWithPatches, appliedFilters, deferredSearchQuery),
+    [recipesWithPatches, appliedFilters, deferredSearchQuery],
   );
 
   const gridData = useMemo(
@@ -120,6 +124,24 @@ export const LibraryScreen = ({
 
   const showImportBanner = importFlow.banner && !importFlow.visible;
 
+  const openFilterSheet = () => {
+    setStagedFilters(appliedFilters);
+    setFilterSheetVisible(true);
+  };
+
+  const dismissFilterSheet = () => {
+    setFilterSheetVisible(false);
+  };
+
+  const applyFilters = () => {
+    setAppliedFilters(stagedFilters);
+    setFilterSheetVisible(false);
+  };
+
+  const clearStagedFilters = () => {
+    setStagedFilters(DEFAULT_FILTERS);
+  };
+
   const listHeader = (
     <LibraryHeader
       topInset={insets.top}
@@ -130,9 +152,8 @@ export const LibraryScreen = ({
       recipeCountLabel={t.home.recipeCount(filteredRecipes.length)}
       searchQuery={searchQuery}
       onChangeSearch={setSearchQuery}
-      filters={filters}
-      selectedFilter={selectedFilter}
-      onSelectFilter={setSelectedFilter}
+      onFilterPress={openFilterSheet}
+      hasActiveFilters={hasActiveFilters(appliedFilters)}
       afterTitle={
         showImportBanner && importFlow.banner ? (
           <ImportProgressBanner
@@ -222,6 +243,16 @@ export const LibraryScreen = ({
         onDiscard={() => void importFlow.discardImport()}
         onRetry={() => void importFlow.retryImportFlow()}
         onViewRecipe={handleViewRecipe}
+      />
+
+      <HomeFilterSheet
+        visible={filterSheetVisible}
+        stagedFilters={stagedFilters}
+        categories={availableCategories}
+        onStagedChange={setStagedFilters}
+        onApply={applyFilters}
+        onClear={clearStagedFilters}
+        onDismiss={dismissFilterSheet}
       />
     </View>
   );
