@@ -9,7 +9,7 @@ import { DSMascotSticker } from "../design-system/MascotSticker";
 import { RecipeCard } from "../components/RecipeCard";
 import { StateCard } from "../components/StateCard";
 import { ConfirmUnfavoriteBottomSheet } from "../components/ConfirmUnfavoriteBottomSheet";
-import { buildFilterList, filterRecipes } from "../utils/filter";
+import { buildCategoryList, filterRecipes, DEFAULT_FILTERS } from "../utils/filter";
 import { fetchFavoriteRecipes } from "../services/api";
 import { useRecipeFavorites } from "../hooks/use-recipe-favorites";
 import { useLocale } from "../i18n/LocaleContext";
@@ -80,10 +80,14 @@ export const FavoritesScreen = ({
     void loadRecipes(refreshKey > 0);
   }, [loadRecipes, refreshKey]);
 
-  const filters = useMemo(() => buildFilterList(recipes), [recipes]);
+  const filters = useMemo(() => ["All", ...buildCategoryList(recipes)], [recipes]);
 
   const filteredRecipes = useMemo(
-    () => filterRecipes(recipes, selectedFilter, ""),
+    () => filterRecipes(
+      recipes,
+      { ...DEFAULT_FILTERS, category: selectedFilter === "All" ? null : selectedFilter },
+      "",
+    ),
     [recipes, selectedFilter],
   );
 
@@ -105,7 +109,7 @@ export const FavoritesScreen = ({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.chipsRow}
         >
-          {filters.map((item) => (
+          {filters.map((item: string) => (
             <DSChip
               key={item}
               label={item}

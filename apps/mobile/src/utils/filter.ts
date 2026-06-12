@@ -1,16 +1,42 @@
 import type { RecipeRecord } from "@chefitu/shared";
 import { RECIPE_CATEGORIES } from "@chefitu/shared";
 
+export type HomeFilters = {
+  prepTime: "15" | "30" | "60" | "60+" | null;
+  category: string | null;
+  onlyFavorites: boolean;
+};
+
+export const DEFAULT_FILTERS: HomeFilters = {
+  prepTime: null,
+  category: null,
+  onlyFavorites: false,
+};
+
+export const hasActiveFilters = (filters: HomeFilters): boolean =>
+  filters.prepTime !== null || filters.category !== null || filters.onlyFavorites;
+
 export const filterRecipes = (
   recipes: RecipeRecord[],
-  selectedFilter: string,
+  filters: HomeFilters,
   searchQuery: string,
 ): RecipeRecord[] => {
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
   return recipes.filter((recipe) => {
-    const matchesFilter = selectedFilter === "All" || recipe.category === selectedFilter;
-    if (!matchesFilter) return false;
+    if (filters.onlyFavorites && !recipe.isFavorite) return false;
+
+    if (filters.category !== null && recipe.category !== filters.category) return false;
+
+    if (filters.prepTime !== null) {
+      if (recipe.totalTimeMinutes == null) return false;
+      const time = recipe.totalTimeMinutes;
+      if (filters.prepTime === "15" && time > 15) return false;
+      if (filters.prepTime === "30" && time > 30) return false;
+      if (filters.prepTime === "60" && time > 60) return false;
+      if (filters.prepTime === "60+" && time <= 60) return false;
+    }
+
     if (!normalizedQuery) return true;
 
     const haystack = [
@@ -28,10 +54,9 @@ export const filterRecipes = (
   });
 };
 
-export const buildFilterList = (recipes: RecipeRecord[]): string[] => {
+export const buildCategoryList = (recipes: RecipeRecord[]): string[] => {
   const present = new Set(
     recipes.map((r) => r.category).filter((c): c is string => Boolean(c)),
   );
-  const ordered = RECIPE_CATEGORIES.filter((c) => present.has(c));
-  return ["All", ...ordered];
+  return RECIPE_CATEGORIES.filter((c) => present.has(c));
 };

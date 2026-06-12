@@ -8,7 +8,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- Spec Writer skill (`.cursor/skills/spec-writer/`) for Linear-native spec workflow via `@Cursor /spec-writer`
+- Home filter sheet: bottom sheet opened from the search bar filter icon with preparation time, category, and favorites filters (deferred apply via `Aplicar`/`Apply`)
+- `HomeFilters` type and `DEFAULT_FILTERS` / `hasActiveFilters` helpers in `filter.ts`
+- `buildCategoryList` replacing `buildFilterList` (no longer includes the "All" entry)
+- Filter active indicator on the search bar filter button when at least one filter is applied
+- PT/EN i18n strings for the filter sheet under `filters` key
+- Unit tests for all new filter combinations (prepTime, category, onlyFavorites, combinations)
+
+### Changed
+- Horizontal category chips removed from the Home header; category filtering now lives inside the filter sheet
+- `filterRecipes` now accepts a structured `HomeFilters` object instead of a category string
+
+### Spec Writer skill (`.cursor/skills/spec-writer/`) for Linear-native spec workflow via `@Cursor /spec-writer`
 - `AGENTS.md` with Cloud Agent instructions for spec-writer mode
 - `scripts/linear-issue.ts` fallback CLI (`linear:fetch`, `linear:update`, `linear:comment`)
 - Public portfolio README with screenshots, MIT license, and setup docs
