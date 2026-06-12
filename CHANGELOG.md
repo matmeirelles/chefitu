@@ -8,6 +8,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Spec Writer skill (`.cursor/skills/spec-writer/`) for Linear-native spec workflow via `@Cursor /spec-writer`
+- `AGENTS.md` with Cloud Agent instructions for spec-writer mode
+- `scripts/linear-issue.ts` fallback CLI (`linear:fetch`, `linear:update`, `linear:comment`)
 - Public portfolio README with screenshots, MIT license, and setup docs
 - Mobile UI kit screenshot export (`Export PNG`, `?screenshot=1` mode)
 - `docs/screenshots/` and `apps/mobile/.env.example`
@@ -20,6 +23,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `eas.json` production URLs and Apple ID replaced with placeholders
 
 ### Removed
+- Python Spec Writer CLI (`spec-writer.py`) — replaced by Cursor skill + Linear integration
 - Eval run artifacts and `.claude/settings.json` from version control
 
 ---

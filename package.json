@@ -14,7 +14,9 @@
     "typecheck": "turbo run typecheck",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "spec-writer": ".venv/bin/python spec-writer.py"
+    "linear:fetch": "tsx scripts/linear-issue.ts fetch",
+    "linear:update": "tsx scripts/linear-issue.ts update",
+    "linear:comment": "tsx scripts/linear-issue.ts comment"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

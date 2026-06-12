@@ -16,6 +16,7 @@ prisma/dev.db
 apps/api/uploads
 .venv
 repomix-output.xml
+.spec-work/
 
 # Local agent / IDE config (machine-specific paths)
 .claude/
