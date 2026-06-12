@@ -14,8 +14,9 @@ Turn a rough Linear issue (title, basic description, screenshots, HTML mock) int
 ## Hard rules
 
 - **Spec writing only.** Do NOT implement code, create branches, or open PRs.
-- **Linear comments only.** All interaction with the PM happens as comments on the issue. Never expect IDE chat input.
-- **Read the full comment thread** to determine which phase you are in.
+- **Your response IS the Linear comment.** When triggered from Linear via `@Cursor`, output the Impact Report, questions, or spec directly in your reply. Cursor syncs your response back to the issue — you do NOT need Linear MCP to post comments.
+- **Never refuse to respond** because Linear MCP is unavailable. If MCP is missing, still output the full formatted message.
+- **Read the full comment thread** from the issue context already provided by the Linear integration.
 - **Never use repomix.** Search the repo surgically with SemanticSearch, Grep, and Read.
 - **Never guess on decisions.** Surface ambiguities as numbered questions with explicit options.
 - **Never skip confirmation** before writing the final spec.
@@ -49,7 +50,7 @@ Read all issue comments. Determine the current phase:
 
 ### 1. Load issue context
 
-- Issue title, description, attachments, and full comment history (via Linear MCP or context already provided).
+- Issue title, description, attachments, and comment history are **already in your context** when triggered from Linear. Do not require Linear MCP to read them.
 - Download and read HTML mock attachments (fetch URL from description links if needed).
 - Treat screenshots as pixel-perfect UI source of truth.
 - HTML mock is source of truth for interactions, copy, and states.
@@ -73,7 +74,7 @@ Search only what the feature touches:
 
 ### 4. Post Impact Report
 
-Post a Linear comment using this structure:
+**Output this as your response** (Cursor syncs it to the Linear issue as a comment):
 
 ```markdown
 ## Spec Writer — Impact Report
@@ -110,7 +111,7 @@ Max 5 questions per round. Group by theme.
 
 ## Phase: confirm
 
-Post a Linear comment:
+**Output this as your response:**
 
 ```markdown
 ## Spec Writer — Decisões confirmadas
@@ -141,12 +142,19 @@ Reference specific DS components from `docs/design-system.md` in Technical notes
 
 ### 2. Save to Linear
 
-Update the issue description with the full spec.
+Try in this order:
 
-- **Preferred:** Linear MCP `issueUpdate` mutation.
-- **Fallback:** `npm run linear:update -- CHE-XX --file .spec-work/CHE-XX/spec.md`
+1. **Linear MCP** — `issueUpdate` if available.
+2. **Fallback script** — save spec to `.spec-work/CHE-XX/spec.md`, then run:
+   ```
+   npm run linear:update -- CHE-XX --file .spec-work/CHE-XX/spec.md
+   ```
+   Requires `LINEAR_API_KEY` in the Cloud Agent environment (Cursor Dashboard → Cloud Agents → Secrets).
+3. **No API access** — output the full spec in your response under `## Spec — update issue description`, and tell the PM to paste it into the issue description manually.
 
-### 3. Post completion comment
+### 3. Post completion message
+
+**Output this as your response** (or append after the spec if using fallback 3):
 
 ```markdown
 ## Spec Writer — Concluído
@@ -156,15 +164,22 @@ Spec escrita na descrição da issue. Pronta para dev.
 Próximo passo: criar branch a partir da issue no Linear (`[username]/[issue-id]-[short-description]`).
 ```
 
-## Linear integration
+If the spec was only output in the response (fallback 3), say instead:
+
+```markdown
+## Spec Writer — Concluído
+
+Spec acima — cole na descrição da issue. Pronta para dev.
+```
+
+## Linear integration (Cloud Agent from @Cursor)
 
 | Action | Method |
 |--------|--------|
-| Read issue + comments | Linear MCP (primary) |
-| Post comments | Linear MCP `commentCreate` |
-| Update description | Linear MCP `issueUpdate` |
-| Download HTML mock | Fetch attachment URL; save to `.spec-work/CHE-XX/` if needed |
-| Fallback read/update | `npm run linear:fetch` / `npm run linear:update` |
+| Read issue + comments | Already in context from Linear integration |
+| Post comments / questions | **Output as your response** — Cursor syncs to Linear |
+| Update description | Linear MCP → `npm run linear:update` → output spec for manual paste |
+| Download HTML mock | Fetch attachment URL from description links |
 
 ## Chefitu-specific checks
 

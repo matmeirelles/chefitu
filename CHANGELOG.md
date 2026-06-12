@@ -16,7 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `docs/screenshots/` and `apps/mobile/.env.example`
 
 ### Changed
-- README rewritten in English for public repository
+- Spec Writer skill: Cloud Agent outputs responses directly to Linear (no Linear MCP required for comments)
 - README header logo uses `logo-full.png` instead of cropped horizontal asset
 - Splash screen in UI kit aligned to latest design handoff
 - Profile demo defaults use placeholder email instead of personal address
